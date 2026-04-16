@@ -6,4 +6,6 @@
 source .venv/Scripts/activate
 which python
 python -m mkdocs serve
+
+# Visit http://127.0.0.1:8000/digital-design
 ```
