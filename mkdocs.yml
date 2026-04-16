@@ -1,7 +1,7 @@
 site_name: Intro to Digital Design - An End to End Approach
 site_description: Course notes and setup guides
-site_url: https://<your-github-username>.github.io/<your-repo-name>/
-repo_url: https://github.com/<your-github-username>/<your-repo-name>
+site_url: https://<your-github-username>.github.io/digital-design/
+repo_url: https://github.com/<your-github-username>/digital-design
 theme:
   name: readthedocs
 nav:
