@@ -17,6 +17,7 @@ html_title = "Intro to Digital Design"
 
 # Allow SVG and webp in docs
 html_static_path = ["_static"]
+html_css_files = ["custom.css"]
 
 myst_enable_extensions = [
     "colon_fence",
