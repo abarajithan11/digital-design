@@ -1,0 +1,4 @@
+[submodule "material/openroad/OpenROAD-flow-scripts"]
+	path = material/openroad/OpenROAD-flow-scripts
+	url = https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts.git
+	branch = master
