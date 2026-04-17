@@ -14,5 +14,5 @@ export TB_FILES ?= $(filter /repo/material/tb/%,$(DESIGN_FILES))
 # raw cell-area estimate used for floorplanning.
 export CORE_UTILIZATION ?= 50
 export CORE_ASPECT_RATIO ?= 1
-export CORE_MARGIN ?= 2
+export CORE_MARGIN ?= 1
 export PLACE_DENSITY ?= 0.60

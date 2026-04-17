@@ -66,6 +66,9 @@ kill:
 	- docker kill $(CONTAINER) || true
 	- docker rm $(CONTAINER) || true
 
+serve:
+	sphinx-build -b html docs site
+	python3 -m http.server 8000 --directory site
 
 # Targets for CI
 
@@ -83,10 +86,6 @@ ci-sim:
 
 ci-gds-docs:
 	CI_IMAGE="$(CI_IMAGE)" python scripts/generate_outputs.py
-
-serve:
-	sphinx-build -b html docs site
-	python3 -m http.server 8000 --directory site
 
 ci-build-pages:
 	python -m pip install --upgrade pip
