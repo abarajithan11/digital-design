@@ -81,8 +81,8 @@ def main() -> None:
     ap.add_argument("--svg", required=True)
     ap.add_argument("--start", default="auto")
     ap.add_argument("--end", default="auto")
-    ap.add_argument("--window", type=int, default=100000)
-    ap.add_argument("--sample-rate", type=int, default=256)
+    ap.add_argument("--window", type=int, default=4096)
+    ap.add_argument("--sample-rate", type=int, default=64)
     ap.add_argument("--hscale", type=int, default=1)
     ap.add_argument("--max-signals", type=int, default=64)
     args = ap.parse_args()
@@ -96,12 +96,12 @@ def main() -> None:
     max_t = max(int(vcd[s].tv[-1][0]) for s in signals)
 
     start_t = min_t if args.start == "auto" else int(args.start)
-    end_t = max_t if args.end == "auto" else int(args.end)
     start_t = max(min_t, start_t)
-    end_t = min(max_t, end_t)
-
-    if end_t <= start_t:
-        end_t = min(max_t, start_t + max(1, args.window))
+    # always cap to window; if --end is explicit, honour it but still cap
+    if args.end == "auto":
+        end_t = min(max_t, start_t + args.window)
+    else:
+        end_t = min(max_t, int(args.end))
     if end_t <= start_t:
         end_t = start_t + 1
 

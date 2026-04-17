@@ -33,11 +33,11 @@ WAVE_SAVE    ?= $(SIM_WORKDIR)/$(DESIGN).gtkw
 WAVE_SVG     ?= $(SIM_WORKDIR)/$(DESIGN).svg
 WAVE_START   ?= auto
 WAVE_END     ?= auto
-WAVE_WINDOW  ?= 100000
+WAVE_WINDOW  ?= 65536
 WAVE_SAMPLE  ?= 256
 WAVE_HSCALE  ?= 1
 
-.PHONY: require_container prepare gds sim gtkwave wave_svg show_layout show_layout_orfs check_tools
+.PHONY: require_container prepare gds sim gtkwave wave_svg clean show_layout check_tools
 
 require_container:
 	test -f /.dockerenv
@@ -51,6 +51,7 @@ gds: prepare
 	REPORT_IMAGE_SCALE="$(REPORT_IMAGE_SCALE)" $(MAKE) -C "$(ORFS_FLOW_DIR)" DESIGN_NAME="$(DESIGN)" DESIGN_CONFIG="$(DESIGN_CONFIG)" WORK_HOME="$(WORK_HOME)" YOSYS_EXE="$(YOSYS_EXE)" OPENROAD_EXE="$(OPENROAD_EXE)" KLAYOUT_CMD="$(KLAYOUT_CMD)" gds
 
 sim: prepare
+	mkdir -p "$(SIM_WORKDIR)"
 	cd "$(CONT_MATERIAL)"
 	verilator --binary --trace --timing --sv --top-module "$(TOP_TB)" -Mdir "$(SIM_WORKDIR)/obj_dir" -f "designs/$(DESIGN).f"
 	"$(SIM_WORKDIR)/obj_dir/V$(TOP_TB)" +VCD="$(WAVE_VCD)"
@@ -76,11 +77,11 @@ wave_svg: sim
 		--hscale "$(WAVE_HSCALE)"
 	echo "Wrote waveform image: $(WAVE_SVG)"
 
+clean: require_container
+	rm -rf "$(CONT_MATERIAL)/sim" "$(CONT_MATERIAL)/openroad/work"
+
 show_layout: require_container
 	$(KLAYOUT_CMD) -l "$(PLATFORM_LYP)" "$(FINAL_GDS)"
-
-show_layout_orfs: require_container
-	$(MAKE) -C "$(ORFS_FLOW_DIR)" DESIGN_NAME="$(DESIGN)" DESIGN_CONFIG="$(DESIGN_CONFIG)" WORK_HOME="$(WORK_HOME)" YOSYS_EXE="$(YOSYS_EXE)" OPENROAD_EXE="$(OPENROAD_EXE)" KLAYOUT_CMD="$(KLAYOUT_CMD)" klayout_6_final.gds
 
 check_tools: require_container
 	echo "openroad: $$($(OPENROAD_EXE) -version 2>/dev/null | head -n 1)"

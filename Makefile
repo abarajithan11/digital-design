@@ -34,41 +34,11 @@ image:
 		--build-arg CONT_ROOT=$(CONT_MATERIAL) \
 		-t $(IMAGE) .
 
-ci-image:
-	git submodule update --init --recursive
-	docker build \
-		-f Dockerfile \
-		--build-arg UID=$(UID) \
-		--build-arg GID=$(GID) \
-		--build-arg USERNAME=$(USR) \
-		--build-arg CONT_ROOT=$(CONT_MATERIAL) \
-		-t $(CI_IMAGE) .
-
 run:
 	docker run --rm \
 		-v $(HOST_REPO):$(CONT_REPO) \
 		-w $(CONT_MATERIAL) \
 		$(CI_IMAGE) bash -lc '$(CMD)'
-
-ci-sim:
-	shopt -s nullglob; \
-	mkdir -p out/sim; \
-	: > out/sim/status.tsv; \
-	for design_file in material/designs/*.f; do \
-		design="$${design_file##*/}"; \
-		design="$${design%.f}"; \
-		sim_status=pass; \
-		if ! $(MAKE) run CMD="make sim DESIGN=$$design"; then sim_status=fail; fi; \
-		printf '%s\t%s\n' "$$design" "$$sim_status" >> out/sim/status.tsv; \
-	done
-
-ci-gds-docs:
-	CI_IMAGE="$(CI_IMAGE)" python scripts/generate_outputs.py
-
-ci-build-pages:
-	python -m pip install --upgrade pip
-	pip install mkdocs
-	mkdocs build
 
 start:
 	- xhost +Local:docker
@@ -95,3 +65,36 @@ enter:
 kill:
 	- docker kill $(CONTAINER) || true
 	- docker rm $(CONTAINER) || true
+
+
+# Targets for CI
+
+ci-sim:
+	shopt -s nullglob; \
+	mkdir -p out/sim; \
+	: > out/sim/status.tsv; \
+	for design_file in material/designs/*.f; do \
+		design="$${design_file##*/}"; \
+		design="$${design%.f}"; \
+		sim_status=pass; \
+		if ! $(MAKE) run CMD="make sim DESIGN=$$design"; then sim_status=fail; fi; \
+		printf '%s\t%s\n' "$$design" "$$sim_status" >> out/sim/status.tsv; \
+	done
+
+ci-gds-docs:
+	CI_IMAGE="$(CI_IMAGE)" python scripts/generate_outputs.py
+
+ci-build-pages:
+	python -m pip install --upgrade pip
+	pip install mkdocs
+	mkdocs build
+
+ci-image:
+	git submodule update --init --recursive
+	docker build \
+		-f Dockerfile \
+		--build-arg UID=$(UID) \
+		--build-arg GID=$(GID) \
+		--build-arg USERNAME=$(USR) \
+		--build-arg CONT_ROOT=$(CONT_MATERIAL) \
+		-t $(CI_IMAGE) .
