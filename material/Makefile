@@ -30,12 +30,14 @@ TOP_TB       ?= tb_$(DESIGN)
 SIM_WORKDIR  := $(CONT_MATERIAL)/sim/$(DESIGN)
 WAVE_VCD     ?= $(SIM_WORKDIR)/$(DESIGN).vcd
 WAVE_SAVE    ?= $(SIM_WORKDIR)/$(DESIGN).gtkw
-WAVE_PNG     ?= $(SIM_WORKDIR)/$(DESIGN).png
+WAVE_SVG     ?= $(SIM_WORKDIR)/$(DESIGN).svg
 WAVE_START   ?= auto
 WAVE_END     ?= auto
 WAVE_WINDOW  ?= 100000
+WAVE_SAMPLE  ?= 256
+WAVE_HSCALE  ?= 1
 
-.PHONY: require_container prepare gds sim gtkwave wave_png show_layout show_layout_orfs check_tools
+.PHONY: require_container prepare gds sim gtkwave wave_svg show_layout show_layout_orfs check_tools
 
 require_container:
 	test -f /.dockerenv
@@ -61,16 +63,18 @@ gtkwave: sim
 		gtkwave "$(WAVE_VCD)"
 	fi
 
-wave_png: sim
+wave_svg: sim
 	cd "$(CONT_MATERIAL)"
 	mkdir -p "$(SIM_WORKDIR)"
-	python3 "$(CONT_REPO)/scripts/vcd_to_png.py" \
+	python3 "$(CONT_REPO)/scripts/vcd_to_svg.py" \
 		--vcd "$(WAVE_VCD)" \
-		--png "$(WAVE_PNG)" \
+		--svg "$(WAVE_SVG)" \
 		--start "$(WAVE_START)" \
 		--end "$(WAVE_END)" \
-		--window "$(WAVE_WINDOW)"
-	echo "Wrote waveform image: $(WAVE_PNG)"
+		--window "$(WAVE_WINDOW)" \
+		--sample-rate "$(WAVE_SAMPLE)" \
+		--hscale "$(WAVE_HSCALE)"
+	echo "Wrote waveform image: $(WAVE_SVG)"
 
 show_layout: require_container
 	$(KLAYOUT_CMD) -l "$(PLATFORM_LYP)" "$(FINAL_GDS)"

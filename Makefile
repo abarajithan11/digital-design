@@ -63,7 +63,7 @@ ci-sim:
 	done
 
 ci-gds-docs:
-	CI_IMAGE="$(CI_IMAGE)" python scripts/generate_asap7_layouts.py
+	CI_IMAGE="$(CI_IMAGE)" python scripts/generate_outputs.py
 
 ci-build-pages:
 	python -m pip install --upgrade pip

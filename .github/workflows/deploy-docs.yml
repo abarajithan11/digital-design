@@ -149,16 +149,16 @@ jobs:
           name: sim-results
           path: out/sim
 
-      - name: Run gds and generate ASAP7 docs
+      - name: Run gds and generate design outputs docs
         run: make ci-gds-docs CI_IMAGE="${GHCR_IMAGE}:${IMAGE_TAG}"
 
-      - name: Upload ASAP7 docs artifacts
+      - name: Upload design outputs artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: asap7-layout-docs
+          name: design-outputs-docs
           path: |
-            docs/asap7-layouts.md
-            docs/assets/asap7-layouts
+            docs/design_outputs.md
+            docs/assets/design-outputs
 
   build-pages:
     runs-on: ubuntu-latest
@@ -167,11 +167,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Download ASAP7 docs artifacts
+      - name: Download design outputs artifacts
         uses: actions/download-artifact@v4
         with:
-          name: asap7-layout-docs
-          path: .
+          name: design-outputs-docs
+          path: docs
 
       - name: Setup Python
         uses: actions/setup-python@v5
