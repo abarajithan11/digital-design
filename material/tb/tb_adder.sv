@@ -9,6 +9,8 @@ module tb_adder;
 
   adder #(.WIDTH(WIDTH)) dut (.*);
 
+  string vcd_path;
+
   task automatic check(input logic [WIDTH-1:0] ai, input logic [WIDTH-1:0] bi);
     begin
       a = ai;
@@ -24,6 +26,12 @@ module tb_adder;
   endtask
 
   initial begin
+    if (!$value$plusargs("VCD=%s", vcd_path)) begin
+      vcd_path = "adder.vcd";
+    end
+    $dumpfile(vcd_path);
+    $dumpvars(0, tb_adder);
+
     for (int i = 0; i < 2** WIDTH; i++) begin
       for (int j = 0; j < 2** WIDTH; j++) begin
         check(i[WIDTH-1:0], j[WIDTH-1:0]);

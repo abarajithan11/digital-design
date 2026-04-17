@@ -2,7 +2,7 @@ FROM openroad/orfs:latest
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG USERNAME=usr
-ARG CONT_ROOT=/material
+ARG CONT_ROOT=/repo/material
 ARG UID=1000
 ARG GID=1000
 ARG VERILATOR_VERSION=v5.038
@@ -23,6 +23,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libfl-dev \
     libfl2 \
     perl \
+    python3-pip \
     python3 \
     rsync \
     time \
@@ -30,7 +31,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     xauth \
  && rm -rf /var/lib/apt/lists/*
 
-RUN git clone --depth 1 --branch "${VERILATOR_VERSION}" https://github.com/verilator/verilator.git /tmp/verilator \
+RUN python3 -m pip install --no-cache-dir matplotlib vcdvcd
+
+RUN git clone --depth 1 --single-branch --branch "${VERILATOR_VERSION}" https://github.com/verilator/verilator.git /tmp/verilator \
  && cd /tmp/verilator \
  && autoconf \
  && ./configure \

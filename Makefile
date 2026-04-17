@@ -8,9 +8,11 @@ HOSTNAME_VAR := $(shell bash -lc 'echo $${USER:0:3}')
 IMAGE        := $(USR)/cse140-openroad:dev
 CONTAINER    := orfs-$(USR)
 
-HOST_MATERIAL := $(CURDIR)/material
-CONT_MATERIAL := /material
-CONT_XDG_RUNTIME := /material/openroad/work/.runtime-$(USR)
+HOST_REPO     := $(CURDIR)
+HOST_MATERIAL := $(HOST_REPO)/material
+CONT_REPO     := /repo
+CONT_MATERIAL := $(CONT_REPO)/material
+CONT_XDG_RUNTIME := $(CONT_MATERIAL)/openroad/work/.runtime-$(USR)
 
 X11_MOUNT    := $(if $(wildcard /tmp/.X11-unix),-v /tmp/.X11-unix:/tmp/.X11-unix)
 WSLG_MOUNT   := $(if $(wildcard /mnt/wslg),-v /mnt/wslg:/mnt/wslg)
@@ -44,13 +46,12 @@ ci-image:
 
 run:
 	docker run --rm \
-		-v $(HOST_MATERIAL):$(CONT_MATERIAL) \
+		-v $(HOST_REPO):$(CONT_REPO) \
 		-w $(CONT_MATERIAL) \
 		$(CI_IMAGE) bash -lc '$(CMD)'
 
 ci-sim:
 	shopt -s nullglob; \
-	$(MAKE) ci-image CI_IMAGE="$(CI_IMAGE)"; \
 	mkdir -p out/sim; \
 	: > out/sim/status.tsv; \
 	for design_file in material/designs/*.f; do \
@@ -62,8 +63,7 @@ ci-sim:
 	done
 
 ci-gds-docs:
-	$(MAKE) ci-image CI_IMAGE="$(CI_IMAGE)"
-	CI_IMAGE="$(CI_IMAGE)" python docs/generate_asap7_layouts.py
+	CI_IMAGE="$(CI_IMAGE)" python scripts/generate_asap7_layouts.py
 
 ci-build-pages:
 	python -m pip install --upgrade pip
@@ -85,7 +85,7 @@ start:
 		$(XAUTH_MOUNT) \
 		$(X11_MOUNT) \
 		$(WSLG_MOUNT) \
-		-v $(HOST_MATERIAL):$(CONT_MATERIAL) \
+		-v $(HOST_REPO):$(CONT_REPO) \
 		-w $(CONT_MATERIAL) \
 			$(IMAGE) /bin/bash -lc 'mkdir -p "$$XDG_RUNTIME_DIR" && chmod 700 "$$XDG_RUNTIME_DIR" && tail -f /dev/null'
 

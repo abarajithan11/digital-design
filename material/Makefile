@@ -9,7 +9,8 @@ DESIGN ?= adder
 PLATFORM ?= asap7
 
 HOST_MATERIAL := $(CURDIR)
-CONT_MATERIAL := /material
+CONT_REPO ?= /repo
+CONT_MATERIAL := $(CONT_REPO)/material
 
 OPENROAD_DIR := $(HOST_MATERIAL)/openroad
 ORFS_FLOW_DIR := $(CONT_MATERIAL)/openroad/OpenROAD-flow-scripts/flow
@@ -27,8 +28,14 @@ OPENROAD_EXE := /OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad
 KLAYOUT_CMD  := /usr/bin/klayout
 TOP_TB       ?= tb_$(DESIGN)
 SIM_WORKDIR  := $(CONT_MATERIAL)/sim/$(DESIGN)
+WAVE_VCD     ?= $(SIM_WORKDIR)/$(DESIGN).vcd
+WAVE_SAVE    ?= $(SIM_WORKDIR)/$(DESIGN).gtkw
+WAVE_PNG     ?= $(SIM_WORKDIR)/$(DESIGN).png
+WAVE_START   ?= auto
+WAVE_END     ?= auto
+WAVE_WINDOW  ?= 100000
 
-.PHONY: require_container prepare gds sim show_layout show_layout_orfs check_tools
+.PHONY: require_container prepare gds sim gtkwave wave_png show_layout show_layout_orfs check_tools
 
 require_container:
 	test -f /.dockerenv
@@ -43,8 +50,27 @@ gds: prepare
 
 sim: prepare
 	cd "$(CONT_MATERIAL)"
-	verilator --binary --timing --sv --top-module "$(TOP_TB)" -Mdir "$(SIM_WORKDIR)/obj_dir" -f "designs/$(DESIGN).f"
-	"$(SIM_WORKDIR)/obj_dir/V$(TOP_TB)"
+	verilator --binary --trace --timing --sv --top-module "$(TOP_TB)" -Mdir "$(SIM_WORKDIR)/obj_dir" -f "designs/$(DESIGN).f"
+	"$(SIM_WORKDIR)/obj_dir/V$(TOP_TB)" +VCD="$(WAVE_VCD)"
+
+gtkwave: sim
+	cd "$(CONT_MATERIAL)"
+	if [[ -f "$(WAVE_SAVE)" ]]; then
+		gtkwave "$(WAVE_VCD)" "$(WAVE_SAVE)"
+	else
+		gtkwave "$(WAVE_VCD)"
+	fi
+
+wave_png: sim
+	cd "$(CONT_MATERIAL)"
+	mkdir -p "$(SIM_WORKDIR)"
+	python3 "$(CONT_REPO)/scripts/vcd_to_png.py" \
+		--vcd "$(WAVE_VCD)" \
+		--png "$(WAVE_PNG)" \
+		--start "$(WAVE_START)" \
+		--end "$(WAVE_END)" \
+		--window "$(WAVE_WINDOW)"
+	echo "Wrote waveform image: $(WAVE_PNG)"
 
 show_layout: require_container
 	$(KLAYOUT_CMD) -l "$(PLATFORM_LYP)" "$(FINAL_GDS)"
