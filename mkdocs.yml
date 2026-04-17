@@ -6,6 +6,7 @@ theme:
   name: readthedocs
 nav:
   - Overview: index.md
+  - ASAP7 layouts: asap7-layouts.md
   - Week 1: week-1.md
   - Week 2: week-2.md
   - Week 3: week-3.md

@@ -1,14 +1,13 @@
 # Common defaults for course designs. Override on the make command line if needed.
 
-rtl_sv := /material/rtl/$(DESIGN_NAME).sv
-rtl_v := /material/rtl/$(DESIGN_NAME).v
-rtl_flist := /material/rtl/$(DESIGN_NAME).flist
+design_flist := /material/designs/$(DESIGN_NAME).f
 
-ifeq ($(wildcard $(rtl_flist)),)
-export VERILOG_FILES ?= $(wildcard $(rtl_sv)) $(wildcard $(rtl_v))
-else
-export VERILOG_FILES ?= $(shell cat $(rtl_flist))
-endif
+design_files_raw := $(strip $(shell awk '{sub(/#.*/, ""); gsub(/^[ \t]+|[ \t]+$$/, ""); if (length) print $$0}' $(design_flist) 2>/dev/null))
+export DESIGN_FILES ?= $(foreach f,$(design_files_raw),$(if $(filter /%,$(f)),$(f),/material/$(patsubst ./%,%,$(f))))
+
+# ORFS uses only RTL sources; simulation flows can use full DESIGN_FILES.
+export VERILOG_FILES ?= $(filter /material/rtl/%,$(DESIGN_FILES))
+export TB_FILES ?= $(filter /material/tb/%,$(DESIGN_FILES))
 
 # 70% was too aggressive for tiny ASAP7 examples like `adder`, where
 # implementation overhead after synthesis can significantly exceed the

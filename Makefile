@@ -1,4 +1,5 @@
 SHELL := /bin/bash
+.SHELLFLAGS := -eu -o pipefail -c
 
 USR          := $(shell id -un)
 UID          := $(shell id -u)
@@ -15,7 +16,9 @@ X11_MOUNT    := $(if $(wildcard /tmp/.X11-unix),-v /tmp/.X11-unix:/tmp/.X11-unix
 WSLG_MOUNT   := $(if $(wildcard /mnt/wslg),-v /mnt/wslg:/mnt/wslg)
 XAUTH_MOUNT  := $(if $(wildcard $(HOME)/.Xauthority),-e XAUTHORITY=$(HOME)/.Xauthority -v $(HOME)/.Xauthority:$(HOME)/.Xauthority)
 
-.PHONY: image start enter kill fresh
+.PHONY: image start enter kill fresh ci-image run ci-sim ci-gds-docs ci-build-pages
+
+CI_IMAGE ?= pages-layouts:latest
 
 fresh: kill image start
 
@@ -28,6 +31,44 @@ image:
 		--build-arg USERNAME=$(USR) \
 		--build-arg CONT_ROOT=$(CONT_MATERIAL) \
 		-t $(IMAGE) .
+
+ci-image:
+	git submodule update --init --recursive
+	docker build \
+		-f Dockerfile \
+		--build-arg UID=$(UID) \
+		--build-arg GID=$(GID) \
+		--build-arg USERNAME=$(USR) \
+		--build-arg CONT_ROOT=$(CONT_MATERIAL) \
+		-t $(CI_IMAGE) .
+
+run:
+	docker run --rm \
+		-v $(HOST_MATERIAL):$(CONT_MATERIAL) \
+		-w $(CONT_MATERIAL) \
+		$(CI_IMAGE) bash -lc '$(CMD)'
+
+ci-sim:
+	shopt -s nullglob; \
+	$(MAKE) ci-image CI_IMAGE="$(CI_IMAGE)"; \
+	mkdir -p out/sim; \
+	: > out/sim/status.tsv; \
+	for design_file in material/designs/*.f; do \
+		design="$${design_file##*/}"; \
+		design="$${design%.f}"; \
+		sim_status=pass; \
+		if ! $(MAKE) run CMD="make sim DESIGN=$$design"; then sim_status=fail; fi; \
+		printf '%s\t%s\n' "$$design" "$$sim_status" >> out/sim/status.tsv; \
+	done
+
+ci-gds-docs:
+	$(MAKE) ci-image CI_IMAGE="$(CI_IMAGE)"
+	CI_IMAGE="$(CI_IMAGE)" python docs/generate_asap7_layouts.py
+
+ci-build-pages:
+	python -m pip install --upgrade pip
+	pip install mkdocs
+	mkdocs build
 
 start:
 	- xhost +Local:docker
