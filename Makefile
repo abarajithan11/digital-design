@@ -20,6 +20,7 @@ XAUTH_MOUNT  := $(if $(wildcard $(HOME)/.Xauthority),-e XAUTHORITY=$(HOME)/.Xaut
 fresh: kill image start
 
 image:
+	git submodule update --init --recursive
 	docker build \
 		-f Dockerfile \
 		--build-arg UID=$(UID) \
@@ -45,7 +46,7 @@ start:
 		$(WSLG_MOUNT) \
 		-v $(HOST_MATERIAL):$(CONT_MATERIAL) \
 		-w $(CONT_MATERIAL) \
-		$(IMAGE) /bin/bash -lc 'mkdir -p "$(XDG_RUNTIME_DIR)" && chmod 700 "$(XDG_RUNTIME_DIR)" && tail -f /dev/null'
+			$(IMAGE) /bin/bash -lc 'mkdir -p "$$XDG_RUNTIME_DIR" && chmod 700 "$$XDG_RUNTIME_DIR" && tail -f /dev/null'
 
 enter:
 	docker exec -it $(CONTAINER) bash -i

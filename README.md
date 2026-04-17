@@ -5,7 +5,6 @@
 Run these commands from the repo root inside WSL2:
 
 ```bash
-git submodule update --init --recursive
 make fresh
 make enter
 
