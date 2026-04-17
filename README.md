@@ -23,8 +23,8 @@ make show_layout DESIGN=adder
 ## To locally serve the site
 
 ```bash
-source .venv/Scripts/activate
-python -m mkdocs serve
-
-# Visit http://127.0.0.1:8000/digital-design
+pip install sphinx furo myst-parser
+make serve
 ```
+
+Then open `http://localhost:8000` in your browser.

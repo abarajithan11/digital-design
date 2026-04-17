@@ -18,7 +18,7 @@ X11_MOUNT    := $(if $(wildcard /tmp/.X11-unix),-v /tmp/.X11-unix:/tmp/.X11-unix
 WSLG_MOUNT   := $(if $(wildcard /mnt/wslg),-v /mnt/wslg:/mnt/wslg)
 XAUTH_MOUNT  := $(if $(wildcard $(HOME)/.Xauthority),-e XAUTHORITY=$(HOME)/.Xauthority -v $(HOME)/.Xauthority:$(HOME)/.Xauthority)
 
-.PHONY: image start enter kill fresh ci-image run ci-sim ci-gds-docs ci-build-pages
+.PHONY: image start enter kill fresh ci-image run ci-sim ci-gds-docs ci-build-pages serve
 
 CI_IMAGE ?= pages-layouts:latest
 
@@ -84,10 +84,14 @@ ci-sim:
 ci-gds-docs:
 	CI_IMAGE="$(CI_IMAGE)" python scripts/generate_outputs.py
 
+serve:
+	sphinx-build -b html docs site
+	python3 -m http.server 8000 --directory site
+
 ci-build-pages:
 	python -m pip install --upgrade pip
-	pip install mkdocs
-	mkdocs build
+	pip install sphinx furo myst-parser
+	sphinx-build -b html docs site
 
 ci-image:
 	git submodule update --init --recursive

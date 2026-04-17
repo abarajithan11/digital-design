@@ -2,6 +2,20 @@
 
 Welcome to the course site.
 
+```{toctree}
+:maxdepth: 1
+:caption: Contents
+
+design_outputs
+week-1
+week-2
+week-3
+week-4
+week-5
+setting-up-pynq
+setting-up-docker
+```
+
 ## Overview
 
 This site contains week-by-week material and setup guides for the course.
