@@ -67,7 +67,7 @@ kill:
 	- docker rm $(CONTAINER) || true
 
 serve:
-	sphinx-build -b html docs site
+	sphinx-build -a -b html docs site
 	python3 -m http.server 8000 --directory site
 
 # Targets for CI
