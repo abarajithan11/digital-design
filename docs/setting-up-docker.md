@@ -1,8 +1,13 @@
 # Setting up Docker
 
-## Target environment
+These commands are intended for Ubuntu (Native OS or WSL2). First clone our repo:
 
-These commands are intended for Ubuntu (Native OS or WSL2)
+```sh
+git clone git@github.com:abarajithan11/digital-design.git
+# or
+git clone https://github.com/abarajithan11/digital-design.git
+```
+
 
 ## Setup, start and enter docker container, from Ubuntu or WSL2
 
