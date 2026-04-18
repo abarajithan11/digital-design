@@ -150,12 +150,12 @@ In five weeks, you will learn the following:
 ```{toctree}
 :maxdepth: 1
 
-design_outputs
+setting-up-docker
+setting-up-pynq
 week-1
 week-2
 week-3
 week-4
 week-5
-setting-up-pynq
-setting-up-docker
+design_outputs
 ```
