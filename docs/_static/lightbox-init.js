@@ -4,8 +4,17 @@ document.addEventListener("DOMContentLoaded", () => {
   );
 
   contentImages.forEach((img, index) => {
-    if (img.closest("a[data-lightbox]")) return;
     if (img.closest(".sidebar-drawer, .toc-drawer")) return;
+
+    const enclosingAnchor = img.closest("a");
+    if (enclosingAnchor) {
+      enclosingAnchor.setAttribute("data-lightbox", "doc-images");
+      enclosingAnchor.setAttribute("data-title", img.alt || `Image ${index + 1}`);
+      if (!enclosingAnchor.getAttribute("href")) {
+        enclosingAnchor.setAttribute("href", img.currentSrc || img.src);
+      }
+      return;
+    }
 
     const link = document.createElement("a");
     link.href = img.currentSrc || img.src;
