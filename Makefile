@@ -18,7 +18,7 @@ X11_MOUNT    := $(if $(wildcard /tmp/.X11-unix),-v /tmp/.X11-unix:/tmp/.X11-unix
 WSLG_MOUNT   := $(if $(wildcard /mnt/wslg),-v /mnt/wslg:/mnt/wslg)
 XAUTH_MOUNT  := $(if $(wildcard $(HOME)/.Xauthority),-e XAUTHORITY=$(HOME)/.Xauthority -v $(HOME)/.Xauthority:$(HOME)/.Xauthority)
 
-.PHONY: image start enter kill fresh ci-image run ci-sim ci-gds-docs ci-build-pages serve
+.PHONY: image start enter kill fresh ci-image run ci-sim ci-gds ci-gds-docs ci-build-pages serve
 
 CI_IMAGE ?= pages-layouts:latest
 
@@ -80,8 +80,23 @@ ci-sim:
 		design="$${design_file##*/}"; \
 		design="$${design%.f}"; \
 		sim_status=pass; \
-		if ! $(MAKE) run CMD="make sim DESIGN=$$design"; then sim_status=fail; fi; \
+		if ! $(MAKE) run CMD="make sim DESIGN=$$design" CI_IMAGE="$(CI_IMAGE)"; then sim_status=fail; fi; \
+		if [ "$$sim_status" = "pass" ]; then \
+			$(MAKE) run CMD="make wave_svg DESIGN=$$design" CI_IMAGE="$(CI_IMAGE)" || true; \
+		fi; \
 		printf '%s\t%s\n' "$$design" "$$sim_status" >> out/sim/status.tsv; \
+	done
+
+ci-gds:
+	shopt -s nullglob; \
+	for design_file in material/designs/*.f; do \
+		design="$${design_file##*/}"; design="$${design%.f}"; \
+		mkdir -p "docs/assets/design-outputs/$$design"; \
+		$(MAKE) run CMD="make gds DESIGN=$$design" CI_IMAGE="$(CI_IMAGE)" || true; \
+		for img in final_routing.webp final_placement.webp final_worst_path.webp; do \
+			src="material/openroad/work/reports/asap7/$$design/base/$$img"; \
+			[ -f "$$src" ] && cp "$$src" "docs/assets/design-outputs/$$design/$$img" || true; \
+		done; \
 	done
 
 ci-gds-docs:

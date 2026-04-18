@@ -106,18 +106,20 @@ jobs:
       - name: Pull CI image
         run: docker pull "${GHCR_IMAGE}:${IMAGE_TAG}"
 
-      - name: Run simulations
+      - name: Run simulations and generate waveform SVGs
         run: make ci-sim CI_IMAGE="${GHCR_IMAGE}:${IMAGE_TAG}"
 
       - name: Upload sim results
         uses: actions/upload-artifact@v4
         with:
           name: sim-results
-          path: out/sim/status.tsv
+          path: |
+            out/sim/status.tsv
+            material/sim
 
   gds:
     runs-on: ubuntu-latest
-    needs: sim
+    needs: build-and-push-image
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -143,42 +145,43 @@ jobs:
       - name: Pull CI image
         run: docker pull "${GHCR_IMAGE}:${IMAGE_TAG}"
 
-      - name: Download sim results
-        uses: actions/download-artifact@v4
-        with:
-          name: sim-results
-          path: out/sim
+      - name: Run RTL-to-GDS and copy layout images
+        run: make ci-gds CI_IMAGE="${GHCR_IMAGE}:${IMAGE_TAG}"
 
-      - name: Run gds and generate design outputs docs
-        run: make ci-gds-docs CI_IMAGE="${GHCR_IMAGE}:${IMAGE_TAG}"
-
-      - name: Upload design outputs artifacts
+      - name: Upload GDS assets
         uses: actions/upload-artifact@v4
         with:
-          name: design-outputs-docs
-          path: |
-            docs/design_outputs.md
-            docs/assets/design-outputs
+          name: gds-assets
+          path: docs/assets/design-outputs
 
   build-pages:
     runs-on: ubuntu-latest
-    needs: gds
+    needs: [sim, gds]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Download design outputs artifacts
+      - name: Download sim results
         uses: actions/download-artifact@v4
         with:
-          name: design-outputs-docs
+          name: sim-results
           path: .
+
+      - name: Download GDS assets
+        uses: actions/download-artifact@v4
+        with:
+          name: gds-assets
+          path: docs/assets/design-outputs
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      - name: Install MkDocs
+      - name: Generate design outputs page
+        run: python scripts/generate_outputs.py --generate-only
+
+      - name: Build Sphinx site
         run: make ci-build-pages
 
       - name: Setup Pages
