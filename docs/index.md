@@ -1,5 +1,42 @@
 # Intro to Digital Design - An End to End Approach
 
+## Overview: CSE140 Summer 2026
+
+Expected prior knowledge:
+
+* Basic knowledge on logic gates (AND, OR, NAND, XOR) and truth tables
+* Familiarity in any programming language (Python, C...etc)
+
+In five weeks, you will learn the following:
+
+### Digital Design concepts
+
+- Decomposing boolean functions into gates
+- Combinational, Sequential elements
+- Finite State Machines
+- AXI-Stream protocol - Ready/valid handshake
+- UART protocol - Make your circuit talk to your PC
+- Setup time, hold time, critical path, retiming
+
+###  A subset of SystemVerilog features for design and verification
+
+- Design: 
+  - Parametrization, hierarchical design
+  - `always_ff`, `always_comb`, `logic`, 
+  - `generate for`, `if`, `case`, `function`, packed arrays
+  - 3 procedure coding style of FSMs
+  - Wrapping SystemVerilog in old Verilog
+- Verification: 
+  - basic tbs, `function`, `task`, queues
+  - randomizing with constraints, 
+  - transactional tbs: simple driver/monitor, basic OOP
+
+### Final Projects
+
+- **We will show you:** FIR Filter on FPGA - extracting bass/treble from your favorite song
+- **You will do (with our guidance):** Implement a hardware accelerated (on FPGA) neural network to classify handwritten numbers (MNIST)
+
+
 ## Week 1 – Digital Logic and HDL
 
 ### Lecture:
@@ -14,16 +51,16 @@
   - Write a simple testbench, simulate the design, observe values over time.
   - Do the same by directly writing the function in SystemVerilog
 - Abstraction layers again, as a map of career paths in digital design
-    - Architecture - cache type...etc.
-    - Logic design - this course
-    - Physical design - running tools to get GDS2, fixing problems
-    - Verification - simulation
-    - Analog design - creating PDK cells
+  - Computer Architecture
+  - Logic design - This course
+  - Physical design
+  - Verification
+  - Analog design
 
 ### Assignment:
 
 - For a given list of boolean functions
-  - Decompose into gates
+  - Decompose into SoP and PoS
   - write as an SV file, get layout and observe transistors
   - simulate
   - write the function directly in verilog and do the same
@@ -43,8 +80,12 @@
 ### Assignment:
 
 - Create module to apply quantization and relu: `y = relu(quant(x))`
-- Quantization: `q = y/(2^f)`. where `f` is a constant
-- ReLU `z = (y > 0) ? y : 0`
+  - Quantization: `q = y/(2^f)`. where `f` is a constant
+  - ReLU `z = (y > 0) ? y : 0`
+- For each combinational element in `[mux, encoder, decoder, relu]`
+  - Consider input of 3 bits
+  - Decompose into sum of products
+  - Decompose into product of sums 
 
 ## Week 3 – Sequential Logic
 
@@ -75,13 +116,13 @@
   - 3-process coding style
   - Parallel-to-serial converter
 - UART serial protocol
-  - UART Transmitter
-  - UART Receiver
+  - AXI-Stream UART Transmitter
+  - AXI-Stream UART Receiver
 
 ### Discussion: FPGA System
 
 - Put UART RX + TX back to back on FPGA
-- Write a Python script to send a series of numbers to serial, get numbers and display
+- Write a Python script to send a series of numbers to FPGA via serial port, get numbers back and display
 
 ### Assignment:
 

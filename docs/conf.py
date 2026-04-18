@@ -1,5 +1,5 @@
 # Sphinx configuration
-project = "Intro to Digital Design - An End to End Approach"
+project = "Digital Design with SystemVerilog"
 author = ""
 release = ""
 
