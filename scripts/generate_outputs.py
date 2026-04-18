@@ -5,11 +5,12 @@ import shutil
 import subprocess
 
 LAYOUT_IMAGES = [
-    "final_all.webp",
-    "final_placement.webp",
     "final_routing.webp",
+    "final_placement.webp",
     "final_worst_path.webp",
 ]
+
+REPO_URL = "https://github.com/abarajithan11/digital-design"
 
 
 def run_in_container(ci_image: str, cmd: str) -> str:
@@ -51,6 +52,12 @@ def main() -> None:
         sim_svg_status = run_in_container(ci_image, f"make wave_svg DESIGN={design}")
         gds_status = run_in_container(ci_image, f"make gds DESIGN={design}")
 
+        sim_result = "passed" if sim_status.strip().lower() == "pass" else "failed"
+        rtl2gds_result = "passed" if gds_status.strip().lower() == "pass" else "failed"
+
+        sim_link = f"{REPO_URL}/blob/main/material/tb/tb_{design}.sv"
+        rtl2gds_link = f"{REPO_URL}/tree/main/material/openroad"
+
         dst = assets_root / design
         dst.mkdir(parents=True, exist_ok=True)
 
@@ -68,9 +75,9 @@ def main() -> None:
             [
                 f"## {design}",
                 "",
-                f"- sim: **{sim_status}**",
-                f"- sim_svg: **{sim_svg_status}**",
-                f"- gds: **{gds_status}**",
+                f"- [Simulation]({sim_link}): {sim_result}",
+                f"- [RTL2GDS]({rtl2gds_link}): {rtl2gds_result}",
+                f"- waveform_svg: {'passed' if sim_svg_status.strip().lower() == 'pass' else 'failed'}",
                 "",
                 "### Simulation Waveform",
                 "",
@@ -88,13 +95,22 @@ def main() -> None:
             "",
         ])
 
-        for image in LAYOUT_IMAGES:
-            lines.append(f"#### {image.removesuffix('.webp')}")
-            lines.append("")
-            if (dst / image).exists():
-                lines.append(f"![{design} {image.removesuffix('.webp')}](assets/design-outputs/{design}/{image})")
-            else:
-                lines.append("Image not generated.")
+        routing_path = f"assets/design-outputs/{design}/final_routing.webp"
+        placement_path = f"assets/design-outputs/{design}/final_placement.webp"
+        worst_path = f"assets/design-outputs/{design}/final_worst_path.webp"
+
+        if all((dst / image).exists() for image in LAYOUT_IMAGES):
+            lines.extend([
+                '<div style="display:flex; gap:12px; justify-content:center; align-items:flex-start;">',
+                f'  <img src="{routing_path}" alt="{design} routing" style="width:32%; height:auto;" />',
+                f'  <img src="{placement_path}" alt="{design} placement" style="width:32%; height:auto;" />',
+                f'  <img src="{worst_path}" alt="{design} worst path" style="width:32%; height:auto;" />',
+                "</div>",
+                '<p style="text-align:center;"><em>Routing, Placement, Worst path</em></p>',
+                "",
+            ])
+        else:
+            lines.append("One or more layout images were not generated.")
             lines.append("")
 
     docs_md.write_text("\n".join(lines) + "\n", encoding="utf-8")
