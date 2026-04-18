@@ -33,14 +33,21 @@ def build_markdown(designs_data: list[dict], assets_root: Path) -> list[str]:
     lines = [
         "# Design Outputs",
         "",
-        "For each SystemVerilog design available in the course repository, our GitHub Actions flow runs the simulation and OpenROAD RTL2GDS2 flow for ASAP7 (7nm educational PDK), collects the outputs and displays them here.",
+        "For each SystemVerilog design available in the course repository, our GitHub Actions flow runs",
         "",
-        f"Our repository: [github.com/abarajithan11/digital-design]({REPO_URL})",
-        f"Filelists: [material/designs](https://github.com/abarajithan11/digital-design/tree/main/material/designs)", 
-        f"SystemVerilog RTL: [material/rtl](https://github.com/abarajithan11/digital-design/tree/main/material/rtl)", 
-        f"Testbenches: [material/tb](https://github.com/abarajithan11/digital-design/tree/main/material/tb)", 
-        f"Makefile: [material/Makefile](https://github.com/abarajithan11/digital-design/tree/main/material/Makefile)", 
-        f"OpenRoad Flow: [material/openroad](https://github.com/abarajithan11/digital-design/tree/main/material/openroad)", 
+        "1. Simulation using Verilator, generating VCD, converted to SVG",
+        "2. OpenROAD RTL2GDS2 flow using ASAP7 (7nm educational PDK)",
+        "",
+        "collects their outputs and displays them here. To reproduce this in your machine, check out our [docker setup](setting-up-docker.md).",
+        "",
+        "## Components of the flow:",
+        "",
+        f"* Our repository: [github.com/abarajithan11/digital-design]({REPO_URL})",
+        f"* Filelists: [material/designs](https://github.com/abarajithan11/digital-design/tree/main/material/designs)", 
+        f"* SystemVerilog RTL: [material/rtl](https://github.com/abarajithan11/digital-design/tree/main/material/rtl)", 
+        f"* Testbenches: [material/tb](https://github.com/abarajithan11/digital-design/tree/main/material/tb)", 
+        f"* Makefile: [material/Makefile](https://github.com/abarajithan11/digital-design/tree/main/material/Makefile)", 
+        f"* OpenRoad Flow: [material/openroad](https://github.com/abarajithan11/digital-design/tree/main/material/openroad)", 
         "",
     ]
 
@@ -82,7 +89,7 @@ def build_markdown(designs_data: list[dict], assets_root: Path) -> list[str]:
                 f'  <img src="{placement_path}" alt="{design} placement" style="width:32%; height:auto;" />',
                 f'  <img src="{worst_path}" alt="{design} worst path" style="width:32%; height:auto;" />',
                 "</div>",
-                '<p style="text-align:center;"><em>Routing, Placement, Worst path</em></p>',
+                '<p style="text-align:center;">Routing, Placement, Worst path</p>',
                 "",
             ])
         else:
