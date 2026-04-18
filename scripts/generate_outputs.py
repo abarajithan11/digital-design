@@ -89,6 +89,12 @@ def mode_generate_only(repo: Path) -> None:
     """Assemble markdown from pre-built artifacts — no container calls."""
     docs_md = repo / "docs" / "design_outputs.md"
     assets_root = repo / "docs" / "assets" / "design-outputs"
+    gds_assets_root = repo / "out" / "gds-assets"
+
+    # Rebuild assets output deterministically from downloaded artifacts.
+    if assets_root.exists():
+        shutil.rmtree(assets_root)
+    assets_root.mkdir(parents=True, exist_ok=True)
 
     # Read sim statuses from downloaded artifact
     sim_statuses: dict[str, str] = {}
@@ -118,6 +124,15 @@ def mode_generate_only(repo: Path) -> None:
         sim_svg = repo / "material" / "sim" / design / f"{design}.svg"
         if sim_svg.exists():
             shutil.copy2(sim_svg, dst / f"{design}.svg")
+
+        for image in LAYOUT_IMAGES:
+            source_image = gds_assets_root / design / image
+            if not source_image.exists():
+                matches = list(gds_assets_root.glob(f"**/{design}/{image}"))
+                if matches:
+                    source_image = matches[0]
+            if source_image.exists():
+                shutil.copy2(source_image, dst / image)
 
         raw_status = sim_statuses.get(design, "unknown")
         designs_data.append({

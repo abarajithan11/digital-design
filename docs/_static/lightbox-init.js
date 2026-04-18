@@ -53,9 +53,28 @@
   overlay.appendChild(img);
   document.body.appendChild(overlay);
 
+  let scale = 1;
+  let offsetX = 0;
+  let offsetY = 0;
+  let dragging = false;
+  let startX = 0;
+  let startY = 0;
+
+  function applyTransform() {
+    img.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
+  }
+
+  function resetTransform() {
+    scale = 1;
+    offsetX = 0;
+    offsetY = 0;
+    applyTransform();
+  }
+
   function openLightbox(src, alt) {
     img.src = src;
     img.alt = alt || "";
+    resetTransform();
     overlay.classList.add("active");
     document.body.style.overflow = "hidden";
   }
@@ -63,6 +82,7 @@
   function closeLightbox() {
     overlay.classList.remove("active");
     img.src = "";
+    resetTransform();
     document.body.style.overflow = "";
   }
 
@@ -70,8 +90,61 @@
     if (e.target !== img) closeLightbox();
   });
 
+  img.addEventListener("wheel", function (e) {
+    if (!overlay.classList.contains("active")) return;
+    e.preventDefault();
+    const factor = e.deltaY < 0 ? 1.1 : 0.9;
+    scale = Math.max(1, Math.min(8, scale * factor));
+    applyTransform();
+  });
+
+  img.addEventListener("dblclick", function (e) {
+    e.preventDefault();
+    if (scale > 1.01) {
+      resetTransform();
+    } else {
+      scale = 2.5;
+      applyTransform();
+    }
+  });
+
+  img.addEventListener("mousedown", function (e) {
+    if (scale <= 1) return;
+    dragging = true;
+    startX = e.clientX - offsetX;
+    startY = e.clientY - offsetY;
+  });
+
+  document.addEventListener("mousemove", function (e) {
+    if (!dragging) return;
+    offsetX = e.clientX - startX;
+    offsetY = e.clientY - startY;
+    applyTransform();
+  });
+
+  document.addEventListener("mouseup", function () {
+    dragging = false;
+  });
+
   document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape") closeLightbox();
+    if (e.key === "Escape") {
+      closeLightbox();
+      return;
+    }
+    if (!overlay.classList.contains("active")) return;
+
+    if (e.key === "+" || e.key === "=") {
+      scale = Math.min(8, scale * 1.15);
+      applyTransform();
+    }
+    if (e.key === "-") {
+      scale = Math.max(1, scale / 1.15);
+      if (scale === 1) {
+        offsetX = 0;
+        offsetY = 0;
+      }
+      applyTransform();
+    }
   });
 
   document.addEventListener("DOMContentLoaded", function () {

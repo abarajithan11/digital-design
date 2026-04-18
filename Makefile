@@ -89,13 +89,14 @@ ci-sim:
 
 ci-gds:
 	shopt -s nullglob; \
+	rm -rf out/gds-assets; \
 	for design_file in material/designs/*.f; do \
 		design="$${design_file##*/}"; design="$${design%.f}"; \
-		mkdir -p "docs/assets/design-outputs/$$design"; \
+		mkdir -p "out/gds-assets/$$design"; \
 		$(MAKE) run CMD="make gds DESIGN=$$design" CI_IMAGE="$(CI_IMAGE)" || true; \
 		for img in final_routing.webp final_placement.webp final_worst_path.webp; do \
 			src="material/openroad/work/reports/asap7/$$design/base/$$img"; \
-			[ -f "$$src" ] && cp "$$src" "docs/assets/design-outputs/$$design/$$img" || true; \
+			[ -f "$$src" ] && cp "$$src" "out/gds-assets/$$design/$$img" || true; \
 		done; \
 	done
 
