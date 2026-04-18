@@ -12,7 +12,6 @@ HOST_MATERIAL := $(CURDIR)
 CONT_REPO ?= /repo
 CONT_MATERIAL := $(CONT_REPO)/material
 
-OPENROAD_DIR := $(HOST_MATERIAL)/openroad
 ORFS_FLOW_DIR := $(CONT_MATERIAL)/openroad/OpenROAD-flow-scripts/flow
 WORK_HOME    := $(CONT_MATERIAL)/openroad/work
 DESIGN_CONFIG := $(CONT_MATERIAL)/openroad/config.mk
@@ -43,7 +42,7 @@ require_container:
 	test -f /.dockerenv
 
 prepare: require_container
-	mkdir -p "$(OPENROAD_DIR)/work"
+	mkdir -p "$(WORK_HOME)"
 	mkdir -p "$(CONT_MATERIAL)/sim"
 
 gds: prepare
