@@ -30,26 +30,25 @@ def run_in_container(ci_image: str, cmd: str) -> str:
 
 def build_markdown(designs_data: list[dict], assets_root: Path) -> list[str]:
     """Return markdown lines for all designs given pre-resolved data."""
-    lines = [
-        "# Design Outputs",
-        "",
-        "For each SystemVerilog design available in the course repository, our GitHub Actions flow runs",
-        "",
-        "1. Simulation using Verilator, generating VCD, converted to SVG",
-        "2. OpenROAD RTL2GDS2 flow using ASAP7 (7nm educational PDK)",
-        "",
-        "collects their outputs and displays them here. To reproduce this in your machine, check out our [docker setup](setting-up-docker.md).",
-        "",
-        "## Components of the flow:",
-        "",
-        f"* Our repository: [github.com/abarajithan11/digital-design]({REPO_URL})",
-        f"* Filelists: [material/designs](https://github.com/abarajithan11/digital-design/tree/main/material/designs)", 
-        f"* SystemVerilog RTL: [material/rtl](https://github.com/abarajithan11/digital-design/tree/main/material/rtl)", 
-        f"* Testbenches: [material/tb](https://github.com/abarajithan11/digital-design/tree/main/material/tb)", 
-        f"* Makefile: [material/Makefile](https://github.com/abarajithan11/digital-design/tree/main/material/Makefile)", 
-        f"* OpenRoad Flow: [material/openroad](https://github.com/abarajithan11/digital-design/tree/main/material/openroad)", 
-        "",
-    ]
+    lines = f"""# Design Outputs
+
+For each SystemVerilog design available in the course repository, our GitHub Actions flow runs
+
+1. Simulation using Verilator, generating VCD, converted to SVG
+2. OpenROAD RTL2GDS2 flow using ASAP7 (7nm educational PDK)
+
+collects their outputs and displays them here. To reproduce this on your machine, check out our [docker setup](setting-up-docker.md).
+
+## Components of the flow:
+
+* Our repository: [github.com/abarajithan11/digital-design]({REPO_URL})
+* Filelists: [material/designs](https://github.com/abarajithan11/digital-design/tree/main/material/designs)
+* SystemVerilog RTL: [material/rtl](https://github.com/abarajithan11/digital-design/tree/main/material/rtl)
+* Testbenches: [material/tb](https://github.com/abarajithan11/digital-design/tree/main/material/tb)
+* Makefile: [material/Makefile](https://github.com/abarajithan11/digital-design/tree/main/material/Makefile)
+* OpenRoad Flow: [material/openroad](https://github.com/abarajithan11/digital-design/tree/main/material/openroad)
+
+""".splitlines()
 
     for d in designs_data:
         design = d["design"]
