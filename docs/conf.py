@@ -17,7 +17,6 @@ html_title = "Digital Design"
 
 # Allow SVG and webp in docs
 html_static_path = ["_static"]
-html_extra_path = ["assets"]
 html_css_files = ["custom.css"]
 html_js_files = ["lightbox-init.js"]
 

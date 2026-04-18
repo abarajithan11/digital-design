@@ -57,16 +57,16 @@ def build_markdown(designs_data: list[dict], assets_root: Path) -> list[str]:
         ])
 
         if (dst / f"{design}.svg").exists():
-            lines.append(f"![{design} waveform](assets/design-outputs/{design}/{design}.svg)")
+            lines.append(f"![{design} waveform](_static/design-outputs/{design}/{design}.svg)")
         else:
             lines.append("Waveform SVG not generated.")
         lines.append("")
 
         lines.extend(["### Layout Reports", ""])
 
-        routing_path = f"assets/design-outputs/{design}/final_routing.webp"
-        placement_path = f"assets/design-outputs/{design}/final_placement.webp"
-        worst_path = f"assets/design-outputs/{design}/final_worst_path.webp"
+        routing_path = f"_static/design-outputs/{design}/final_routing.webp"
+        placement_path = f"_static/design-outputs/{design}/final_placement.webp"
+        worst_path = f"_static/design-outputs/{design}/final_worst_path.webp"
 
         if all((dst / img).exists() for img in LAYOUT_IMAGES):
             lines.extend([
@@ -88,7 +88,7 @@ def build_markdown(designs_data: list[dict], assets_root: Path) -> list[str]:
 def mode_generate_only(repo: Path) -> None:
     """Assemble markdown from pre-built artifacts — no container calls."""
     docs_md = repo / "docs" / "design_outputs.md"
-    assets_root = repo / "docs" / "assets" / "design-outputs"
+    assets_root = repo / "docs" / "_static" / "design-outputs"
     gds_assets_root = repo / "out" / "gds-assets"
 
     # Rebuild assets output deterministically from downloaded artifacts.
@@ -150,7 +150,7 @@ def mode_full(repo: Path) -> None:
     ci_image = os.environ.get("CI_IMAGE", "pages-layouts:latest")
     sim_status_file = repo / "out" / "sim" / "status.tsv"
     docs_md = repo / "docs" / "design_outputs.md"
-    assets_root = repo / "docs" / "assets" / "design-outputs"
+    assets_root = repo / "docs" / "_static" / "design-outputs"
 
     if assets_root.exists():
         shutil.rmtree(assets_root)

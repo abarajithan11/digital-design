@@ -2,3 +2,5 @@ material/sim/
 material/openroad/work/
 .tmp_orfs_probe/
 site/
+docs/_static/design-outputs/
+out/
