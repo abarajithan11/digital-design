@@ -12,8 +12,8 @@
 
 ## Assignment:
 
-- Create module to apply quantization and relu: `y = relu(quant(x))`
-  - Quantization: `q = y/(2^f)`. where `f` is a constant
+- Create module to apply quantization and ReLU: `y = relu(quant(x))`
+  - Quantization: `q = y/(2^f)`, where `f` is a constant
   - ReLU `z = (y > 0) ? y : 0`
 - For each combinational element in `[mux, encoder, decoder, relu]`
   - Consider input of 3 bits

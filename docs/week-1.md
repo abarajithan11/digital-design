@@ -3,8 +3,8 @@
 ## Lecture 1
 
 - Electronic Chip - Demystified
-  - Programming: program -> assembly -> machine code -> arduino's microprocessor
-  - IC package, die, layers of transitors, metal wires
+  - Programming: program → assembly → machine code → Arduino's microprocessor
+  - IC package, die, layers of transistors, metal wires
   - Visual 6502: [simulation of a CPU's layout](http://www.visual6502.org/JSSim/expert.html)
   - Today: Megacities on a Chip
 - ASIC Design: Story of the first processor (Intel 4004)
@@ -15,7 +15,7 @@
     - Standard cells
     - Manufacturing: ASML machines, clean rooms, lithography
 - FPGA Design:
-  - Meta-chip: a flexible chip that lets you realize your own digital circuit within it
+  - Meta-chip: a flexible chip that lets you realize your own digital circuit within it.
   - ASIC vs FPGA: speed, power, cost, time-to-market
   - Real world applications
   - FPGA flow
@@ -26,8 +26,8 @@
   - Logic to gates
     - K-maps
     - Sum of products / Product of sums
-    - Write SystmVerilog module made of the gates
-  - Run our script to generate 7nm (ASAP7) layout, observe the transistors
+    - Write a SystemVerilog module made of the gates
+  - Run our script to generate 7 nm (ASAP7) layout, observe the transistors
   - Write a simple testbench, simulate the design, observe values over time.
   - Do the same by directly writing the function in SystemVerilog
 - Abstraction layers: A map of career paths in digital design
@@ -41,6 +41,6 @@
 
 - For a given list of boolean functions
   - Decompose into Sum of Products and Product of Sums
-  - Erite as an SV file, get layout and observe transistors
+  - Write it as an SV file, get layout and observe transistors
   - Simulate
-  - Erite the function directly in SystemVerilog and do the same
+  - Write the function directly in SystemVerilog and do the same

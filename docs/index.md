@@ -3,7 +3,7 @@
 Expected prior knowledge:
 
 * Basic knowledge on logic gates (AND, OR, NAND, XOR) and truth tables
-* Familiarity in any programming language (Python, C...etc)
+* Familiarity in any programming language (Python, C...etc.)
 
 This is a five-week course, with 30 hours of lectures.
 
