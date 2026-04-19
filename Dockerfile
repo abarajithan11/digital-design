@@ -5,7 +5,7 @@ ARG USERNAME=usr
 ARG CONT_ROOT=/repo/material
 ARG UID=1000
 ARG GID=1000
-ARG VERILATOR_VERSION=v5.038
+ARG VERILATOR_VERSION=v5.046
 
 USER root
 
@@ -29,6 +29,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     time \
     vim \
     xauth \
+    z3 \
  && rm -rf /var/lib/apt/lists/*
 
 RUN python3 -m pip install --no-cache-dir wavedrom vcdvcd
