@@ -1,15 +1,18 @@
 # Intro to Digital Design - An End to End Approach
 
-Expected prior knowledge:
+This is a five-week course, with 30 hours of lectures. Expected prior knowledge:
 
 * Basic knowledge on logic gates (AND, OR, NAND, XOR) and truth tables
 * Familiarity in any programming language (Python, C...etc.)
 
-This is a five-week course, with 30 hours of lectures.
+:::{admonition} Why take this course?
+This course is designed to give you a first taste of the art and craft of digital design, help you experience the joy of designing real digital circuits, and build the confidence to take on bigger projects, more advanced modules, and future careers in the many areas of digital design.
+:::
 
 ```{toctree}
 :maxdepth: 1
 
+Home <self>
 week-1
 week-2
 week-3
@@ -47,8 +50,14 @@ setting-up-pynq
 
 ### Final Projects
 
-- **We will show you:** FIR Filter on FPGA - extracting bass/treble from your favorite song
-- **You will do (with our guidance):** A neural network hardware accelerated on FPGA to classify handwritten numbers
+- Worked example (gradually built in our lectures)
+  - FIR Filter on FPGA to extract bass/treble from your favorite song
+- Guided project (students will build through a series of assignments)
+  - A fully-parallel neural network accelerator on FPGA to classify handwritten numbers
+    - Simple fixed-point quantization and ReLU: *Week 2 - Combinational Circuits Assignment*
+    - Adder Tree, Vector Multiply-Adder: *Week 3 - Sequential Circuits Assignment*
+    - Fully-parallel dense layer, neural network, AXI-Stream: *Week 4 - Practical Circuits Assignment*
+    - Full system on FPGA with UART RX & TX, Python serial to send/receive input/outputs: *Week 5 - FIR Filter Example Project*
 
 ## Course Material
 

@@ -1,4 +1,4 @@
-# Week 1 – Digital Logic and HDL
+# Week 1 – Digital Logic Design
 
 ## Lecture 1
 
@@ -37,7 +37,12 @@
   - Verification
   - Analog design
 
-## Assignment:
+## Discussion
+
+- Setting up our docker container in your machine
+- Setting up FPGA boards
+
+## Assignment
 
 - For a given list of boolean functions
   - Decompose into Sum of Products and Product of Sums

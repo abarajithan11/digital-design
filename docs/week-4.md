@@ -1,6 +1,6 @@
-## Week 4 – Practical Circuits
+# Week 4 – Practical Circuits
 
-### Lecture:
+## Lecture
 
 - AXI-Stream Protocol
   - Ready-Valid handshake
@@ -12,12 +12,12 @@
   - AXI-Stream UART Transmitter
   - AXI-Stream UART Receiver
 
-### Discussion: FPGA System
+## Discussion: FPGA System
 
 - Put UART RX + TX back to back on FPGA
 - Write a Python script to send a series of numbers to FPGA via serial port, get numbers back and display
 
-### Assignment:
+## Assignment
 
 - Put multiple `rq_cvmac` (relu-quantized-constant-vector-multiply-accumulate)s together to create a fully-parallel dense layer, test with our testbench
 - Convert dense into AXI Stream module

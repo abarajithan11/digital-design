@@ -1,6 +1,6 @@
 # Week 2 – Combinational Logic
 
-## Lecture:
+## Lecture
 
 - N-bit adder + testbench
 - Mux
@@ -10,7 +10,7 @@
 - Verilog functions
 - LUT
 
-## Assignment:
+## Assignment
 
 - Create module to apply quantization and ReLU: `y = relu(quant(x))`
   - Quantization: `q = y/(2^f)`, where `f` is a constant

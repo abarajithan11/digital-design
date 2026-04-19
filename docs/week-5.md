@@ -1,6 +1,6 @@
-## Week 5 – System-level Design
+# Week 5 – System-level Design
 
-### Lecture:
+## Lecture
 
 - FIR filter
 - Retiming to improve performance

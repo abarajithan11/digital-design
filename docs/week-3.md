@@ -1,6 +1,6 @@
 # Week 3 – Sequential Logic
 
-## Lecture:
+## Lecture
 
 - Intro
   - All circuits are a mix of combinational and sequential logic
@@ -11,7 +11,7 @@
 - Setup time, hold time, critical path
 - Nested counters
 
-## Assignment:
+## Assignment
 
 - Create a module: Adder Tree `y = sum(X)`
 - Create a constant vector MAC, to do `y = sum(W.X + B)`, where `W` & `B` are constants
