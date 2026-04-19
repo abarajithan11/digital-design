@@ -43,7 +43,7 @@ collects their outputs and displays them here. To reproduce this on your machine
         full_svg = dst / f"{design}_full.svg"
         full_svg_link = f"_static/design-outputs/{design}/{design}_full.svg"
 
-        lines.extend([f'''## {design}
+        lines.extend([f'''## {design.upper()}
 
 - Simulation result: {sim_result}
 - RTL2GDS result: {rtl2gds_result}
