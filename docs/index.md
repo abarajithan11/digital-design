@@ -31,18 +31,19 @@ setting-up-pynq
 - UART protocol - Make your circuit talk to your PC
 - Setup time, hold time, critical path, retiming
 
-###  A subset of SystemVerilog features for design and verification
+###  SystemVerilog Features for Design
 
-- Design: 
-  - Parametrization, hierarchical design
-  - `always_ff`, `always_comb`, `logic`, 
-  - `generate for`, `if`, `case`, `function`, packed arrays
-  - 3 procedure coding style of FSMs
-  - Wrapping SystemVerilog in old Verilog
-- Verification: 
-  - basic tbs, `function`, `task`, queues
-  - randomizing with constraints, 
-  - transactional tbs: simple driver/monitor, basic OOP
+- Parametrization, hierarchical design
+- `always_ff`, `always_comb`, `logic`, 
+- `generate for`, `if`, `case`, `function`, packed arrays
+- 3 procedure coding style of FSMs
+- Wrapping SystemVerilog in old Verilog
+
+###  SystemVerilog Features for Verification
+
+- basic tbs, `function`, `task`, queues
+- randomizing with constraints, 
+- transactional tbs: simple driver/monitor, basic OOP
 
 ### Final Projects
 
