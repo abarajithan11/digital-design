@@ -30,7 +30,7 @@
   - Run our script to generate 7 nm (ASAP7) layout, observe the transistors
   - Write a simple testbench, simulate the design, observe values over time.
   - Do the same by directly writing the function in SystemVerilog
-- Abstraction layers: A map of career paths in digital design
+- A map of career paths
   - Computer Architecture
   - Logic design - This course
   - Physical design
