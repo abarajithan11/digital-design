@@ -90,7 +90,7 @@ ci-sim:
 	exit $$fail
 
 ci-gds:
-	$(MAKE) gds_all CI_IMAGE="$(CI_IMAGE)"; \
+	$(MAKE) run CMD="make gds_all" CI_IMAGE="$(CI_IMAGE)"; \
 	rm -rf out/gds-assets; \
 	for design_file in material/designs/*.f; do \
 		design="$${design_file##*/}"; \
