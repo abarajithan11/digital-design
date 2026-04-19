@@ -1,5 +1,9 @@
 `timescale 1ns/1ps
 
+`ifndef VCD_PATH
+`define VCD_PATH "dump.vcd"
+`endif
+
 module tb_n_adder;  
   localparam N = 8;
 
@@ -12,7 +16,7 @@ module tb_n_adder;
   n_adder #(.N(N)) dut (.*);
 
   initial begin
-    $dumpfile("dump.vcd"); $dumpvars(0, dut);
+    $dumpfile(`VCD_PATH); $dumpvars(0, dut);
     
     A = 8'd5; B = 8'd10; ci = 0;
     #1 assert (S == 8'd15) else $error("Fail");
@@ -30,5 +34,7 @@ module tb_n_adder;
       assert ({co,S} == A+B+ci)
         else $error("%d+%d+%d != {%d,%d}", A,B,ci,co,S);
     end
+
+    $finish;
   end
 endmodule

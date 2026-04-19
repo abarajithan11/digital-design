@@ -1,17 +1,7 @@
 #!/usr/bin/env python3
-"""Generate docs/design_outputs.md from simulation and GDS artifacts.
-
-Modes:
-  default         Run containers for wave_svg + gds, copy assets, write markdown.
-                  Used by ci-gds-docs (local/legacy).
-  --generate-only Read already-built artifacts from disk, write markdown only.
-                  Used by CI build-pages job after downloading sim + gds artifacts.
-"""
-import argparse
+"""Generate docs/design_outputs.md from existing simulation and GDS artifacts."""
 from pathlib import Path
-import os
 import shutil
-import subprocess
 
 LAYOUT_IMAGES = [
     "final_routing.webp",
@@ -20,13 +10,6 @@ LAYOUT_IMAGES = [
 ]
 
 REPO_URL = "https://github.com/abarajithan11/digital-design"
-
-
-def run_in_container(ci_image: str, cmd: str) -> str:
-    command = ["make", "run", f"CI_IMAGE={ci_image}", f"CMD={cmd}"]
-    result = subprocess.run(command, check=False)
-    return "pass" if result.returncode == 0 else "fail"
-
 
 def build_markdown(designs_data: list[dict], assets_root: Path) -> list[str]:
     """Return markdown lines for all designs given pre-resolved data."""
@@ -55,22 +38,30 @@ collects their outputs and displays them here. To reproduce this on your machine
         sim_result = d["sim_result"]
         rtl2gds_result = d["rtl2gds_result"]
         dst = assets_root / design
+        repo_root = REPO_URL + "/blob/main/"
+        short_svg = dst / f"{design}_short.svg"
+        full_svg = dst / f"{design}_full.svg"
+        full_svg_link = f"_static/design-outputs/{design}/{design}_full.svg"
 
-        sim_link = f"{REPO_URL}/blob/main/material/tb/tb_{design}.sv"
-        rtl2gds_link = f"{REPO_URL}/tree/main/material/openroad"
+        lines.extend([f'''## {design}
 
-        lines.extend([
-            f"## {design}",
-            "",
-            f"- [Simulation]({sim_link}): {sim_result}",
-            f"- [RTL2GDS]({rtl2gds_link}): {rtl2gds_result}",
-            "",
-            "### Simulation Waveform",
-            "",
-        ])
+- Simulation result: {sim_result}
+- RTL2GDS result: {rtl2gds_result}
 
-        if (dst / f"{design}.svg").exists():
-            lines.append(f"![{design} waveform](_static/design-outputs/{design}/{design}.svg)")
+### Source files:
+
+- File List : [material/designs/{design}.f]({repo_root}material/designs/{design}.f)
+- Top RTL Design : [material/rtl/{design}.sv]({repo_root}material/rtl/{design}.sv)
+- Top Testbench : [material/tb/tb_{design}.sv]({repo_root}material/tb/tb_{design}.sv)
+- Full waveform SVG : [view]({full_svg_link})
+
+### Simulation Waveform (First 10 ns)
+'''])
+        if short_svg.exists():
+            if full_svg.exists():
+                lines.append(f"[View full waveform](_static/design-outputs/{design}/{design}_full.svg)")
+                lines.append("")
+            lines.append(f"![{design} waveform](_static/design-outputs/{design}/{design}_short.svg)")
         else:
             lines.append("Waveform SVG not generated.")
         lines.append("")
@@ -98,10 +89,12 @@ collects their outputs and displays them here. To reproduce this on your machine
     return lines
 
 
-def mode_generate_only(repo: Path) -> None:
-    """Assemble markdown from pre-built artifacts — no container calls."""
+def generate_outputs(repo: Path) -> None:
+    """Assemble markdown from pre-built local or CI-downloaded artifacts."""
     docs_md = repo / "docs" / "design_outputs.md"
     assets_root = repo / "docs" / "_static" / "design-outputs"
+    sim_assets_root = repo / "material" / "sim"
+    local_gds_assets_root = repo / "material" / "openroad" / "work" / "reports" / "asap7"
     gds_assets_root = repo / "out" / "gds-assets"
 
     # Rebuild assets output deterministically from downloaded artifacts.
@@ -133,13 +126,20 @@ def mode_generate_only(repo: Path) -> None:
         dst = assets_root / design
         dst.mkdir(parents=True, exist_ok=True)
 
-        # Copy SVG produced by sim job
-        sim_svg = repo / "material" / "sim" / design / f"{design}.svg"
-        if sim_svg.exists():
-            shutil.copy2(sim_svg, dst / f"{design}.svg")
+        # Copy waveform SVGs produced by a local sim_outputs_all run or by CI artifacts.
+        sim_svg_short = sim_assets_root / design / f"{design}_short.svg"
+        if sim_svg_short.exists():
+            shutil.copy2(sim_svg_short, dst / f"{design}_short.svg")
 
+        sim_svg_full = sim_assets_root / design / f"{design}_full.svg"
+        if sim_svg_full.exists():
+            shutil.copy2(sim_svg_full, dst / f"{design}_full.svg")
+
+        local_reports_dir = local_gds_assets_root / design / "base"
         for image in LAYOUT_IMAGES:
-            source_image = gds_assets_root / design / image
+            source_image = local_reports_dir / image
+            if not source_image.exists():
+                source_image = gds_assets_root / design / image
             if not source_image.exists():
                 matches = list(gds_assets_root.glob(f"**/{design}/{image}"))
                 if matches:
@@ -147,7 +147,12 @@ def mode_generate_only(repo: Path) -> None:
             if source_image.exists():
                 shutil.copy2(source_image, dst / image)
 
-        raw_status = sim_statuses.get(design, "unknown")
+        raw_status = sim_statuses.get(design)
+        if raw_status is None:
+            if sim_svg_short.exists() or sim_svg_full.exists() or (sim_assets_root / design / f"{design}.vcd").exists():
+                raw_status = "pass"
+            else:
+                raw_status = "unknown"
         designs_data.append({
             "design": design,
             "sim_result": "passed" if raw_status == "pass" else raw_status,
@@ -158,72 +163,10 @@ def mode_generate_only(repo: Path) -> None:
     docs_md.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
-def mode_full(repo: Path) -> None:
-    """Run containers, copy all assets, write markdown."""
-    ci_image = os.environ.get("CI_IMAGE", "pages-layouts:latest")
-    sim_status_file = repo / "out" / "sim" / "status.tsv"
-    docs_md = repo / "docs" / "design_outputs.md"
-    assets_root = repo / "docs" / "_static" / "design-outputs"
-
-    if assets_root.exists():
-        shutil.rmtree(assets_root)
-    assets_root.mkdir(parents=True, exist_ok=True)
-
-    if not sim_status_file.exists() or sim_status_file.stat().st_size == 0:
-        docs_md.write_text(
-            "# Design Outputs\n\nNo designs found under material/designs.\n",
-            encoding="utf-8",
-        )
-        return
-
-    designs_data = []
-    for row in sim_status_file.read_text(encoding="utf-8").splitlines():
-        if not row.strip():
-            continue
-
-        design, sim_status = row.split("\t", maxsplit=1)
-        sim_svg_status = run_in_container(ci_image, f"make wave_svg DESIGN={design}")
-        gds_status = run_in_container(ci_image, f"make gds DESIGN={design}")
-
-        dst = assets_root / design
-        dst.mkdir(parents=True, exist_ok=True)
-
-        sim_svg = repo / "material" / "sim" / design / f"{design}.svg"
-        if sim_svg.exists():
-            shutil.copy2(sim_svg, dst / f"{design}.svg")
-
-        src_layout = repo / "material" / "openroad" / "work" / "reports" / "asap7" / design / "base"
-        for image in LAYOUT_IMAGES:
-            source_image = src_layout / image
-            if source_image.exists():
-                shutil.copy2(source_image, dst / image)
-
-        designs_data.append({
-            "design": design,
-            "sim_result": "passed" if sim_status.strip().lower() == "pass" else "failed",
-            "rtl2gds_result": "passed" if gds_status.strip().lower() == "pass" else "failed",
-        })
-
-    lines = build_markdown(designs_data, assets_root)
-    docs_md.write_text("\n".join(lines) + "\n", encoding="utf-8")
-
-
 def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--generate-only",
-        action="store_true",
-        help="Assemble markdown from existing artifacts without running containers.",
-    )
-    args = parser.parse_args()
 
     repo = Path(__file__).resolve().parents[1]
-    os.chdir(repo)
-
-    if args.generate_only:
-        mode_generate_only(repo)
-    else:
-        mode_full(repo)
+    generate_outputs(repo)
 
 
 if __name__ == "__main__":

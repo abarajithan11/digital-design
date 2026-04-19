@@ -4,6 +4,7 @@
 import argparse
 import json
 from pathlib import Path
+import re
 
 import wavedrom
 from vcdvcd import VCDVCD
@@ -37,6 +38,13 @@ def _sample_values(tv, sample_times):
             current = str(tv[idx][1])
         out.append(current)
     return out
+
+
+def _display_name(name: str) -> str:
+    parts = name.split(".")
+    if parts and re.fullmatch(r"tb_[A-Za-z0-9_]+", parts[0]):
+        parts = parts[1:]
+    return ".".join(parts) if parts else name
 
 
 def _encode_scalar(samples):
@@ -82,7 +90,8 @@ def main() -> None:
     ap.add_argument("--start", default="auto")
     ap.add_argument("--end", default="auto")
     ap.add_argument("--window", type=int, default=4096)
-    ap.add_argument("--sample-rate", type=int, default=64)
+    # A larger sample step compresses the waveform horizontally.
+    ap.add_argument("--sample-rate", type=int, default=128)
     ap.add_argument("--hscale", type=int, default=1)
     ap.add_argument("--max-signals", type=int, default=64)
     args = ap.parse_args()
@@ -124,7 +133,7 @@ def main() -> None:
         else:
             wave, data = _encode_bus(samples)
 
-        entry = {"name": name, "wave": wave}
+        entry = {"name": _display_name(name), "wave": wave}
         if data:
             entry["data"] = data
         wave_signals.append(entry)

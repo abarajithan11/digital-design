@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 
-module alu_tb;
+module tb_alu;
   localparam WIDTH = 8;
 
   logic        [2:0]       alu_sel;

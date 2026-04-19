@@ -72,7 +72,7 @@ jobs:
 
       - name: Build Docker image
         if: steps.check-changes.outputs.docker_changed == 'true'
-        run: make CI_IMAGE="${GHCR_IMAGE}:${IMAGE_TAG}" ci-image
+        run: make IMAGE="${GHCR_IMAGE}:${IMAGE_TAG}" image
 
       - name: Push image to GHCR
         if: steps.check-changes.outputs.docker_changed == 'true'
@@ -107,7 +107,7 @@ jobs:
         run: docker pull "${GHCR_IMAGE}:${IMAGE_TAG}"
 
       - name: Run simulations and generate waveform SVGs
-        run: make ci-sim CI_IMAGE="${GHCR_IMAGE}:${IMAGE_TAG}"
+        run: make sim_outputs_all IMAGE="${GHCR_IMAGE}:${IMAGE_TAG}"
 
       - name: Upload sim results
         uses: actions/upload-artifact@v4
@@ -146,7 +146,7 @@ jobs:
         run: docker pull "${GHCR_IMAGE}:${IMAGE_TAG}"
 
       - name: Run RTL-to-GDS and copy layout images
-        run: make ci-gds CI_IMAGE="${GHCR_IMAGE}:${IMAGE_TAG}"
+        run: make gds_outputs_all IMAGE="${GHCR_IMAGE}:${IMAGE_TAG}"
 
       - name: Upload GDS assets
         uses: actions/upload-artifact@v4
@@ -178,11 +178,16 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Install docs dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install sphinx furo myst-parser
+
       - name: Generate design outputs page
-        run: python scripts/generate_outputs.py --generate-only
+        run: make generate_outputs
 
       - name: Build Sphinx site
-        run: make ci-build-pages
+        run: make build_pages
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

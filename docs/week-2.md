@@ -3,8 +3,7 @@
 ## Lecture
 
 - N-bit adder + testbench
-- Mux
-- ALU
+- Mux, ALU
 - Encoder
 - Decoder
 - Verilog functions

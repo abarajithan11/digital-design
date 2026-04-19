@@ -29,11 +29,14 @@ TOP_TB       ?= tb_$(DESIGN)
 SIM_WORKDIR  := $(CONT_MATERIAL)/sim/$(DESIGN)
 WAVE_VCD     ?= $(SIM_WORKDIR)/$(DESIGN).vcd
 WAVE_SAVE    ?= $(SIM_WORKDIR)/$(DESIGN).gtkw
-WAVE_SVG     ?= $(SIM_WORKDIR)/$(DESIGN).svg
+WAVE_SVG_SHORT ?= $(SIM_WORKDIR)/$(DESIGN)_short.svg
+WAVE_SVG_FULL  ?= $(SIM_WORKDIR)/$(DESIGN)_full.svg
 WAVE_START   ?= auto
 WAVE_END     ?= auto
+WAVE_SHORT_START ?= 0
+WAVE_SHORT_END   ?= 10000
 WAVE_WINDOW  ?= 65536
-WAVE_SAMPLE  ?= 256
+WAVE_SAMPLE  ?= 512
 WAVE_HSCALE  ?= 1
 
 .PHONY: require_container prepare gds sim sim_all gds_all gtkwave wave_svg clean show_layout check_tools
@@ -68,26 +71,34 @@ wave_svg: sim
 	mkdir -p "$(SIM_WORKDIR)"
 	python3 "$(CONT_REPO)/scripts/vcd_to_svg.py" \
 		--vcd "$(WAVE_VCD)" \
-		--svg "$(WAVE_SVG)" \
+		--svg "$(WAVE_SVG_SHORT)" \
+		--start "$(WAVE_SHORT_START)" \
+		--end "$(WAVE_SHORT_END)" \
+		--window "$(WAVE_WINDOW)" \
+		--sample-rate "$(WAVE_SAMPLE)" \
+		--hscale "$(WAVE_HSCALE)"
+	python3 "$(CONT_REPO)/scripts/vcd_to_svg.py" \
+		--vcd "$(WAVE_VCD)" \
+		--svg "$(WAVE_SVG_FULL)" \
 		--start "$(WAVE_START)" \
 		--end "$(WAVE_END)" \
 		--window "$(WAVE_WINDOW)" \
 		--sample-rate "$(WAVE_SAMPLE)" \
 		--hscale "$(WAVE_HSCALE)"
-	echo "Wrote waveform image: $(WAVE_SVG)"
+	echo "Wrote waveform images: $(WAVE_SVG_SHORT) $(WAVE_SVG_FULL)"
 
 sim_all:
 	for design_file in designs/*.f; do \
 		design="$${design_file##*/}"; \
 		design="$${design%.f}"; \
-		$(MAKE) sim DESIGN=$$design CI_IMAGE="$(CI_IMAGE)"; \
+		$(MAKE) sim DESIGN=$$design; \
 	done
 
 gds_all:
 	for design_file in designs/*.f; do \
 		design="$${design_file##*/}"; \
 		design="$${design%.f}"; \
-		$(MAKE) gds DESIGN=$$design CI_IMAGE="$(CI_IMAGE)"; \
+		$(MAKE) gds DESIGN=$$design; \
 	done
 
 clean: require_container
