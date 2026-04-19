@@ -1,2 +1,2 @@
-rtl/not.sv
-tb/tb_not.sv
+rtl/not_gate.sv
+tb/tb_not_gate.sv
