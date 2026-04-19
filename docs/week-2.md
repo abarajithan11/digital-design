@@ -1,9 +1,21 @@
-# Week 2
+# Week 2 – Combinational Logic
 
-## Goals
+## Lecture:
 
-Add Week 2 goals and content here.
+- N-bit adder + testbench
+- Mux
+- ALU
+- Encoder
+- Decoder
+- Verilog functions
+- LUT
 
-## Notes
+## Assignment:
 
-Add lecture notes, examples, and links.
+- Create module to apply quantization and relu: `y = relu(quant(x))`
+  - Quantization: `q = y/(2^f)`. where `f` is a constant
+  - ReLU `z = (y > 0) ? y : 0`
+- For each combinational element in `[mux, encoder, decoder, relu]`
+  - Consider input of 3 bits
+  - Decompose into sum of products
+  - Decompose into product of sums 
