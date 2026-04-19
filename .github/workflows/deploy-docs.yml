@@ -115,7 +115,7 @@ jobs:
         with:
           name: sim-results
           path: |
-            out/sim/status.tsv
+            out/sim
             material/sim
 
   gds:

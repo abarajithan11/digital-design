@@ -148,15 +148,23 @@ def generate_outputs(repo: Path) -> None:
                 shutil.copy2(source_image, dst / image)
 
         raw_status = sim_statuses.get(design)
+        per_design_sim_status = repo / "out" / "sim" / f"{design}.status"
+        if raw_status is None and per_design_sim_status.exists():
+            raw_status = per_design_sim_status.read_text(encoding="utf-8").strip()
         if raw_status is None:
             if sim_svg_short.exists() or sim_svg_full.exists() or (sim_assets_root / design / f"{design}.vcd").exists():
                 raw_status = "pass"
             else:
                 raw_status = "unknown"
+        gds_status_file = gds_assets_root / design / "status.txt"
+        if gds_status_file.exists():
+            rtl2gds_result = "passed" if gds_status_file.read_text(encoding="utf-8").strip() == "pass" else "failed"
+        else:
+            rtl2gds_result = "passed" if (dst / "final_routing.webp").exists() else "failed"
         designs_data.append({
             "design": design,
             "sim_result": "passed" if raw_status == "pass" else raw_status,
-            "rtl2gds_result": "passed" if (dst / "final_routing.webp").exists() else "failed",
+            "rtl2gds_result": rtl2gds_result,
         })
 
     lines = build_markdown(designs_data, assets_root)

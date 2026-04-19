@@ -18,8 +18,9 @@ X11_MOUNT    := $(if $(wildcard /tmp/.X11-unix),-v /tmp/.X11-unix:/tmp/.X11-unix
 WSLG_MOUNT   := $(if $(wildcard /mnt/wslg),-v /mnt/wslg:/mnt/wslg)
 XAUTH_MOUNT  := $(if $(wildcard $(HOME)/.Xauthority),-e XAUTHORITY=$(HOME)/.Xauthority -v $(HOME)/.Xauthority:$(HOME)/.Xauthority)
 
-.PHONY: image start enter kill fresh run sim_outputs_all gds_outputs_all generate_outputs build_pages serve
+.PHONY: image start enter kill fresh run sim_output sim_outputs_all gds_output gds_outputs_all generate_outputs build_pages serve
 FRESH ?= 0
+DESIGNS := $(basename $(notdir $(wildcard material/designs/*.f)))
 
 # Docker container targets
 
@@ -86,36 +87,71 @@ serve: generate_outputs build_pages
 
 # Bulk artifact targets
 
+sim_output:
+	test -n "$(DESIGN)"
+	mkdir -p out/sim
+	if $(MAKE) run CMD="make sim DESIGN=$(DESIGN)" IMAGE="$(IMAGE)"; then \
+		printf '%s\n' "pass" > "out/sim/$(DESIGN).status"; \
+		$(MAKE) run CMD="make wave_svg DESIGN=$(DESIGN)" IMAGE="$(IMAGE)" || true; \
+	else \
+		printf '%s\n' "fail" > "out/sim/$(DESIGN).status"; \
+		exit 1; \
+	fi
+
 sim_outputs_all:
+	rm -rf out/sim; \
 	mkdir -p out/sim; \
-	: > out/sim/status.tsv; \
 	fail=0; \
-	for design_file in material/designs/*.f; do \
-		design="$${design_file##*/}"; \
-		design="$${design%.f}"; \
-		if $(MAKE) run CMD="make sim DESIGN=$$design" IMAGE="$(IMAGE)"; then \
-			printf '%s\t%s\n' "$$design" "pass" >> out/sim/status.tsv; \
-			$(MAKE) run CMD="make wave_svg DESIGN=$$design" IMAGE="$(IMAGE)" || true; \
-		else \
-			printf '%s\t%s\n' "$$design" "fail" >> out/sim/status.tsv; \
+	for design in $(DESIGNS); do \
+		printf '\n==== [sim] %s ====\n' "$$design"; \
+		if ! $(MAKE) sim_output DESIGN=$$design IMAGE="$(IMAGE)"; then \
+			printf -- '---- [sim] %s: FAIL ----\n' "$$design"; \
 			fail=1; \
+		else \
+			printf -- '---- [sim] %s: PASS ----\n' "$$design"; \
 		fi; \
 	done; \
+	: > out/sim/status.tsv; \
+	for design in $(DESIGNS); do \
+		if [ -f "out/sim/$$design.status" ]; then \
+			printf '%s\t%s\n' "$$design" "$$(cat out/sim/$$design.status)" >> out/sim/status.tsv; \
+		fi; \
+	done; \
+	printf '\n==== [sim] summary ====\n'; \
+	cat out/sim/status.tsv; \
 	exit $$fail
+
+gds_output:
+	test -n "$(DESIGN)"
+	mkdir -p "out/gds-assets/$(DESIGN)"
+	if $(MAKE) run CMD="make gds DESIGN=$(DESIGN)" IMAGE="$(IMAGE)"; then \
+		printf '%s\n' "pass" > "out/gds-assets/$(DESIGN)/status.txt"; \
+	else \
+		printf '%s\n' "fail" > "out/gds-assets/$(DESIGN)/status.txt"; \
+		status=1; \
+	fi; \
+	for img in final_routing.webp final_placement.webp final_worst_path.webp; do \
+		src="material/openroad/work/reports/asap7/$(DESIGN)/base/$$img"; \
+		[ -f "$$src" ] && cp "$$src" "out/gds-assets/$(DESIGN)/$$img" || true; \
+	done; \
+	exit $${status:-0}
 
 gds_outputs_all:
 	rm -rf out/gds-assets; \
 	fail=0; \
-	for design_file in material/designs/*.f; do \
-		design="$${design_file##*/}"; \
-		design="$${design%.f}"; \
-		if ! $(MAKE) run CMD="make gds DESIGN=$$design" IMAGE="$(IMAGE)"; then \
+	for design in $(DESIGNS); do \
+		printf '\n==== [gds] %s ====\n' "$$design"; \
+		if ! $(MAKE) gds_output DESIGN=$$design IMAGE="$(IMAGE)"; then \
+			printf -- '---- [gds] %s: FAIL ----\n' "$$design"; \
 			fail=1; \
+		else \
+			printf -- '---- [gds] %s: PASS ----\n' "$$design"; \
 		fi; \
-		mkdir -p "out/gds-assets/$$design"; \
-		for img in final_routing.webp final_placement.webp final_worst_path.webp; do \
-			src="material/openroad/work/reports/asap7/$$design/base/$$img"; \
-			[ -f "$$src" ] && cp "$$src" "out/gds-assets/$$design/$$img" || true; \
-		done; \
+	done; \
+	printf '\n==== [gds] summary ====\n'; \
+	for design in $(DESIGNS); do \
+		if [ -f "out/gds-assets/$$design/status.txt" ]; then \
+			printf '%s\t%s\n' "$$design" "$$(cat out/gds-assets/$$design/status.txt)"; \
+		fi; \
 	done; \
 	exit $$fail
