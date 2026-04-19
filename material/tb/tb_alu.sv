@@ -10,8 +10,8 @@ module tb_alu;
   alu #(.WIDTH(WIDTH)) dut (.*);
 
   initial begin
-    $dumpfile("dump.vcd");
-    $dumpvars(0, alu_tb);
+    $dumpfile(`VCD_PATH);
+    $dumpvars(0, tb_alu);
 
     repeat (5) begin
       #10;
@@ -24,5 +24,6 @@ module tb_alu;
     #10 bus_a =  8'sd30;  bus_b = -8'sd10;  alu_sel = 3'b001;
     #10 bus_a =  8'sd5;   bus_b =  8'sd10;  alu_sel = 3'b010;
     #10 bus_a =  8'sd51;  bus_b =  8'sd17;  alu_sel = 3'b011;
+    #10 $finish;
   end
 endmodule

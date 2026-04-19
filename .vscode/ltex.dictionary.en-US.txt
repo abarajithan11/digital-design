@@ -11,3 +11,9 @@ ReLU
 combinational
 combinational
 relu
+Retiming
+AXI
+UART RX
+UART TX
+MNIST
+NN
