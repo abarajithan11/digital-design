@@ -9,10 +9,11 @@ export DESIGN_FILES ?= $(foreach f,$(design_files_raw),$(if $(filter /%,$(f)),$(
 export VERILOG_FILES ?= $(filter /repo/material/rtl/%,$(DESIGN_FILES))
 export TB_FILES ?= $(filter /repo/material/tb/%,$(DESIGN_FILES))
 
-# 70% was too aggressive for tiny ASAP7 examples like `adder`, where
-# implementation overhead after synthesis can significantly exceed the
-# raw cell-area estimate used for floorplanning.
-export CORE_UTILIZATION ?= 50
+# ASAP7's shared PDN script uses fixed M5/M6 strap geometry. Tiny designs can
+# floorplan into just a few rows, which makes the core too short for those
+# straps even when synthesis area looks small. A lower common default keeps
+# small teaching examples like `full_adder` routable without per-design knobs.
+export CORE_UTILIZATION ?= 15
 export CORE_ASPECT_RATIO ?= 1
 export CORE_MARGIN ?= 1
 export PLACE_DENSITY ?= 0.60
