@@ -105,13 +105,17 @@ sim_outputs_all:
 
 gds_outputs_all:
 	rm -rf out/gds-assets; \
+	fail=0; \
 	for design_file in material/designs/*.f; do \
 		design="$${design_file##*/}"; \
 		design="$${design%.f}"; \
-		$(MAKE) run CMD="make gds DESIGN=$$design" IMAGE="$(IMAGE)" || true; \
+		if ! $(MAKE) run CMD="make gds DESIGN=$$design" IMAGE="$(IMAGE)"; then \
+			fail=1; \
+		fi; \
 		mkdir -p "out/gds-assets/$$design"; \
 		for img in final_routing.webp final_placement.webp final_worst_path.webp; do \
 			src="material/openroad/work/reports/asap7/$$design/base/$$img"; \
 			[ -f "$$src" ] && cp "$$src" "out/gds-assets/$$design/$$img" || true; \
 		done; \
-	done
+	done; \
+	exit $$fail
