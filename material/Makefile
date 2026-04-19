@@ -36,7 +36,7 @@ WAVE_WINDOW  ?= 65536
 WAVE_SAMPLE  ?= 256
 WAVE_HSCALE  ?= 1
 
-.PHONY: require_container prepare gds sim gtkwave wave_svg clean show_layout check_tools
+.PHONY: require_container prepare gds sim sim_all gds_all gtkwave wave_svg clean show_layout check_tools
 
 require_container:
 	test -f /.dockerenv
@@ -75,6 +75,20 @@ wave_svg: sim
 		--sample-rate "$(WAVE_SAMPLE)" \
 		--hscale "$(WAVE_HSCALE)"
 	echo "Wrote waveform image: $(WAVE_SVG)"
+
+sim_all:
+	for design_file in designs/*.f; do \
+		design="$${design_file##*/}"; \
+		design="$${design%.f}"; \
+		$(MAKE) sim DESIGN=$$design CI_IMAGE="$(CI_IMAGE)"; \
+	done
+
+gds_all:
+	for design_file in designs/*.f; do \
+		design="$${design_file##*/}"; \
+		design="$${design%.f}"; \
+		$(MAKE) gds DESIGN=$$design CI_IMAGE="$(CI_IMAGE)"; \
+	done
 
 clean: require_container
 	rm -rf "$(CONT_MATERIAL)/sim" "$(CONT_MATERIAL)/openroad/work"

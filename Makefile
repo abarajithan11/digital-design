@@ -73,27 +73,29 @@ serve:
 # Targets for CI
 
 ci-sim:
-	shopt -s nullglob; \
 	mkdir -p out/sim; \
 	: > out/sim/status.tsv; \
+	fail=0; \
 	for design_file in material/designs/*.f; do \
 		design="$${design_file##*/}"; \
 		design="$${design%.f}"; \
-		sim_status=pass; \
-		if ! $(MAKE) run CMD="make sim DESIGN=$$design" CI_IMAGE="$(CI_IMAGE)"; then sim_status=fail; fi; \
-		if [ "$$sim_status" = "pass" ]; then \
+		if $(MAKE) run CMD="make sim DESIGN=$$design" CI_IMAGE="$(CI_IMAGE)"; then \
+			printf '%s\t%s\n' "$$design" "pass" >> out/sim/status.tsv; \
 			$(MAKE) run CMD="make wave_svg DESIGN=$$design" CI_IMAGE="$(CI_IMAGE)" || true; \
+		else \
+			printf '%s\t%s\n' "$$design" "fail" >> out/sim/status.tsv; \
+			fail=1; \
 		fi; \
-		printf '%s\t%s\n' "$$design" "$$sim_status" >> out/sim/status.tsv; \
-	done
+	done; \
+	exit $$fail
 
 ci-gds:
-	shopt -s nullglob; \
+	$(MAKE) gds_all CI_IMAGE="$(CI_IMAGE)"; \
 	rm -rf out/gds-assets; \
 	for design_file in material/designs/*.f; do \
-		design="$${design_file##*/}"; design="$${design%.f}"; \
+		design="$${design_file##*/}"; \
+		design="$${design%.f}"; \
 		mkdir -p "out/gds-assets/$$design"; \
-		$(MAKE) run CMD="make gds DESIGN=$$design" CI_IMAGE="$(CI_IMAGE)" || true; \
 		for img in final_routing.webp final_placement.webp final_worst_path.webp; do \
 			src="material/openroad/work/reports/asap7/$$design/base/$$img"; \
 			[ -f "$$src" ] && cp "$$src" "out/gds-assets/$$design/$$img" || true; \
