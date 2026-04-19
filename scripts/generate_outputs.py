@@ -11,6 +11,26 @@ LAYOUT_IMAGES = [
 
 REPO_URL = "https://github.com/abarajithan11/digital-design"
 
+
+def parse_design_entry(design: str, repo: Path) -> dict:
+    """Return metadata for a numbered design filelist stem."""
+    flist_path = repo / "material" / "designs" / f"{design}.f"
+    flist_lines = [line.strip() for line in flist_path.read_text(encoding="utf-8").splitlines() if line.strip()]
+    rtl_files = [line for line in flist_lines if line.startswith("rtl/")]
+    tb_files = [line for line in flist_lines if line.startswith("tb/")]
+
+    number, raw_name = design.split("_", 1)
+    display_name = raw_name.replace("_", " ").upper()
+    heading = f"{number}. {display_name}"
+
+    return {
+        "design": design,
+        "heading": heading,
+        "flist_rel": f"material/designs/{design}.f",
+        "top_rtl_rel": f"material/{rtl_files[0]}" if rtl_files else None,
+        "top_tb_rel": f"material/{tb_files[0]}" if tb_files else None,
+    }
+
 def build_markdown(designs_data: list[dict], assets_root: Path) -> list[str]:
     """Return markdown lines for all designs given pre-resolved data."""
     lines = f"""# Design Outputs
@@ -35,6 +55,7 @@ collects their outputs and displays them here. To reproduce this on your machine
 
     for d in designs_data:
         design = d["design"]
+        heading = d["heading"]
         sim_result = d["sim_result"]
         rtl2gds_result = d["rtl2gds_result"]
         dst = assets_root / design
@@ -42,17 +63,20 @@ collects their outputs and displays them here. To reproduce this on your machine
         short_svg = dst / f"{design}_short.svg"
         full_svg = dst / f"{design}_full.svg"
         full_svg_link = f"_static/design-outputs/{design}/{design}_full.svg"
+        flist_rel = d["flist_rel"]
+        top_rtl_rel = d["top_rtl_rel"]
+        top_tb_rel = d["top_tb_rel"]
 
-        lines.extend([f'''## {design.upper()}
+        lines.extend([f'''## {heading}
 
 - Simulation result: {sim_result}
 - RTL2GDS result: {rtl2gds_result}
 
 ### Source files:
 
-- File List : [material/designs/{design}.f]({repo_root}material/designs/{design}.f)
-- Top RTL Design : [material/rtl/{design}.sv]({repo_root}material/rtl/{design}.sv)
-- Top Testbench : [material/tb/tb_{design}.sv]({repo_root}material/tb/tb_{design}.sv)
+- File List : [{flist_rel}]({repo_root}{flist_rel})
+- Top RTL Design : [{top_rtl_rel}]({repo_root}{top_rtl_rel})
+- Top Testbench : [{top_tb_rel}]({repo_root}{top_tb_rel})
 - Full waveform SVG : [view]({full_svg_link})
 
 ### Simulation Waveform (First 10 ns)
@@ -112,7 +136,8 @@ def generate_outputs(repo: Path) -> None:
                 sim_statuses[name] = status.strip()
 
     # Discover designs from source tree
-    designs = sorted(p.stem for p in (repo / "material" / "designs").glob("*.f"))
+    design_entries = [parse_design_entry(p.stem, repo) for p in sorted((repo / "material" / "designs").glob("*.f"))]
+    designs = [entry["design"] for entry in design_entries]
 
     if not designs:
         docs_md.write_text(
@@ -122,7 +147,8 @@ def generate_outputs(repo: Path) -> None:
         return
 
     designs_data = []
-    for design in designs:
+    for entry in design_entries:
+        design = entry["design"]
         dst = assets_root / design
         dst.mkdir(parents=True, exist_ok=True)
 
@@ -162,7 +188,7 @@ def generate_outputs(repo: Path) -> None:
         else:
             rtl2gds_result = "passed" if (dst / "final_routing.webp").exists() else "failed"
         designs_data.append({
-            "design": design,
+            **entry,
             "sim_result": "passed" if raw_status == "pass" else raw_status,
             "rtl2gds_result": rtl2gds_result,
         })

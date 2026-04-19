@@ -3,9 +3,9 @@
 module tb_alu;
   localparam WIDTH = 8;
 
-  logic        [2:0]       alu_sel;
-  logic signed [WIDTH-1:0] bus_a, bus_b, alu_out;
-  logic                    zero, negative;
+  logic [WIDTH-1:0] bus_a, bus_b, alu_out;
+  logic [2:0] alu_sel;
+  logic zero, negative;
 
   alu #(.WIDTH(WIDTH)) dut (.*);
 
@@ -15,8 +15,8 @@ module tb_alu;
 
     repeat (5) begin
       #1;
-      bus_a   = $urandom[WIDTH-1:0];
-      bus_b   = $urandom[WIDTH-1:0];
+      bus_a   = WIDTH'($urandom);
+      bus_b   = WIDTH'($urandom);
       alu_sel = 3'($urandom_range(4, 0));
     end
 

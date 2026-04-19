@@ -1,9 +1,5 @@
 `timescale 1ns/1ps
 
-`ifndef VCD_PATH
-`define VCD_PATH "dump.vcd"
-`endif
-
 module tb_n_adder;  
   localparam N = 8;
 
