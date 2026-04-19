@@ -1,7 +1,7 @@
 `timescale 1ns/1ps
 
 module n_adder #(
-  parameter N=4
+  parameter N=8
 )(
   input  logic signed [N-1:0] A, B,
   input  logic ci,

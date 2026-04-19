@@ -22,7 +22,7 @@ module alu #(
     endcase
 
     zero      = (alu_out == 0);
-    negative  = (alu_out <  0);
+    negative  = $signed(alu_out) < 0;
   end
 
 endmodule

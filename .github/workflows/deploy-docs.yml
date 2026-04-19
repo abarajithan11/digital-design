@@ -201,6 +201,7 @@ jobs:
           path: site
 
   deploy:
+    if: ${{ always() && needs.build-pages.result == 'success' }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

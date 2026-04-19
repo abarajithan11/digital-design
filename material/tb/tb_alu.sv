@@ -17,7 +17,7 @@ module tb_alu;
       #10;
       bus_a   = $urandom[WIDTH-1:0];
       bus_b   = $urandom[WIDTH-1:0];
-      alu_sel = $urandom_range(4, 0);
+      alu_sel = 3'($urandom_range(4, 0));
     end
 
     #30 bus_a =  8'sd5;   bus_b =  8'sd10;  alu_sel = 3'b000;
