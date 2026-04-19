@@ -5,3 +5,4 @@ site/
 docs/_static/design-outputs/
 out/
 .codex
+**/__pycache__/

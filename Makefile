@@ -90,11 +90,11 @@ ci-sim:
 	exit $$fail
 
 ci-gds:
-	$(MAKE) run CMD="make gds_all" CI_IMAGE="$(CI_IMAGE)"; \
 	rm -rf out/gds-assets; \
 	for design_file in material/designs/*.f; do \
 		design="$${design_file##*/}"; \
 		design="$${design%.f}"; \
+		$(MAKE) run CMD="make gds DESIGN=$$design" CI_IMAGE="$(CI_IMAGE)" || true; \
 		mkdir -p "out/gds-assets/$$design"; \
 		for img in final_routing.webp final_placement.webp final_worst_path.webp; do \
 			src="material/openroad/work/reports/asap7/$$design/base/$$img"; \

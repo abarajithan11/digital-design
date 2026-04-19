@@ -83,10 +83,10 @@ collects their outputs and displays them here. To reproduce this on your machine
 
         if all((dst / img).exists() for img in LAYOUT_IMAGES):
             lines.extend([
-                '<div style="display:flex; gap:12px; justify-content:center; align-items:flex-start;">',
-                f'  <img src="{routing_path}" alt="{design} routing" style="width:32%; height:auto;" />',
-                f'  <img src="{placement_path}" alt="{design} placement" style="width:32%; height:auto;" />',
-                f'  <img src="{worst_path}" alt="{design} worst path" style="width:32%; height:auto;" />',
+                '<div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; max-width:1100px; margin:0 auto;">',
+                f'  <img src="{routing_path}" alt="{design} routing" style="width:100%; height:auto; display:block;" />',
+                f'  <img src="{placement_path}" alt="{design} placement" style="width:100%; height:auto; display:block;" />',
+                f'  <img src="{worst_path}" alt="{design} worst path" style="width:100%; height:auto; display:block;" />',
                 "</div>",
                 '<p style="text-align:center;">Routing, Placement, Worst path</p>',
                 "",
