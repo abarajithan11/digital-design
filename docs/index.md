@@ -1,9 +1,10 @@
 # Intro to Digital Design - An End to End Approach
 
-This is a five-week course, with 30 hours of lectures. We expect the following prior knowledge from students:
+This is a five-week course, with 30 hours of lectures. We expect the following prior knowledge from the students:
 
-* Basic knowledge on logic gates (AND, OR, NAND, XOR) and truth tables
-* Familiarity in any programming language (Python, C...etc.)
+* Converting a number between decimal, binary and hexadecimal representations
+* Basic knowledge on logical operations (AND, OR, NAND, XOR) and truth tables
+* Familiarity with any programming language (Python, C...etc.)
 
 :::{admonition} Why take this course?
 Digital design is both an art and a craft. 

@@ -9,11 +9,11 @@ export DESIGN_FILES ?= $(foreach f,$(design_files_raw),$(if $(filter /%,$(f)),$(
 export VERILOG_FILES ?= $(filter /repo/material/rtl/%,$(DESIGN_FILES))
 export TB_FILES ?= $(filter /repo/material/tb/%,$(DESIGN_FILES))
 
-# ASAP7's shared PDN script uses fixed M5/M6 strap geometry. Tiny designs can
-# floorplan into just a few rows, which makes the core too short for those
-# straps even when synthesis area looks small. A lower common default keeps
-# small teaching examples like `full_adder` routable without per-design knobs.
-export CORE_UTILIZATION ?= 15
+# Tiny ASAP7 designs can floorplan into too few rows for the shared M5/M6 PDN
+# geometry, so keep a small-design allowlist with a safer utilization target.
+SMALL_DESIGNS := full_adder
+
+export CORE_UTILIZATION ?= $(if $(filter $(DESIGN_NAME),$(SMALL_DESIGNS)),15,50)
 export CORE_ASPECT_RATIO ?= 1
 export CORE_MARGIN ?= 1
 export PLACE_DENSITY ?= 0.60
