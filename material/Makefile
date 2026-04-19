@@ -52,8 +52,8 @@ gds: prepare
 sim: prepare
 	mkdir -p "$(SIM_WORKDIR)"
 	cd "$(CONT_MATERIAL)"
-	verilator --binary --trace --timing --sv --top-module "$(TOP_TB)" -Mdir "$(SIM_WORKDIR)/obj_dir" -f "designs/$(DESIGN).f"
-	"$(SIM_WORKDIR)/obj_dir/V$(TOP_TB)" +VCD="$(WAVE_VCD)"
+	verilator --binary --trace-vcd --timing --sv --top-module "$(TOP_TB)" -Mdir "$(SIM_WORKDIR)/obj_dir" "-DVCD_PATH=\"$(WAVE_VCD)\"" -f "designs/$(DESIGN).f"
+	"$(SIM_WORKDIR)/obj_dir/V$(TOP_TB)"
 
 gtkwave: sim
 	cd "$(CONT_MATERIAL)"
