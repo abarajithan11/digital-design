@@ -1,6 +1,7 @@
 # Common defaults for course designs. Override on the make command line if needed.
 
-design_flist := /repo/material/designs/$(DESIGN_NAME).f
+DESIGN_NUMBERED := $(if $(strip $(DESIGN_NICKNAME)),$(DESIGN_NICKNAME),$(DESIGN_NAME))
+design_flist := /repo/material/designs/$(DESIGN_NUMBERED).f
 
 design_files_raw := $(strip $(shell awk '{sub(/#.*/, ""); gsub(/^[ \t]+|[ \t]+$$/, ""); if (length) print $$0}' $(design_flist) 2>/dev/null))
 export DESIGN_FILES ?= $(foreach f,$(design_files_raw),$(if $(filter /%,$(f)),$(f),/repo/material/$(patsubst ./%,%,$(f))))

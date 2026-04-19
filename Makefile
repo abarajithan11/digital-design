@@ -21,6 +21,7 @@ XAUTH_MOUNT  := $(if $(wildcard $(HOME)/.Xauthority),-e XAUTHORITY=$(HOME)/.Xaut
 .PHONY: image start enter kill fresh run sim_output sim_outputs_all gds_output gds_outputs_all generate_outputs build_pages serve
 FRESH ?= 0
 DESIGNS := $(basename $(notdir $(wildcard material/designs/*.f)))
+DESIGN_BASE := $(subst $(firstword $(subst _, ,$(DESIGN)))_,,$(DESIGN))
 
 # Docker container targets
 
@@ -90,9 +91,9 @@ serve: generate_outputs build_pages
 sim_output:
 	test -n "$(DESIGN)"
 	mkdir -p out/sim
-	if $(MAKE) run CMD="make sim DESIGN=$(DESIGN)" IMAGE="$(IMAGE)"; then \
+	if $(MAKE) run CMD="make sim DESIGN=$(DESIGN_BASE)" IMAGE="$(IMAGE)"; then \
 		printf '%s\n' "pass" > "out/sim/$(DESIGN).status"; \
-		$(MAKE) run CMD="make wave_svg DESIGN=$(DESIGN)" IMAGE="$(IMAGE)" || true; \
+		$(MAKE) run CMD="make wave_svg DESIGN=$(DESIGN_BASE)" IMAGE="$(IMAGE)" || true; \
 	else \
 		printf '%s\n' "fail" > "out/sim/$(DESIGN).status"; \
 		exit 1; \
@@ -124,7 +125,7 @@ sim_outputs_all:
 gds_output:
 	test -n "$(DESIGN)"
 	mkdir -p "out/gds-assets/$(DESIGN)"
-	if $(MAKE) run CMD="make gds DESIGN=$(DESIGN)" IMAGE="$(IMAGE)"; then \
+	if $(MAKE) run CMD="make gds DESIGN=$(DESIGN_BASE)" IMAGE="$(IMAGE)"; then \
 		printf '%s\n' "pass" > "out/gds-assets/$(DESIGN)/status.txt"; \
 	else \
 		printf '%s\n' "fail" > "out/gds-assets/$(DESIGN)/status.txt"; \

@@ -28,3 +28,27 @@ make serve
 ```
 
 Then open `http://localhost:8000` in your browser.
+
+
+## Examples
+
+1. Not Gate
+2. Full Adder
+3. N-Adder
+4. ALU
+5. Encoder
+6. Decoder
+7. Verilog Functions
+8. Flip Flop
+9. Register
+10. Vector Minimum
+11. Up counter
+12. Down counter
+13. Nested counters
+14. Parallel to Serial Converter
+15. UART RX
+16. UART TX
+17. UART RX + TX
+18. FIR Filter
+19. FIR Filter - Retimed
+20. UART RX + TX + FIR Filter

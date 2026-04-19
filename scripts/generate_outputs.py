@@ -12,21 +12,22 @@ LAYOUT_IMAGES = [
 REPO_URL = "https://github.com/abarajithan11/digital-design"
 
 
-def parse_design_entry(design: str, repo: Path) -> dict:
+def parse_design_entry(design_numbered: str, repo: Path) -> dict:
     """Return metadata for a numbered design filelist stem."""
-    flist_path = repo / "material" / "designs" / f"{design}.f"
+    flist_path = repo / "material" / "designs" / f"{design_numbered}.f"
     flist_lines = [line.strip() for line in flist_path.read_text(encoding="utf-8").splitlines() if line.strip()]
     rtl_files = [line for line in flist_lines if line.startswith("rtl/")]
     tb_files = [line for line in flist_lines if line.startswith("tb/")]
 
-    number, raw_name = design.split("_", 1)
-    display_name = raw_name.replace("_", " ").upper()
+    number, design_base = design_numbered.split("_", 1)
+    display_name = design_base.replace("_", " ").upper()
     heading = f"{number}. {display_name}"
 
     return {
-        "design": design,
+        "design_numbered": design_numbered,
+        "design_base": design_base,
         "heading": heading,
-        "flist_rel": f"material/designs/{design}.f",
+        "flist_rel": f"material/designs/{design_numbered}.f",
         "top_rtl_rel": f"material/{rtl_files[0]}" if rtl_files else None,
         "top_tb_rel": f"material/{tb_files[0]}" if tb_files else None,
     }
@@ -54,15 +55,15 @@ collects their outputs and displays them here. To reproduce this on your machine
 """.splitlines()
 
     for d in designs_data:
-        design = d["design"]
+        design_numbered = d["design_numbered"]
         heading = d["heading"]
         sim_result = d["sim_result"]
         rtl2gds_result = d["rtl2gds_result"]
-        dst = assets_root / design
+        dst = assets_root / design_numbered
         repo_root = REPO_URL + "/blob/main/"
-        short_svg = dst / f"{design}_short.svg"
-        full_svg = dst / f"{design}_full.svg"
-        full_svg_link = f"_static/design-outputs/{design}/{design}_full.svg"
+        short_svg = dst / f"{design_numbered}_short.svg"
+        full_svg = dst / f"{design_numbered}_full.svg"
+        full_svg_link = f"_static/design-outputs/{design_numbered}/{design_numbered}_full.svg"
         flist_rel = d["flist_rel"]
         top_rtl_rel = d["top_rtl_rel"]
         top_tb_rel = d["top_tb_rel"]
@@ -83,25 +84,25 @@ collects their outputs and displays them here. To reproduce this on your machine
 '''])
         if short_svg.exists():
             if full_svg.exists():
-                lines.append(f"[View full waveform](_static/design-outputs/{design}/{design}_full.svg)")
+                lines.append(f"[View full waveform](_static/design-outputs/{design_numbered}/{design_numbered}_full.svg)")
                 lines.append("")
-            lines.append(f"![{design} waveform](_static/design-outputs/{design}/{design}_short.svg)")
+            lines.append(f"![{design_numbered} waveform](_static/design-outputs/{design_numbered}/{design_numbered}_short.svg)")
         else:
             lines.append("Waveform SVG not generated.")
         lines.append("")
 
         lines.extend(["### Layout Reports", ""])
 
-        routing_path = f"_static/design-outputs/{design}/final_routing.webp"
-        placement_path = f"_static/design-outputs/{design}/final_placement.webp"
-        worst_path = f"_static/design-outputs/{design}/final_worst_path.webp"
+        routing_path = f"_static/design-outputs/{design_numbered}/final_routing.webp"
+        placement_path = f"_static/design-outputs/{design_numbered}/final_placement.webp"
+        worst_path = f"_static/design-outputs/{design_numbered}/final_worst_path.webp"
 
         if all((dst / img).exists() for img in LAYOUT_IMAGES):
             lines.extend([
                 '<div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; max-width:1100px; margin:0 auto;">',
-                f'  <img src="{routing_path}" alt="{design} routing" style="width:100%; height:auto; display:block;" />',
-                f'  <img src="{placement_path}" alt="{design} placement" style="width:100%; height:auto; display:block;" />',
-                f'  <img src="{worst_path}" alt="{design} worst path" style="width:100%; height:auto; display:block;" />',
+                f'  <img src="{routing_path}" alt="{design_numbered} routing" style="width:100%; height:auto; display:block;" />',
+                f'  <img src="{placement_path}" alt="{design_numbered} placement" style="width:100%; height:auto; display:block;" />',
+                f'  <img src="{worst_path}" alt="{design_numbered} worst path" style="width:100%; height:auto; display:block;" />',
                 "</div>",
                 '<p style="text-align:center;">Routing, Placement, Worst path</p>',
                 "",
@@ -137,7 +138,7 @@ def generate_outputs(repo: Path) -> None:
 
     # Discover designs from source tree
     design_entries = [parse_design_entry(p.stem, repo) for p in sorted((repo / "material" / "designs").glob("*.f"))]
-    designs = [entry["design"] for entry in design_entries]
+    designs = [entry["design_numbered"] for entry in design_entries]
 
     if not designs:
         docs_md.write_text(
@@ -148,41 +149,41 @@ def generate_outputs(repo: Path) -> None:
 
     designs_data = []
     for entry in design_entries:
-        design = entry["design"]
-        dst = assets_root / design
+        design_numbered = entry["design_numbered"]
+        dst = assets_root / design_numbered
         dst.mkdir(parents=True, exist_ok=True)
 
         # Copy waveform SVGs produced by a local sim_outputs_all run or by CI artifacts.
-        sim_svg_short = sim_assets_root / design / f"{design}_short.svg"
+        sim_svg_short = sim_assets_root / design_numbered / f"{design_numbered}_short.svg"
         if sim_svg_short.exists():
-            shutil.copy2(sim_svg_short, dst / f"{design}_short.svg")
+            shutil.copy2(sim_svg_short, dst / f"{design_numbered}_short.svg")
 
-        sim_svg_full = sim_assets_root / design / f"{design}_full.svg"
+        sim_svg_full = sim_assets_root / design_numbered / f"{design_numbered}_full.svg"
         if sim_svg_full.exists():
-            shutil.copy2(sim_svg_full, dst / f"{design}_full.svg")
+            shutil.copy2(sim_svg_full, dst / f"{design_numbered}_full.svg")
 
-        local_reports_dir = local_gds_assets_root / design / "base"
+        local_reports_dir = local_gds_assets_root / design_numbered / "base"
         for image in LAYOUT_IMAGES:
             source_image = local_reports_dir / image
             if not source_image.exists():
-                source_image = gds_assets_root / design / image
+                source_image = gds_assets_root / design_numbered / image
             if not source_image.exists():
-                matches = list(gds_assets_root.glob(f"**/{design}/{image}"))
+                matches = list(gds_assets_root.glob(f"**/{design_numbered}/{image}"))
                 if matches:
                     source_image = matches[0]
             if source_image.exists():
                 shutil.copy2(source_image, dst / image)
 
-        raw_status = sim_statuses.get(design)
-        per_design_sim_status = repo / "out" / "sim" / f"{design}.status"
+        raw_status = sim_statuses.get(design_numbered)
+        per_design_sim_status = repo / "out" / "sim" / f"{design_numbered}.status"
         if raw_status is None and per_design_sim_status.exists():
             raw_status = per_design_sim_status.read_text(encoding="utf-8").strip()
         if raw_status is None:
-            if sim_svg_short.exists() or sim_svg_full.exists() or (sim_assets_root / design / f"{design}.vcd").exists():
+            if sim_svg_short.exists() or sim_svg_full.exists() or (sim_assets_root / design_numbered / f"{design_numbered}.vcd").exists():
                 raw_status = "pass"
             else:
                 raw_status = "unknown"
-        gds_status_file = gds_assets_root / design / "status.txt"
+        gds_status_file = gds_assets_root / design_numbered / "status.txt"
         if gds_status_file.exists():
             rtl2gds_result = "passed" if gds_status_file.read_text(encoding="utf-8").strip() == "pass" else "failed"
         else:
