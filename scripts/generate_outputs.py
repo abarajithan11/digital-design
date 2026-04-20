@@ -36,7 +36,30 @@ def build_markdown(designs_data: list[dict], assets_root: Path) -> list[str]:
     """Return markdown lines for all designs given pre-resolved data."""
     lines = f"""# Design Examples
 
-For each SystemVerilog design available in the course repository, our GitHub Actions flow runs
+In this course, digital design concepts and SystemVerilog features will be introduced through examples of gradually increasing complexity, inspired by real digital systems, as follows:
+
+1. Not Gate [[File List](https://github.com/abarajithan11/digital-design/blob/main/material/designs/1_not_gate.f)][[RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/not_gate.sv)][[TB](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_not_gate.sv)]
+2. Full Adder [[File List](https://github.com/abarajithan11/digital-design/blob/main/material/designs/2_full_adder.f)][[RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/full_adder.sv)][[TB](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_full_adder.sv)]
+3. N-Adder [[File List](https://github.com/abarajithan11/digital-design/blob/main/material/designs/3_n_adder.f)][[RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/n_adder.sv)][[TB](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_n_adder.sv)]
+4. ALU [[File List](https://github.com/abarajithan11/digital-design/blob/main/material/designs/4_alu.f)][[RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/alu.sv)][[TB](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_alu.sv)]
+5. Encoder
+6. Decoder
+7. Verilog Functions
+8. Flip Flop [[File List](https://github.com/abarajithan11/digital-design/blob/main/material/designs/8_flip_flop.f)][[RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/flip_flop.sv)][[TB](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_flip_flop.sv)]
+9. Up counter [[File List](https://github.com/abarajithan11/digital-design/blob/main/material/designs/9_up_counter.f)][[RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/up_counter.sv)][[TB](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_up_counter.sv)]
+10. Binary Reduction Tree to find minimum of a vector `y = min(X)` 
+11. Parallel to Serial Converter [[File List](https://github.com/abarajithan11/digital-design/blob/main/material/designs/11_parallel_to_serial.f)][[RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/parallel_to_serial.sv)][[TB](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_parallel_to_serial.sv)]
+12. Down counter [[File List](https://github.com/abarajithan11/digital-design/blob/main/material/designs/12_down_counter.f)][[RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/down_counter.sv)][[TB](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_down_counter.sv)]
+13. UART RX [[File List](https://github.com/abarajithan11/digital-design/blob/main/material/designs/13_uart_rx.f)][[RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/uart_rx.sv)][[TB](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_uart_rx.sv)]
+14. UART TX [[File List](https://github.com/abarajithan11/digital-design/blob/main/material/designs/14_uart_tx.f)][[RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/uart_tx.sv)][[TB](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_uart_tx.sv)]
+15. UART Echo (RX + TX) [[File List](https://github.com/abarajithan11/digital-design/blob/main/material/designs/15_uart_echo.f)][[RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/uart_echo.v)][[TB](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_uart_echo.sv)]
+16. FIR Filter [[File List](https://github.com/abarajithan11/digital-design/blob/main/material/designs/16_fir_filter.f)][[RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/fir_filter.sv)][[TB](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_fir_filter.sv)]
+17. FIR Filter - Retimed
+18. UART RX + TX + FIR Filter
+
+## Waveforms and ASAP7 GDS
+
+For each design our GitHub Actions flow runs
 
 1. Simulation using Verilator, generating VCD, converted to SVG,
 2. OpenROAD RTL2GDS2 flow using [ASAP7 7nm, a realistic PDK for academic use,](https://www.sciencedirect.com/science/article/pii/S002626921630026X)
@@ -44,8 +67,6 @@ For each SystemVerilog design available in the course repository, our GitHub Act
 collects their outputs and displays them here. 
 
 To reproduce this on your machine, check out our [docker setup](setting-up-docker.md).
-
-## Components of the flow:
 
 * Our repository: [github.com/abarajithan11/digital-design]({REPO_URL})
 * Filelists: [material/designs](https://github.com/abarajithan11/digital-design/tree/main/material/designs)
@@ -74,12 +95,6 @@ To reproduce this on your machine, check out our [docker setup](setting-up-docke
         top_tb_rel = d["top_tb_rel"]
 
         lines.extend([f'''## {heading}
-
-**Source files**
-
-- File List : [{flist_rel}]({repo_root}{flist_rel})
-- Top RTL Design : [{top_rtl_rel}]({repo_root}{top_rtl_rel})
-- Top Testbench : [{top_tb_rel}]({repo_root}{top_tb_rel})
 
 **Run results**
 
@@ -126,6 +141,7 @@ def generate_outputs(repo: Path) -> None:
     sim_assets_root = repo / "material" / "sim"
     local_gds_assets_root = repo / "material" / "openroad" / "work" / "reports" / "asap7"
     gds_assets_root = repo / "out" / "gds-assets"
+    deployed_assets_root = repo / "site" / "_static" / "design-outputs"
 
     # Rebuild assets output deterministically from downloaded artifacts.
     if assets_root.exists():
@@ -163,17 +179,24 @@ def generate_outputs(repo: Path) -> None:
         design_numbered = entry["design_numbered"]
         dst = assets_root / design_numbered
         dst.mkdir(parents=True, exist_ok=True)
+        deployed_dir = deployed_assets_root / design_numbered
 
         # Copy waveform SVGs produced by a local sim_outputs_all run or by CI artifacts.
         sim_svg_short = sim_assets_root / design_numbered / f"{design_numbered}_short.svg"
+        if not sim_svg_short.exists():
+            sim_svg_short = deployed_dir / f"{design_numbered}_short.svg"
         if sim_svg_short.exists():
             shutil.copy2(sim_svg_short, dst / f"{design_numbered}_short.svg")
 
         sim_svg_full = sim_assets_root / design_numbered / f"{design_numbered}_full.svg"
+        if not sim_svg_full.exists():
+            sim_svg_full = deployed_dir / f"{design_numbered}_full.svg"
         if sim_svg_full.exists():
             shutil.copy2(sim_svg_full, dst / f"{design_numbered}_full.svg")
 
         sim_vcd = sim_assets_root / design_numbered / f"{design_numbered}.vcd"
+        if not sim_vcd.exists():
+            sim_vcd = deployed_dir / f"{design_numbered}.vcd"
         if sim_vcd.exists():
             shutil.copy2(sim_vcd, dst / f"{design_numbered}.vcd")
 
@@ -183,10 +206,14 @@ def generate_outputs(repo: Path) -> None:
             local_gds_file = repo / "material" / "openroad" / "work" / "results" / "asap7" / design_numbered / "base" / "6_final.gds"
             if local_gds_file.exists():
                 gds_file = local_gds_file
+            else:
+                gds_file = deployed_dir / f"{design_numbered}.gds"
         if gds_file.exists():
             shutil.copy2(gds_file, dst / f"{design_numbered}.gds")
 
         gds_logs_file = gds_assets_root / design_numbered / "logs.zip"
+        if not gds_logs_file.exists():
+            gds_logs_file = deployed_dir / "logs.zip"
         if gds_logs_file.exists():
             shutil.copy2(gds_logs_file, dst / "logs.zip")
 
@@ -198,6 +225,8 @@ def generate_outputs(repo: Path) -> None:
                 matches = list(gds_assets_root.glob(f"**/{design_numbered}/{image}"))
                 if matches:
                     source_image = matches[0]
+            if not source_image.exists():
+                source_image = deployed_dir / image
             if source_image.exists():
                 shutil.copy2(source_image, dst / image)
 
