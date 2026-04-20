@@ -22,4 +22,5 @@ html_js_files = ["lightbox-init.js"]
 
 myst_enable_extensions = [
     "colon_fence",
+    "tasklist",
 ]

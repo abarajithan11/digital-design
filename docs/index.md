@@ -62,6 +62,29 @@ setting-up-pynq
 SystemVerilog/Verilog is one of the most complex languages ever, with a lot of historical baggage and countless footguns. To avoid wasting our limited time in debating those, we will avoid the above. However, I will create a page here explaining each of their use in detail for the sake of completion.
 :::
 
+## Examples
+
+In this course, digital design concepts and SystemVerilog features will be introduced through increasingly complex examples inspired by real digital systems, as follows:
+
+- [x] 1. Not Gate
+- [x] 2. Full Adder
+- [x] 3. N-Adder
+- [x] 4. ALU
+- [ ] 5. Encoder
+- [ ] 6. Decoder
+- [ ] 7. Verilog Functions
+- [x] 8. Flip Flop
+- [x] 9. Up counter
+- [ ] 10. Vector Minimum
+- [x] 11. Parallel to Serial Converter
+- [x] 12. Down counter
+- [x] 13. UART RX
+- [x] 14. UART TX
+- [x] 15. UART Echo (RX + TX)
+- [ ] 16. FIR Filter
+- [ ] 17. FIR Filter - Retimed
+- [ ] 18. UART RX + TX + FIR Filter
+
 ## Final Projects
 
 - **FIR Filter on FPGA to extract bass/treble from your favorite song** - A Worked example gradually built through our lectures and discussions

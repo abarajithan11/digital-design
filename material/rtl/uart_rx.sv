@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 
 module uart_rx #(
-  parameter CLOCKS_PER_PULSE = 4,
+  parameter CLKS_PER_BIT = 4,
             BITS_PER_WORD    = 8,
             W_OUT            = 24
 )(
@@ -12,7 +12,7 @@ module uart_rx #(
   localparam NUM_WORDS = W_OUT/BITS_PER_WORD;
 
   logic bw_clr;
-  logic [$clog2(CLOCKS_PER_PULSE)-1:0] c, c_max;
+  logic [$clog2(CLKS_PER_BIT)-1:0] c, c_max;
   logic [$clog2(BITS_PER_WORD)-1:0]    b, b_max;
   logic [$clog2(NUM_WORDS)-1:0]        w, w_max;
   logic c_en, c_clr, c_last, c_last_clk;
@@ -35,17 +35,17 @@ module uart_rx #(
     c_en = state != IDLE;
     b_en = c_last_clk;
     w_en = b_last_clk;
-    c_max = $bits(c)'(CLOCKS_PER_PULSE-1);
+    c_max = $bits(c)'(CLKS_PER_BIT-1);
     b_max = $bits(b)'(BITS_PER_WORD-1);
     w_max = $bits(w)'(NUM_WORDS-1);
 
     if (state == IDLE && !rx) begin
       c_clr = 1;
-      c_max = $bits(c)'(CLOCKS_PER_PULSE/2-1);
+      c_max = $bits(c)'(CLKS_PER_BIT/2-1);
     end else if (state == START && c_last) begin
       c_clr = 1;
       b_clr = 1;
-      c_max = $bits(c)'(CLOCKS_PER_PULSE-1);
+      c_max = $bits(c)'(CLKS_PER_BIT-1);
     end
   end
 

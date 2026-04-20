@@ -2,30 +2,29 @@
 
 module tb_uart_rx;
 
-  localparam  CLOCKS_PER_PULSE = 4, //200_000_000/9600
+  localparam  CLKS_PER_BIT = 4, //200_000_000/9600
               W_OUT            = 16,
               BITS_PER_WORD    = 8,
               NUM_WORDS        = W_OUT/BITS_PER_WORD,
-              DATA_WIDTH       = NUM_WORDS*BITS_PER_WORD,
-              CLK_PERIOD       = 10;
+              DATA_WIDTH       = NUM_WORDS*BITS_PER_WORD;
 
   logic clk=0, rstn=0, rx=1, m_valid;
   logic [NUM_WORDS-1:0][BITS_PER_WORD-1:0] m_data, data;
   logic [BITS_PER_WORD+2-1:0] packet;
 
-  initial forever #(CLK_PERIOD/2) clk = !clk;
+  initial forever #1 clk = !clk;
 
   uart_rx #(
-    .CLOCKS_PER_PULSE(CLOCKS_PER_PULSE), 
+    .CLKS_PER_BIT(CLKS_PER_BIT), 
     .W_OUT(W_OUT),
     .BITS_PER_WORD(BITS_PER_WORD)) dut (.*);
 
   initial begin
     $dumpfile(`VCD_PATH); $dumpvars;
 
-    repeat(2)  @(posedge clk) #1; 
+    repeat(2)  @(posedge clk) #1ps; 
     rstn = 1;
-    repeat(5)  @(posedge clk) #1;
+    repeat(5)  @(posedge clk) #1ps;
 
     repeat (10) begin
       data = DATA_WIDTH'($urandom());
@@ -36,8 +35,8 @@ module tb_uart_rx;
         repeat ($urandom_range(1,20)) @(posedge clk);
 
         for (int ib=0; ib<BITS_PER_WORD+2; ib=ib+1)
-          repeat(CLOCKS_PER_PULSE) begin 
-            #1 rx = packet[ib];
+          repeat(CLKS_PER_BIT) begin 
+            #1ps rx = packet[ib];
             @(posedge clk);
           end
       end
@@ -59,7 +58,7 @@ module tb_uart_rx;
     wait(!rx);
     for (int n=0; n<BITS_PER_WORD+2; n++) begin
       bits += 1;
-      repeat (CLOCKS_PER_PULSE) @(posedge clk);
+      repeat (CLKS_PER_BIT) @(posedge clk);
     end
   end
 

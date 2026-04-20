@@ -1,7 +1,7 @@
 `timescale 1ns/1ps
 
 module uart_tx #(
-  parameter CLOCKS_PER_PULSE = 4,
+  parameter CLKS_PER_BIT = 4,
             BITS_PER_WORD    = 8,
             PACKET_SIZE      = BITS_PER_WORD+5,
             W_OUT            = 24
@@ -16,8 +16,8 @@ module uart_tx #(
 
   logic [NUM_BITS-1:0] m_packets;
   logic [NUM_WORDS-1:0][PACKET_SIZE-1:0] s_packets;
-  logic [$clog2(CLOCKS_PER_PULSE)-1:0] c, c_max;
-  logic [$clog2(NUM_BITS)-1:0]         p, p_max;
+  logic [$clog2(CLKS_PER_BIT)-1:0] c, c_max;
+  logic [$clog2(NUM_BITS)    -1:0] p, p_max;
   logic c_en, c_clr, c_last, c_last_clk;
   logic p_en, p_clr, p_last, p_last_clk;
 
@@ -40,7 +40,7 @@ module uart_tx #(
     p_clr = state == IDLE && s_valid;
     c_en  = state == SEND;
     p_en  = c_last_clk;
-    c_max = $bits(c)'(CLOCKS_PER_PULSE-1);
+    c_max = $bits(c)'(CLKS_PER_BIT-1);
     p_max = $bits(p)'(NUM_BITS-1);
   end
 
