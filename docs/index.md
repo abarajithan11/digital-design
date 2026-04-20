@@ -82,7 +82,7 @@ In this course, digital design concepts and SystemVerilog features will be intro
 13. UART RX [[RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/uart_rx.sv)] [[TB](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_uart_rx.sv)]
 14. UART TX [[RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/uart_tx.sv)] [[TB](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_uart_tx.sv)]
 15. UART Echo (RX + TX)] [[RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/uart_echo.v)] [[TB](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_uart_echo.sv)]
-16. FIR Filter
+16. FIR Filter [[RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/fir_filter.sv)] [[TB](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_fir_filter.sv)]
 17. FIR Filter - Retimed
 18. UART RX + TX + FIR Filter
 

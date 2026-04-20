@@ -8,3 +8,4 @@ out/
 __pycache__
 docs/design_outputs.md
 *.vcd
+material/data/y.txt
