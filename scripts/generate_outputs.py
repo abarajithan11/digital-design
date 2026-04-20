@@ -38,10 +38,12 @@ def build_markdown(designs_data: list[dict], assets_root: Path) -> list[str]:
 
 For each SystemVerilog design available in the course repository, our GitHub Actions flow runs
 
-1. Simulation using Verilator, generating VCD, converted to SVG.
-2. OpenROAD RTL2GDS2 flow using [ASAP7 7nm, a realistic PDK for academic use.](https://www.sciencedirect.com/science/article/pii/S002626921630026X)
+1. Simulation using Verilator, generating VCD, converted to SVG,
+2. OpenROAD RTL2GDS2 flow using [ASAP7 7nm, a realistic PDK for academic use,](https://www.sciencedirect.com/science/article/pii/S002626921630026X)
 
-collects their outputs and displays them here. To reproduce this on your machine, check out our [docker setup](setting-up-docker.md).
+collects their outputs and displays them here. 
+
+To reproduce this on your machine, check out our [docker setup](setting-up-docker.md).
 
 ## Components of the flow:
 

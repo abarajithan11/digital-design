@@ -9,22 +9,26 @@ git clone https://github.com/abarajithan11/digital-design.git
 ```
 
 
-## Setup, start and enter docker container, from Ubuntu or WSL2
+## Build, start, and enter docker container - from Ubuntu or WSL2
 
 ```bash
-make fresh
-make enter
+make fresh   # only once, unless something is broken
+make enter   # to enter after you exit
+
+# make restart - if your container gets stopped 
 ```
 
-## Run simulation, and RTL-to-GDS2 flow with ASAP7
+## Run simulation and RTL-to-GDS2 flow with ASAP7
 
-From inside docker container
+From inside the container
 
 ```bash
-make sim DESIGN=adder
-make gds DESIGN=adder
-make show_layout DESIGN=adder
+make sim DESIGN=alu
+make gds DESIGN=alu
+make show_layout DESIGN=alu
+# exit - to leave the container 
 ```
 
-* The root `Makefile` only manages the Docker image and container. The `material/Makefile` handles simulation and RTL2GDS.
-* Reports and layout images are stored in `material/openroad/work/reports/asap7/adder/base`
+* The root `Makefile` only manages the Docker image and container. 
+* The `material/Makefile` handles simulation and RTL2GDS.
+* Reports and layout images are stored in `material/openroad/work/reports/asap7/4_alu/base`

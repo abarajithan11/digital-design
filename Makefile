@@ -27,6 +27,8 @@ DESIGN_BASE := $(subst $(firstword $(subst _, ,$(DESIGN)))_,,$(DESIGN))
 
 fresh: kill image start
 
+restart: kill start
+
 image:
 	git submodule update --init --recursive
 	docker build \
