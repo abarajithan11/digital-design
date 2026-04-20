@@ -10,8 +10,7 @@ module tb_alu;
   alu #(.WIDTH(WIDTH)) dut (.*);
 
   initial begin
-    $dumpfile(`VCD_PATH);
-    $dumpvars(0, tb_alu);
+    $dumpfile(`VCD_PATH); $dumpvars;
 
     repeat (5) begin
       #1;

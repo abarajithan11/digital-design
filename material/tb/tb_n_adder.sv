@@ -12,7 +12,7 @@ module tb_n_adder;
   n_adder #(.N(N)) dut (.*);
 
   initial begin
-    $dumpfile(`VCD_PATH); $dumpvars(0, dut);
+    $dumpfile(`VCD_PATH); $dumpvars;
     
     A = 8'd5; B = 8'd10; ci = 0;
     #1 assert (S == 8'd15) else $error("Fail");
