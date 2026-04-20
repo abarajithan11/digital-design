@@ -28,6 +28,7 @@ week-5
 design_outputs
 setting-up-docker
 setting-up-pynq
+contact-us
 ```
 
 ## Learning Outcomes
@@ -64,7 +65,7 @@ SystemVerilog/Verilog is one of the most complex languages ever, with a lot of h
 
 ## Examples
 
-In this course, digital design concepts and SystemVerilog features will be introduced through increasingly complex examples inspired by real digital systems, as follows:
+In this course, digital design concepts and SystemVerilog features will be introduced through examples of gradually increasing complexity, inspired by real digital systems, as follows:
 
 - [x] 1. Not Gate
 - [x] 2. Full Adder
