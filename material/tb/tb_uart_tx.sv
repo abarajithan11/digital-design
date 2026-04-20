@@ -35,8 +35,7 @@ module tb_uart_tx;
   );
 
   initial begin
-    $dumpfile("dump.vcd");
-    $dumpvars;
+    $dumpfile(`VCD_PATH); $dumpvars;
 
     repeat (2) @(posedge clk) #1ps;
     rstn = 1;

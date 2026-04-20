@@ -13,6 +13,7 @@ module fir_filter #(
     output logic [W_Y-1:0] y
   );
   logic [N:0][W_X-1:0] z;
+  logic [N:0][W_K-1:0] k_arr;
 
   always_ff @(posedge clk or negedge rstn) begin
     if (!rstn) z[N:1] <= '0;
@@ -20,10 +21,11 @@ module fir_filter #(
   end
   
   always_comb begin
+    k_arr = K;
     z[0] = x;
 
     y = 0;
     for (int n=0; n < N+1; n=n+1)
-      y = $signed(y) + $signed(K[n]) * $signed(z[n]);
+      y = $signed(y) + $signed(k_arr[n]) * $signed(z[n]);
   end
 endmodule
