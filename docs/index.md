@@ -63,28 +63,28 @@ contact-us
 SystemVerilog/Verilog is one of the most complex languages ever, with a lot of historical baggage and countless footguns. To avoid wasting our limited time in debating those, we will avoid the above. However, I will create a page here explaining each of their use in detail for the sake of completion.
 :::
 
-## Examples
+## Design Examples
 
 In this course, digital design concepts and SystemVerilog features will be introduced through examples of gradually increasing complexity, inspired by real digital systems, as follows:
 
-- [x] 1. Not Gate
-- [x] 2. Full Adder
-- [x] 3. N-Adder
-- [x] 4. ALU
-- [ ] 5. Encoder
-- [ ] 6. Decoder
-- [ ] 7. Verilog Functions
-- [x] 8. Flip Flop
-- [x] 9. Up counter
-- [ ] 10. Vector Minimum
-- [x] 11. Parallel to Serial Converter
-- [x] 12. Down counter
-- [x] 13. UART RX
-- [x] 14. UART TX
-- [x] 15. UART Echo (RX + TX)
-- [ ] 16. FIR Filter
-- [ ] 17. FIR Filter - Retimed
-- [ ] 18. UART RX + TX + FIR Filter
+1. Not Gate [RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/not_gate.sv) [TB](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_not_gate.sv)
+2. Full Adder [RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/full_adder.sv) [TB](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_full_adder.sv)
+3. N-Adder [RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/n_adder.sv) [TB](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_n_adder.sv)
+4. ALU [RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/alu.sv) [TB](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_alu.sv)
+5. Encoder
+6. Decoder
+7. Verilog Functions
+8. Flip Flop [RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/flip_flop.sv) [TB](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_flip_flop.sv)
+9. Up counter [RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/up_counter.sv) [TB](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_up_counter.sv)
+10. Vector Minimum
+11. Parallel to Serial Converter [RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/parallel_to_serial.sv) [TB](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_parallel_to_serial.sv)
+12. Down counter [RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/down_counter.sv) [TB](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_down_counter.sv)
+13. UART RX [RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/uart_rx.sv) [TB](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_uart_rx.sv)
+14. UART TX [RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/uart_tx.sv) [TB](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_uart_tx.sv)
+15. UART Echo (RX + TX) [RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/uart_echo.v) [TB](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_uart_echo.sv)
+16. FIR Filter
+17. FIR Filter - Retimed
+18. UART RX + TX + FIR Filter
 
 ## Final Projects
 

@@ -3,7 +3,7 @@
 module tb_uart_echo;
 
   timeunit 1ns/1ps;
-  localparam CLKS_PER_BIT = 4,
+  localparam CLKS_PER_BIT     = 4,
              BITS_PER_WORD    = 8,
              W_OUT            = 24,
              N_WORDS          = W_OUT/BITS_PER_WORD,

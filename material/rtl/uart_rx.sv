@@ -1,9 +1,9 @@
 `timescale 1ns / 1ps
 
 module uart_rx #(
-  parameter CLKS_PER_BIT = 4,
-            BITS_PER_WORD    = 8,
-            W_OUT            = 24
+  parameter CLKS_PER_BIT  = 4,
+            BITS_PER_WORD = 8,
+            W_OUT         = 24
 )(
   input  logic clk, rstn, rx,
   output logic m_valid,

@@ -1,10 +1,10 @@
 `timescale 1ns/1ps
 
 module uart_tx #(
-  parameter CLKS_PER_BIT = 4,
-            BITS_PER_WORD    = 8,
-            PACKET_SIZE      = BITS_PER_WORD+5,
-            W_OUT            = 24
+  parameter CLKS_PER_BIT  = 4,
+            BITS_PER_WORD = 8,
+            PACKET_SIZE   = BITS_PER_WORD+5,
+            W_OUT         = 24
   )(
     input  logic clk, rstn, s_valid,
     input  logic [NUM_WORDS-1:0][BITS_PER_WORD-1:0] s_data,

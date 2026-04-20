@@ -2,7 +2,7 @@
 
 module tb_uart_rx;
 
-  localparam  CLKS_PER_BIT = 4, //200_000_000/9600
+  localparam  CLKS_PER_BIT     = 4, //200_000_000/9600
               W_OUT            = 16,
               BITS_PER_WORD    = 8,
               NUM_WORDS        = W_OUT/BITS_PER_WORD,

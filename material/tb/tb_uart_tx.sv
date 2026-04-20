@@ -1,7 +1,7 @@
 `timescale 1ns/1ps
 
 module tb_uart_tx;
-  localparam  CLKS_PER_BIT = 4, //200_000_000/9600
+  localparam  CLKS_PER_BIT     = 4, //200_000_000/9600
               W_OUT            = 16,
               BITS_PER_WORD    = 8,
               PACKET_SIZE      = BITS_PER_WORD+5,
