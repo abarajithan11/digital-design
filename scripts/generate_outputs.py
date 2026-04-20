@@ -20,7 +20,7 @@ def parse_design_entry(design_numbered: str, repo: Path) -> dict:
     tb_files = [line for line in flist_lines if line.startswith("tb/")]
 
     number, design_base = design_numbered.split("_", 1)
-    display_name = design_base.replace("_", " ").upper()
+    display_name = design_base.replace("_", " ").title()
     heading = f"{number}. {display_name}"
 
     return {
@@ -73,29 +73,28 @@ collects their outputs and displays them here. To reproduce this on your machine
 
         lines.extend([f'''## {heading}
 
-### Source files
+**Source files**
 
 - File List : [{flist_rel}]({repo_root}{flist_rel})
 - Top RTL Design : [{top_rtl_rel}]({repo_root}{top_rtl_rel})
 - Top Testbench : [{top_tb_rel}]({repo_root}{top_tb_rel})
 
-### Run results
+**Run results**
 
 - Simulation: {sim_result}, RTL2GDS: {rtl2gds_result}
 - Artefacts : [VCD]({full_vcd_link}), [Full SVG]({full_svg_link}), [GDS]({full_gds_link}), [GDS Logs]({gds_logs_link})
 
-### Waveform (0-10 ns)
+**Waveform (0-10 ns)**
 '''])
         if short_svg.exists():
             if full_svg.exists():
-                lines.append(f"[View full waveform](_static/design-outputs/{design_numbered}/{design_numbered}_full.svg)")
                 lines.append("")
             lines.append(f"![{design_numbered} waveform](_static/design-outputs/{design_numbered}/{design_numbered}_short.svg)")
         else:
             lines.append("Waveform SVG not generated.")
         lines.append("")
 
-        lines.extend(["### Layout Reports", ""])
+        lines.extend(["**Layout Reports**", ""])
 
         routing_path = f"_static/design-outputs/{design_numbered}/final_routing.webp"
         placement_path = f"_static/design-outputs/{design_numbered}/final_placement.webp"
@@ -141,7 +140,13 @@ def generate_outputs(repo: Path) -> None:
                 sim_statuses[name] = status.strip()
 
     # Discover designs from source tree
-    design_entries = [parse_design_entry(p.stem, repo) for p in sorted((repo / "material" / "designs").glob("*.f"))]
+    design_entries = [
+        parse_design_entry(p.stem, repo)
+        for p in sorted(
+            (repo / "material" / "designs").glob("*.f"),
+            key=lambda p: int(p.stem.split("_", 1)[0])
+        )
+    ]
     designs = [entry["design_numbered"] for entry in design_entries]
 
     if not designs:
