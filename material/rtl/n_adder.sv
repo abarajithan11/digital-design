@@ -8,7 +8,7 @@ module n_adder #(
   output logic signed [N-1:0] S,
   output logic co
 );
-  logic C [N:0];
+  logic [N:0] C;
   assign C[0] = ci;
   assign co = C[N];
 

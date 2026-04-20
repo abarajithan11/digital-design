@@ -73,14 +73,14 @@ collects their outputs and displays them here. To reproduce this on your machine
 - Simulation result: {sim_result}
 - RTL2GDS result: {rtl2gds_result}
 
-### Source files:
+### Source files
 
 - File List : [{flist_rel}]({repo_root}{flist_rel})
 - Top RTL Design : [{top_rtl_rel}]({repo_root}{top_rtl_rel})
 - Top Testbench : [{top_tb_rel}]({repo_root}{top_tb_rel})
 - Full waveform SVG : [view]({full_svg_link})
 
-### Simulation Waveform (First 10 ns)
+### Waveform (0-10 ns)
 '''])
         if short_svg.exists():
             if full_svg.exists():

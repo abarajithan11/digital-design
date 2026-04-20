@@ -16,8 +16,8 @@ SMALL_DESIGNS := full_adder not_gate flip_flop
 
 ifneq ($(filter $(DESIGN_NAME),$(SMALL_DESIGNS)),)
 
-export DIE_AREA ?= 0 0 20 20
-export CORE_AREA ?= 2 2 18 18
+export DIE_AREA ?= 0 0 3.5 3.5
+export CORE_AREA ?= 0.5 0.5 2.5 2.5
 
 else
 
