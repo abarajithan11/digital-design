@@ -12,9 +12,19 @@ export TB_FILES ?= $(filter /repo/material/tb/%,$(DESIGN_FILES))
 
 # Tiny ASAP7 designs can floorplan into too few rows for the shared M5/M6 PDN
 # geometry, so keep a small-design allowlist with a safer utilization target.
-SMALL_DESIGNS := full_adder
+SMALL_DESIGNS := full_adder not_gate flip_flop
+
+ifneq ($(filter $(DESIGN_NAME),$(SMALL_DESIGNS)),)
+
+export DIE_AREA ?= 0 0 20 20
+export CORE_AREA ?= 2 2 18 18
+
+else
 
 export CORE_UTILIZATION ?= $(if $(filter $(DESIGN_NAME),$(SMALL_DESIGNS)),15,50)
 export CORE_ASPECT_RATIO ?= 1
 export CORE_MARGIN ?= 1
+
+endif
+
 export PLACE_DENSITY ?= 0.60
