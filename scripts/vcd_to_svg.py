@@ -5,6 +5,7 @@ import argparse
 import json
 from pathlib import Path
 import re
+import xml.etree.ElementTree as ET
 
 import wavedrom
 from vcdvcd import VCDVCD
@@ -83,6 +84,50 @@ def _encode_bus(samples):
     return "".join(wave), data
 
 
+def _force_white_background(svg_path: Path) -> None:
+    tree = ET.parse(svg_path)
+    root = tree.getroot()
+
+    if root.tag.startswith("{"):
+        ns_uri = root.tag.split("}", 1)[0][1:]
+        ns = {"svg": ns_uri}
+    else:
+        ns_uri = ""
+        ns = {}
+
+    def qname(tag: str) -> str:
+        return f"{{{ns_uri}}}{tag}" if ns_uri else tag
+
+    width = root.get("width", "100%")
+    height = root.get("height", "100%")
+
+    existing_bg = None
+    for child in list(root):
+        if child.tag == qname("rect") and child.get("data-codex-bg") == "white":
+            existing_bg = child
+            break
+
+    if existing_bg is None:
+        bg = ET.Element(
+            qname("rect"),
+            {
+                "data-codex-bg": "white",
+                "x": "0",
+                "y": "0",
+                "width": width,
+                "height": height,
+                "fill": "#ffffff",
+            },
+        )
+        root.insert(0, bg)
+    else:
+        existing_bg.set("width", width)
+        existing_bg.set("height", height)
+        existing_bg.set("fill", "#ffffff")
+
+    tree.write(svg_path, encoding="utf-8", xml_declaration=True)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--vcd", required=True)
@@ -147,6 +192,7 @@ def main() -> None:
     out.parent.mkdir(parents=True, exist_ok=True)
     svg = wavedrom.render(json.dumps(source))
     svg.saveas(str(out))
+    _force_white_background(out)
 
 
 if __name__ == "__main__":

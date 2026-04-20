@@ -5,7 +5,7 @@ SHELL := /bin/bash
 USR       := $(shell id -un)
 CONTAINER := orfs-$(USR)
 
-DESIGN ?= adder
+DESIGN ?= alu
 DESIGN_BASE := $(DESIGN)
 DESIGN_NUMBERED := $(basename $(notdir $(firstword $(wildcard designs/*_$(DESIGN_BASE).f))))
 PLATFORM ?= asap7
