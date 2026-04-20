@@ -34,7 +34,7 @@ def parse_design_entry(design_numbered: str, repo: Path) -> dict:
 
 def build_markdown(designs_data: list[dict], assets_root: Path) -> list[str]:
     """Return markdown lines for all designs given pre-resolved data."""
-    lines = f"""# Design Outputs
+    lines = f"""# Design Examples
 
 For each SystemVerilog design available in the course repository, our GitHub Actions flow runs
 
@@ -146,7 +146,7 @@ def generate_outputs(repo: Path) -> None:
 
     if not designs:
         docs_md.write_text(
-            "# Design Outputs\n\nNo designs found under material/designs.\n",
+            "# Design Examples\n\nNo designs found under material/designs.\n",
             encoding="utf-8",
         )
         return
