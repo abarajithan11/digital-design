@@ -7,3 +7,4 @@ out/
 .codex
 __pycache__
 docs/design_outputs.md
+*.vcd
