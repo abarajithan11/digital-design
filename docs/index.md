@@ -14,6 +14,8 @@ Along the way, you will experience the joy of designing real digital circuits an
 It is the first step in your digital design journey towards more advanced courses at the university, bigger projects, and eventually the many career paths in one of today’s most exciting and in-demand areas of technology.
 :::
 
+### Pages
+
 ```{toctree}
 :maxdepth: 1
 
@@ -62,8 +64,8 @@ SystemVerilog/Verilog is one of the most complex languages ever, with a lot of h
 
 ## Final Projects
 
-- **FIR Filter on FPGA to extract bass/treble from your favorite song** - Worked example (gradually built in our lectures and discussions)
-- **A fully-parallel neural network accelerator on FPGA to classify handwritten numbers** - Guided project (you will build as a series of guided assignments)
+- **FIR Filter on FPGA to extract bass/treble from your favorite song** - A Worked example gradually built through our lectures and discussions
+- **A fully-parallel neural network accelerator on FPGA to classify handwritten numbers** - The project you will gradually build as a series of guided assignments
   - Simple fixed-point quantization and ReLU: *Week 2 - Combinational Circuits Assignment*
   - Adder Tree, Vector Multiply-Adder: *Week 3 - Sequential Circuits Assignment*
   - Fully-parallel dense layer, neural network, AXI-Stream: *Week 4 - Practical Circuits Assignment*
