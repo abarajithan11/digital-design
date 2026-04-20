@@ -3,3 +3,5 @@ rtl/uart_rx.sv
 rtl/uart_tx.sv
 rtl/down_counter.sv
 tb/tb_uart_echo.sv
+tb/vip_uart_rx.sv
+tb/vip_uart_tx.sv
