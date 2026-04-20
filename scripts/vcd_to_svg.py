@@ -48,6 +48,13 @@ def _display_name(name: str) -> str:
     return ".".join(parts) if parts else name
 
 
+def _scope_depth(name: str) -> int:
+    parts = name.split(".")
+    if parts and re.fullmatch(r"tb_[A-Za-z0-9_]+", parts[0]):
+        parts = parts[1:]
+    return max(0, len(parts) - 1)
+
+
 def _encode_scalar(samples):
     wave = []
     prev = None
@@ -139,10 +146,14 @@ def main() -> None:
     ap.add_argument("--sample-rate", type=int, default=128)
     ap.add_argument("--hscale", type=int, default=1)
     ap.add_argument("--max-signals", type=int, default=64)
+    ap.add_argument("--max-depth", type=int)
     args = ap.parse_args()
 
     vcd = VCDVCD(args.vcd, store_tvs=True)
-    signals = [s for s in vcd.signals if getattr(vcd[s], "tv", [])][: args.max_signals]
+    signals = [s for s in vcd.signals if getattr(vcd[s], "tv", [])]
+    if args.max_depth is not None:
+        signals = [s for s in signals if _scope_depth(s) <= args.max_depth]
+    signals = signals[: args.max_signals]
     if not signals:
         raise RuntimeError("No waveform events found in VCD")
 

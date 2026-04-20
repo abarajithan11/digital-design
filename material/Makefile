@@ -82,7 +82,8 @@ wave_svg: sim
 		--end "$(WAVE_SHORT_END)" \
 		--window "$(WAVE_WINDOW)" \
 		--sample-rate "$(WAVE_SAMPLE)" \
-		--hscale "$(WAVE_HSCALE)"
+		--hscale "$(WAVE_HSCALE)" \
+		--max-depth 1
 	python3 "$(CONT_REPO)/scripts/vcd_to_svg.py" \
 		--vcd "$(WAVE_VCD)" \
 		--svg "$(WAVE_SVG_FULL)" \

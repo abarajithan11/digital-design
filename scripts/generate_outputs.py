@@ -64,6 +64,8 @@ collects their outputs and displays them here. To reproduce this on your machine
         short_svg = dst / f"{design_numbered}_short.svg"
         full_svg = dst / f"{design_numbered}_full.svg"
         full_svg_link = f"_static/design-outputs/{design_numbered}/{design_numbered}_full.svg"
+        full_vcd = dst / f"{design_numbered}.vcd"
+        full_vcd_link = f"_static/design-outputs/{design_numbered}/{design_numbered}.vcd"
         flist_rel = d["flist_rel"]
         top_rtl_rel = d["top_rtl_rel"]
         top_tb_rel = d["top_tb_rel"]
@@ -78,7 +80,8 @@ collects their outputs and displays them here. To reproduce this on your machine
 - File List : [{flist_rel}]({repo_root}{flist_rel})
 - Top RTL Design : [{top_rtl_rel}]({repo_root}{top_rtl_rel})
 - Top Testbench : [{top_tb_rel}]({repo_root}{top_tb_rel})
-- Full waveform SVG : [view]({full_svg_link})
+- Full waveform VCD : [download]({full_vcd_link})
+- Full waveform SVG : [download]({full_svg_link})
 
 ### Waveform (0-10 ns)
 '''])
@@ -162,6 +165,10 @@ def generate_outputs(repo: Path) -> None:
         if sim_svg_full.exists():
             shutil.copy2(sim_svg_full, dst / f"{design_numbered}_full.svg")
 
+        sim_vcd = sim_assets_root / design_numbered / f"{design_numbered}.vcd"
+        if sim_vcd.exists():
+            shutil.copy2(sim_vcd, dst / f"{design_numbered}.vcd")
+
         local_reports_dir = local_gds_assets_root / design_numbered / "base"
         for image in LAYOUT_IMAGES:
             source_image = local_reports_dir / image
@@ -179,7 +186,7 @@ def generate_outputs(repo: Path) -> None:
         if raw_status is None and per_design_sim_status.exists():
             raw_status = per_design_sim_status.read_text(encoding="utf-8").strip()
         if raw_status is None:
-            if sim_svg_short.exists() or sim_svg_full.exists() or (sim_assets_root / design_numbered / f"{design_numbered}.vcd").exists():
+            if sim_svg_short.exists() or sim_svg_full.exists() or sim_vcd.exists():
                 raw_status = "pass"
             else:
                 raw_status = "unknown"
