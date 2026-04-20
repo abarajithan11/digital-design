@@ -64,24 +64,25 @@ collects their outputs and displays them here. To reproduce this on your machine
         short_svg = dst / f"{design_numbered}_short.svg"
         full_svg = dst / f"{design_numbered}_full.svg"
         full_svg_link = f"_static/design-outputs/{design_numbered}/{design_numbered}_full.svg"
-        full_vcd = dst / f"{design_numbered}.vcd"
         full_vcd_link = f"_static/design-outputs/{design_numbered}/{design_numbered}.vcd"
+        full_gds_link = f"_static/design-outputs/{design_numbered}/{design_numbered}.gds"
+        gds_logs_link = f"_static/design-outputs/{design_numbered}/logs.zip"
         flist_rel = d["flist_rel"]
         top_rtl_rel = d["top_rtl_rel"]
         top_tb_rel = d["top_tb_rel"]
 
         lines.extend([f'''## {heading}
 
-- Simulation result: {sim_result}
-- RTL2GDS result: {rtl2gds_result}
-
 ### Source files
 
 - File List : [{flist_rel}]({repo_root}{flist_rel})
 - Top RTL Design : [{top_rtl_rel}]({repo_root}{top_rtl_rel})
 - Top Testbench : [{top_tb_rel}]({repo_root}{top_tb_rel})
-- Full waveform VCD : [download]({full_vcd_link})
-- Full waveform SVG : [download]({full_svg_link})
+
+### Run results
+
+- Simulation: {sim_result}, RTL2GDS: {rtl2gds_result}
+- Artefacts : [VCD]({full_vcd_link}), [Full SVG]({full_svg_link}), [GDS]({full_gds_link}), [GDS Logs]({gds_logs_link})
 
 ### Waveform (0-10 ns)
 '''])
@@ -170,6 +171,18 @@ def generate_outputs(repo: Path) -> None:
             shutil.copy2(sim_vcd, dst / f"{design_numbered}.vcd")
 
         local_reports_dir = local_gds_assets_root / design_numbered / "base"
+        gds_file = gds_assets_root / design_numbered / f"{design_numbered}.gds"
+        if not gds_file.exists():
+            local_gds_file = repo / "material" / "openroad" / "work" / "results" / "asap7" / design_numbered / "base" / "6_final.gds"
+            if local_gds_file.exists():
+                gds_file = local_gds_file
+        if gds_file.exists():
+            shutil.copy2(gds_file, dst / f"{design_numbered}.gds")
+
+        gds_logs_file = gds_assets_root / design_numbered / "logs.zip"
+        if gds_logs_file.exists():
+            shutil.copy2(gds_logs_file, dst / "logs.zip")
+
         for image in LAYOUT_IMAGES:
             source_image = local_reports_dir / image
             if not source_image.exists():

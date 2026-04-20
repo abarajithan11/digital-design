@@ -131,6 +131,13 @@ gds_output:
 		printf '%s\n' "fail" > "out/gds-assets/$(DESIGN)/status.txt"; \
 		status=1; \
 	fi; \
+	gds_src="material/openroad/work/results/asap7/$(DESIGN)/base/6_final.gds"; \
+	[ -f "$$gds_src" ] && cp "$$gds_src" "out/gds-assets/$(DESIGN)/$(DESIGN).gds" || true; \
+	logs_src="material/openroad/work/logs/asap7/$(DESIGN)/base"; \
+	rm -f "out/gds-assets/$(DESIGN)/logs.zip"; \
+	if [ -d "$$logs_src" ]; then \
+		zip -qr "out/gds-assets/$(DESIGN)/logs.zip" "$$logs_src" || true; \
+	fi; \
 	for img in final_routing.webp final_placement.webp final_worst_path.webp; do \
 		src="material/openroad/work/reports/asap7/$(DESIGN)/base/$$img"; \
 		[ -f "$$src" ] && cp "$$src" "out/gds-assets/$(DESIGN)/$$img" || true; \
