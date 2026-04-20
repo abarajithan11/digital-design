@@ -9,10 +9,8 @@ module n_adder #(
   output logic co
 );
   logic [N:0] C;
-  assign C[0] = ci;
-  assign co = C[N];
-
   genvar i; 
+  
   for (i=0; i<N; i=i+1) begin:add
     // full_adder fa (A[i],B[i],C[i],C[i+1],S[i]);
     full_adder fa (
@@ -23,4 +21,10 @@ module n_adder #(
       .sum  (S[i  ])
     );
   end
+
+  always_comb begin
+    C[0] = ci;
+    co = C[N];
+  end
+
 endmodule

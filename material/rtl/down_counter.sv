@@ -7,8 +7,8 @@ module down_counter #(parameter WIDTH = 8)(
   output logic last, last_clk
 );
   logic [WIDTH-1:0] max;
-  wire  [WIDTH-1:0] count_next = last ? max : count - 1;
-
+  logic [WIDTH-1:0] count_next;
+  
   always_ff @(posedge clk or negedge rstn) begin
     if (!rstn) {count, max, last} <= '0;
     else if (clear) begin
@@ -22,6 +22,9 @@ module down_counter #(parameter WIDTH = 8)(
     end
   end
 
-  always_comb last_clk = en && last && rstn && !clear;
+  always_comb begin
+    count_next = last ? max : count - 1;
+    last_clk = en && last && rstn && !clear;
+  end
 
 endmodule
