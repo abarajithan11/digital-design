@@ -10,11 +10,12 @@ module uart_rx #(
   output logic [W_OUT-1:0] m_data
 );
   localparam NUM_WORDS = W_OUT/BITS_PER_WORD;
+  localparam BITS_WORDS = $clog2(NUM_WORDS) == 0 ? 1 : $clog2(NUM_WORDS);
 
   logic bw_clr;
-  logic [$clog2(CLKS_PER_BIT)-1:0] c, c_max;
-  logic [$clog2(BITS_PER_WORD)-1:0]    b, b_max;
-  logic [$clog2(NUM_WORDS)-1:0]        w, w_max;
+  logic [$clog2(CLKS_PER_BIT) -1:0] c, c_max;
+  logic [$clog2(BITS_PER_WORD)-1:0] b, b_max;
+  logic [BITS_WORDS-1:0]            w, w_max;
   logic c_en, c_clr, c_last, c_last_clk;
   logic b_en, b_clr, b_last, b_last_clk;
   logic w_en, w_clr, w_last, w_last_clk;

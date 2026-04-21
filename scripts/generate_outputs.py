@@ -54,8 +54,7 @@ In this course, digital design concepts and SystemVerilog features will be intro
 14. UART TX [[File List](https://github.com/abarajithan11/digital-design/blob/main/material/designs/14_uart_tx.f)][[RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/uart_tx.sv)][[TB](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_uart_tx.sv)]
 15. UART Echo (RX + TX) [[File List](https://github.com/abarajithan11/digital-design/blob/main/material/designs/15_uart_echo.f)][[RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/uart_echo.v)][[TB](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_uart_echo.sv)]
 16. FIR Filter [[File List](https://github.com/abarajithan11/digital-design/blob/main/material/designs/16_fir_filter.f)][[RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/fir_filter.sv)][[TB](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_fir_filter.sv)]
-17. FIR Filter - Retimed
-18. UART RX + TX + FIR Filter
+17. UART RX + TX + FIR Filter [[File List](https://github.com/abarajithan11/digital-design/blob/main/material/designs/17_sys_fir_filter.f)][[RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/sys_fir_filter.sv)][[TB](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_sys_fir_filter.sv)]
 
 ## Waveforms and ASAP7 GDS
 
