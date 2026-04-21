@@ -10,6 +10,7 @@ LAYOUT_IMAGES = [
 ]
 
 REPO_URL = "https://github.com/abarajithan11/digital-design"
+ROOT_MAT = "https://github.com/abarajithan11/digital-design/blob/main/material"
 
 
 def parse_design_entry(design_numbered: str, repo: Path) -> dict:
@@ -40,23 +41,23 @@ In this course, digital design concepts and SystemVerilog features will be intro
 
 | # | Design | File List | RTL | TB | Sim & GDS |
 |---|---|---|---|---|---|
-| 1 | Not Gate | [link](https://github.com/abarajithan11/digital-design/blob/main/material/designs/1_not_gate.f) | [link](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/not_gate.sv) | [link](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_not_gate.sv) | [link](#1-not-gate) |
-| 2 | Full Adder | [link](https://github.com/abarajithan11/digital-design/blob/main/material/designs/2_full_adder.f) | [link](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/full_adder.sv) | [link](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_full_adder.sv) | [link](#2-full-adder) |
-| 3 | N-Adder | [link](https://github.com/abarajithan11/digital-design/blob/main/material/designs/3_n_adder.f) | [link](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/n_adder.sv) | [link](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_n_adder.sv) | [link](#3-n-adder) |
-| 4 | ALU | [link](https://github.com/abarajithan11/digital-design/blob/main/material/designs/4_alu.f) | [link](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/alu.sv) | [link](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_alu.sv) | [link](#4-alu) |
+| 1 | Not Gate | [link]({ROOT_MAT}/designs/1_not_gate.f) | [link]({ROOT_MAT}/rtl/not_gate.sv) | [link]({ROOT_MAT}/tb/tb_not_gate.sv) | [link](not-gate) |
+| 2 | Full Adder | [link]({ROOT_MAT}/designs/2_full_adder.f) | [link]({ROOT_MAT}/rtl/full_adder.sv) | [link]({ROOT_MAT}/tb/tb_full_adder.sv) | [link](full-adder) |
+| 3 | N-Adder | [link]({ROOT_MAT}/designs/3_n_adder.f) | [link]({ROOT_MAT}/rtl/n_adder.sv) | [link]({ROOT_MAT}/tb/tb_n_adder.sv) | [link](n-adder) |
+| 4 | ALU | [link]({ROOT_MAT}/designs/4_alu.f) | [link]({ROOT_MAT}/rtl/alu.sv) | [link]({ROOT_MAT}/tb/tb_alu.sv) | [link](alu) |
 | 5 | Encoder | — | — | — | — |
 | 6 | Decoder | — | — | — | — |
 | 7 | Verilog Functions | — | — | — | — |
-| 8 | Flip Flop | [link](https://github.com/abarajithan11/digital-design/blob/main/material/designs/8_flip_flop.f) | [link](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/flip_flop.sv) | [link](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_flip_flop.sv) | [link](#8-flip-flop) |
-| 9 | Up counter | [link](https://github.com/abarajithan11/digital-design/blob/main/material/designs/9_up_counter.f) | [link](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/up_counter.sv) | [link](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_up_counter.sv) | [link](#9-up-counter) |
-| 10 | Binary Reduction Tree to find minimum of a vector `y = min(X)` | [link](https://github.com/abarajithan11/digital-design/blob/main/material/designs/18_reduction_tree_min.f) | [link](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/reduction_tree_min.sv) | [link](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_reduction_tree_min.sv) | [link](#18-reduction-tree-min) |
-| 11 | Parallel to Serial Converter | [link](https://github.com/abarajithan11/digital-design/blob/main/material/designs/11_parallel_to_serial.f) | [link](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/parallel_to_serial.sv) | [link](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_parallel_to_serial.sv) | [link](#11-parallel-to-serial) |
-| 12 | Down counter | [link](https://github.com/abarajithan11/digital-design/blob/main/material/designs/12_down_counter.f) | [link](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/down_counter.sv) | [link](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_down_counter.sv) | [link](#12-down-counter) |
-| 13 | UART RX | [link](https://github.com/abarajithan11/digital-design/blob/main/material/designs/13_uart_rx.f) | [link](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/uart_rx.sv) | [link](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_uart_rx.sv) | [link](#13-uart-rx) |
-| 14 | UART TX | [link](https://github.com/abarajithan11/digital-design/blob/main/material/designs/14_uart_tx.f) | [link](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/uart_tx.sv) | [link](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_uart_tx.sv) | [link](#14-uart-tx) |
-| 15 | UART Echo (RX + TX) | [link](https://github.com/abarajithan11/digital-design/blob/main/material/designs/15_uart_echo.f) | [link](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/uart_echo.v) | [link](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_uart_echo.sv) | [link](#15-uart-echo) |
-| 16 | FIR Filter [Retimed RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/fir_filter_retimed.sv) | [link](https://github.com/abarajithan11/digital-design/blob/main/material/designs/16_fir_filter.f) | [link](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/fir_filter.sv) | [link](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_fir_filter.sv) | [link](#16-fir-filter) |
-| 17 | UART RX + TX + FIR Filter | [link](https://github.com/abarajithan11/digital-design/blob/main/material/designs/17_sys_fir_filter.f) | [link](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/sys_fir_filter.sv) | [link](https://github.com/abarajithan11/digital-design/blob/main/material/tb/tb_sys_fir_filter.sv) | [link](#17-sys-fir-filter) |
+| 8 | Flip Flop | [link]({ROOT_MAT}/designs/8_flip_flop.f) | [link]({ROOT_MAT}/rtl/flip_flop.sv) | [link]({ROOT_MAT}/tb/tb_flip_flop.sv) | [link](flip-flop) |
+| 9 | Up counter | [link]({ROOT_MAT}/designs/9_up_counter.f) | [link]({ROOT_MAT}/rtl/up_counter.sv) | [link]({ROOT_MAT}/tb/tb_up_counter.sv) | [link](up-counter) |
+| 10 | Binary Reduction Tree | [link]({ROOT_MAT}/designs/18_reduction_tree_min.f) | [link]({ROOT_MAT}/rtl/reduction_tree_min.sv) | [link]({ROOT_MAT}/tb/tb_reduction_tree_min.sv) | [link](reduction-tree-min) |
+| 11 | Parallel to Serial Converter | [link]({ROOT_MAT}/designs/11_parallel_to_serial.f) | [link]({ROOT_MAT}/rtl/parallel_to_serial.sv) | [link]({ROOT_MAT}/tb/tb_parallel_to_serial.sv) | [link](parallel-to-serial) |
+| 12 | Down counter | [link]({ROOT_MAT}/designs/12_down_counter.f) | [link]({ROOT_MAT}/rtl/down_counter.sv) | [link]({ROOT_MAT}/tb/tb_down_counter.sv) | [link](down-counter) |
+| 13 | UART RX | [link]({ROOT_MAT}/designs/13_uart_rx.f) | [link]({ROOT_MAT}/rtl/uart_rx.sv) | [link]({ROOT_MAT}/tb/tb_uart_rx.sv) | [link](uart-rx) |
+| 14 | UART TX | [link]({ROOT_MAT}/designs/14_uart_tx.f) | [link]({ROOT_MAT}/rtl/uart_tx.sv) | [link]({ROOT_MAT}/tb/tb_uart_tx.sv) | [link](uart-tx) |
+| 15 | UART Echo (RX + TX) | [link]({ROOT_MAT}/designs/15_uart_echo.f) | [link]({ROOT_MAT}/rtl/uart_echo.v) | [link]({ROOT_MAT}/tb/tb_uart_echo.sv) | [link](uart-echo) |
+| 16 | FIR Filter [Retimed RTL]({ROOT_MAT}/rtl/fir_filter_retimed.sv) | [link]({ROOT_MAT}/designs/16_fir_filter.f) | [link]({ROOT_MAT}/rtl/fir_filter.sv) | [link]({ROOT_MAT}/tb/tb_fir_filter.sv) | [link](fir-filter) |
+| 17 | UART RX + TX + FIR Filter | [link]({ROOT_MAT}/designs/17_sys_fir_filter.f) | [link]({ROOT_MAT}/rtl/sys_fir_filter.sv) | [link]({ROOT_MAT}/tb/tb_sys_fir_filter.sv) | [link](sys-fir-filter) |
 
 ## Waveforms and ASAP7 GDS
 
