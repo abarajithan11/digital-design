@@ -69,6 +69,9 @@ SystemVerilog/Verilog is one of the most complex languages ever, with a lot of h
 ## Final Projects
 
 - **FIR Filter on FPGA to extract bass/treble from your favorite song** - A Worked example gradually built through our lectures and discussions
+
+![Filter Image](https://media.abapages.com/course-site/filter.png)
+
 - **A fully-parallel neural network accelerator on FPGA to classify handwritten numbers** - The project you will gradually build as a series of guided assignments
   - Simple fixed-point quantization and ReLU: *Week 2 - Combinational Circuits Assignment*
   - Adder Tree, Vector Multiply-Adder: *Week 3 - Sequential Circuits Assignment*
