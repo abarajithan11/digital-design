@@ -1,6 +1,6 @@
 # Intro to Digital Design - An End to End Approach
 
-This is a five-week course, with 30 hours of lectures. We expect the following prior knowledge from the students:
+This is a five-week course, with 30 hours of lectures. We expect the following prior knowledge:
 
 * Converting a number between decimal, binary and hexadecimal representations
 * Basic knowledge on logical operations (AND, OR, NAND, XOR) and truth tables
@@ -13,8 +13,14 @@ Along the way, you will experience the joy of designing real digital circuits an
 It is the first step in your journey towards more advanced courses at the university, bigger projects, and eventually the many career paths in one of today’s most exciting and in-demand areas of technology.
 :::
 
+```{figure} https://media.abapages.com/course-site/n_adder.png
+:alt: 8-bit ripple carry adder circuit in 7nm (ASAP7) visualized in 3D
+:align: center
+:figwidth: image
+:width: 100%
+
 8-bit ripple carry adder circuit in 7nm (ASAP7) visualized in 3D
-![GDS](https://media.abapages.com/course-site/n_adder.png)
+```
 
 ## Learning Outcomes
 
@@ -89,7 +95,7 @@ SystemVerilog/Verilog is one of the most complex languages ever, with a lot of h
   * [SystemVerilog Testbenches](https://github.com/abarajithan11/digital-design/tree/main/material/tb)
   * [Outputs](design_outputs.md)
 
-### Pages
+## Pages
 
 ```{toctree}
 :maxdepth: 1
