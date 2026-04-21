@@ -1,40 +1,48 @@
 `timescale 1ns / 1ps
 
 module reduction_tree_min #(
-    parameter  N = 8, W_X = 8,
-    localparam DEPTH = $clog2(N), N_PAD = 2**DEPTH
+    parameter  N   = 8,
+    parameter  W_X = 8,
+    localparam DEPTH = $clog2(N)
   )(
     input  logic clk, rstn, cen,
     input  logic [N-1:0][W_X-1:0] x,
     output logic        [W_X-1:0] y
   );
 
-  // Pad with the largest positive value so padded lanes never become the min
-  localparam logic [W_X-1:0] MAX_VAL = {1'b0, {(W_X-1){1'b1}}};
-
-  genvar n, d, a;
-  logic [N_PAD-1:0][W_X-1:0] x_pad ;
-  logic [DEPTH:0][N_PAD-1:0][W_X-1:0] tree;
+  genvar level, pos;
+  logic [DEPTH:0][N-1:0][W_X-1:0] tree;
 
   always_comb begin
-
-    // padding
-    x_pad[N-1:0] = x;
-    for (int i = 0; i < N_PAD; i = i + 1) begin
-      if (i >= N) x_pad[i] = MAX_VAL;
-      tree[0][i] = x_pad[i];
-    end
-
+    for (int i = 0; i < N; i++)
+      tree[0][i] = x[i];
     y = tree[DEPTH][0];
   end
 
-  // Reduction tree
-  for (d = 0; d < DEPTH; d = d + 1)
-    for (a = 0; a < N_PAD/2**(d+1); a = a + 1)
-      always_ff @(posedge clk or negedge rstn)
-        if (!rstn) tree[d+1][a] <= 0;
-        else if (cen) tree[d+1][a] <= ($signed(tree[d][2*a]) < $signed(tree[d][2*a+1]))
-                                    ? tree[d][2*a]
-                                    : tree[d][2*a+1];
+  for (level = 0; level < DEPTH; level++) begin : gen_d
+    localparam CURR_N = (N + 2**level - 1) / 2**level;
+    localparam NEXT_N = (CURR_N + 1) / 2;
 
+    for (pos = 0; pos < NEXT_N; pos++) begin : gen_a
+      always_ff @(posedge clk or negedge rstn) begin
+
+        int i_left, i_right;
+        logic [W_X-1:0] vl, vr;
+        
+        if (!rstn) tree[level+1][pos] <= '0;
+        else if (cen) begin
+          i_left = 2*pos;
+          i_right = i_left + 1;
+
+          if (i_right < CURR_N) begin
+            vl = tree[level][i_left];
+            vr = tree[level][i_right];
+            tree[level+1][pos] <= ($signed(vl) < $signed(vr)) ? vl : vr;
+          end else begin
+            tree[level+1][pos] <= tree[level][i_left];
+          end
+        end
+      end
+    end
+  end
 endmodule
