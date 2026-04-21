@@ -32,7 +32,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     z3 \
  && rm -rf /var/lib/apt/lists/*
 
-RUN python3 -m pip install --no-cache-dir wavedrom vcdvcd
+RUN python3 -m pip install --no-cache-dir \
+    wavedrom \
+    vcdvcd \
+    numpy \
+    scipy \
+    matplotlib
 
 RUN git clone --depth 1 --single-branch --branch "${VERILATOR_VERSION}" https://github.com/verilator/verilator.git /tmp/verilator \
  && cd /tmp/verilator \

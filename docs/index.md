@@ -58,17 +58,19 @@ The following will be taught through will be introduced through increasing compl
 - randomizing with constraints, 
 - transactional tbs: simple driver/monitor, basic OOP
 
-:::{admonition} Forbidden in this Course: Keywords & Features of SystemVerilog 
+:::{admonition} Keywords & Features of SystemVerilog Avoided in this Course
 
 `reg`, `wire`, `assign`, `always`, unpacked arrays
 
-SystemVerilog/Verilog is one of the most complex languages ever, with a lot of historical baggage and countless footguns. To avoid wasting our limited time in debating those, we will avoid the above. However, I will create a page here explaining each of their use in detail for the sake of completion.
+SystemVerilog/Verilog is one of the most complex languages ever, with a lot of historical baggage and countless footguns. To prevent wasting our limited time in debating those, we will avoid the above. However, I will create a page here explaining each of their use in detail for the sake of completion.
 :::
 
 
 ## Final Projects
 
 - **FIR Filter on FPGA to extract bass/treble from your favorite song** - A Worked example gradually built through our lectures and discussions
+
+[[Original song](https://github.com/abarajithan11/digital-design-content/raw/main/chill_sub.wav)] [[Bass extracted with a 100-tap, 8-bit filter of 800Hz cutoff](https://media.abapages.com/course-site/bass_only_8bit.wav)]
 
 ![Filter Image](https://media.abapages.com/course-site/filter.png)
 

@@ -8,4 +8,10 @@ out/
 __pycache__
 docs/design_outputs.md
 *.vcd
+
+material/data/*.wav
+material/data/coef.svh
 material/data/y.txt
+material/data/x_music.txt
+material/data/y_exp.txt
+material/data/filter.png

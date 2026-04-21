@@ -57,7 +57,7 @@ In this course, digital design concepts and SystemVerilog features will be intro
 | 14 | UART TX | [link]({ROOT_MAT}/designs/14_uart_tx.f) | [link]({ROOT_MAT}/rtl/uart_tx.sv) | [link]({ROOT_MAT}/tb/tb_uart_tx.sv) | [link](uart-tx) |
 | 15 | UART Echo (RX + TX) | [link]({ROOT_MAT}/designs/15_uart_echo.f) | [link]({ROOT_MAT}/rtl/uart_echo.v) | [link]({ROOT_MAT}/tb/tb_uart_echo.sv) | [link](uart-echo) |
 | 16 | FIR Filter [Retimed RTL]({ROOT_MAT}/rtl/fir_filter_retimed.sv) | [link]({ROOT_MAT}/designs/16_fir_filter.f) | [link]({ROOT_MAT}/rtl/fir_filter.sv) | [link]({ROOT_MAT}/tb/tb_fir_filter.sv) | [link](fir-filter) |
-| 17 | UART RX + TX + FIR Filter | [link]({ROOT_MAT}/designs/17_sys_fir_filter.f) | [link]({ROOT_MAT}/rtl/sys_fir_filter.sv) | [link]({ROOT_MAT}/tb/tb_sys_fir_filter.sv) | [link](sys-fir-filter) |
+| 17 | UART RX + TX + FIR Filter [Python code for filtering]({ROOT_MAT}/py/sys_fir_filter_gen.py) | [link]({ROOT_MAT}/designs/17_sys_fir_filter.f) | [link]({ROOT_MAT}/rtl/sys_fir_filter.sv) | [link]({ROOT_MAT}/tb/tb_sys_fir_filter.sv) | [link](sys-fir-filter) |
 
 ## Waveforms and ASAP7 GDS
 

@@ -8,10 +8,10 @@ module sys_fir_filter #(
       PACKET_SIZE_TX = BITS_PER_WORD+5,
       WIDTH          = 8,
       FRAC           = 7,
-      N              = 5,
+      N              = 100,
       W_K            = 8,
     parameter [(N+1)*W_K-1:0] K = {
-      8'd1, 8'd2, 8'd3, 8'd4, 8'd5, 8'd6
+      `include "data/coef.svh"
     },
     localparam W_Y = WIDTH + W_K + $clog2(N+1)
   )(
