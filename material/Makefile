@@ -6,8 +6,12 @@ USR       := $(shell id -un)
 CONTAINER := orfs-$(USR)
 
 DESIGN ?= alu
-DESIGN_BASE := $(DESIGN)
-DESIGN_NUMBERED := $(basename $(notdir $(firstword $(wildcard designs/*_$(DESIGN_BASE).f))))
+DESIGN_INPUT := $(basename $(notdir $(DESIGN)))
+DESIGN_NUMBERED := $(basename $(notdir $(firstword \
+	$(wildcard designs/$(DESIGN_INPUT).f) \
+	$(wildcard designs/*_$(DESIGN_INPUT).f))))
+DESIGN_PREFIX := $(firstword $(subst _, ,$(DESIGN_NUMBERED)))
+DESIGN_BASE := $(if $(DESIGN_NUMBERED),$(patsubst $(DESIGN_PREFIX)_%,%,$(DESIGN_NUMBERED)),$(DESIGN_INPUT))
 PLATFORM ?= asap7
 
 HOST_MATERIAL := $(CURDIR)
@@ -48,7 +52,7 @@ WAVE_WINDOW  ?= 65536
 WAVE_SAMPLE  ?= 512
 WAVE_HSCALE  ?= 1
 
-.PHONY: require_container prepare gds sim sim_all gds_all sys_fir_sim gtkwave wave_svg clean show_layout show_layout_3d check_tools
+.PHONY: require_container prepare gds sim sim_all gds_all gtkwave wave_svg clean show_layout show_3d check_tools
 
 require_container:
 	test -f /.dockerenv
@@ -120,22 +124,12 @@ gds_all:
 show_layout: require_container
 	$(KLAYOUT_CMD) -l "$(PLATFORM_LYP)" "$(FINAL_GDS)"
 
-GDS3XTRUDE_EXE   ?= /usr/local/bin/gds3xtrude
-GDS3XTRUDE_TECH  ?= $(CONT_MATERIAL)/openroad/gds3xtrude/$(PLATFORM).layerstack
-GDS3XTRUDE_TOP   ?=
-GDS3XTRUDE_OUT   ?= $(RESULTS_DIR)/6_final.scad
-GDS3XTRUDE_FLAGS ?=
-
 show_3d: require_container
 	test -x "$(GDS3XTRUDE_EXE)"
 	test -f "$(FINAL_GDS)"
 	test -f "$(GDS3XTRUDE_TECH)"
 	echo "DISPLAY=$${DISPLAY:-<unset>}"
-	if [[ -n "$(GDS3XTRUDE_TOP)" ]]; then \
-		"$(GDS3XTRUDE_EXE)" -v --tech "$(GDS3XTRUDE_TECH)" --input "$(FINAL_GDS)" --cell "$(GDS3XTRUDE_TOP)" --output "$(GDS3XTRUDE_OUT)" --view $(GDS3XTRUDE_FLAGS); \
-	else \
-		"$(GDS3XTRUDE_EXE)" -v --tech "$(GDS3XTRUDE_TECH)" --input "$(FINAL_GDS)" --output "$(GDS3XTRUDE_OUT)" --view $(GDS3XTRUDE_FLAGS); \
-	fi
+	"$(GDS3XTRUDE_EXE)" -v --tech "$(GDS3XTRUDE_TECH)" --input "$(FINAL_GDS)" --cell "$(GDS3XTRUDE_TOP)" --output "$(GDS3XTRUDE_OUT)" --view $(GDS3XTRUDE_FLAGS)
 
 check_tools: require_container
 	echo "openroad: $$($(OPENROAD_EXE) -version 2>/dev/null | head -n 1)"
