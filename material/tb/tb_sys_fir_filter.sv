@@ -11,7 +11,6 @@ module tb_sys_fir_filter;
               W_Y              = WIDTH + W_K + $clog2(N),
               PACKET_SIZE_TX   = BITS_PER_WORD+5,
               N_WORDS          = WIDTH/BITS_PER_WORD,
-              RETIMED          = 1,
               NUM_EXP          = 10;
 
   typedef logic [N_WORDS-1:0][BITS_PER_WORD-1:0] data_t;
@@ -28,7 +27,6 @@ module tb_sys_fir_filter;
   initial forever #1 clk = !clk;
 
   sys_fir_filter #(
-    .RETIMED        (RETIMED),
     .CLKS_PER_BIT   (CLKS_PER_BIT),
     .BITS_PER_WORD  (BITS_PER_WORD),
     .PACKET_SIZE_TX (PACKET_SIZE_TX),

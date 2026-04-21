@@ -2,7 +2,7 @@
 
 module sys_fir_filter #(
     parameter
-      RETIMED        = 1,
+      RETIMED        = 0,
       CLKS_PER_BIT   = 4,
       BITS_PER_WORD  = 8,
       PACKET_SIZE_TX = BITS_PER_WORD+5,
