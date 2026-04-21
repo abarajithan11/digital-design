@@ -7,19 +7,20 @@ module sys_fir_filter #(
       BITS_PER_WORD  = 8,
       PACKET_SIZE_TX = BITS_PER_WORD+5,
       WIDTH          = 8,
+      FRAC           = 7,
       N              = 5,
-      W_K            = 3,
-    parameter logic [(N+1)*W_K-1:0] K = {
+      W_K            = 8,
+    parameter [(N+1)*W_K-1:0] K = {
       8'd1, 8'd2, 8'd3, 8'd4, 8'd5, 8'd6
     },
-    localparam W_Y = WIDTH + W_K + $clog2(N)
+    localparam W_Y = WIDTH + W_K + $clog2(N+1)
   )(
     input  wire clk, rstn, rx,
     output wire tx
   );
 
   wire valid;
-  wire [WIDTH-1:0] data_rx, data_tx;
+  wire [WIDTH-1:0] data_rx;
   wire [W_Y-1:0] y;
 
   uart_rx #(
@@ -48,8 +49,18 @@ module sys_fir_filter #(
     .y    (y)
   );
 
-  // Quantization
-  assign data_tx = y[W_Y-1 -: WIDTH];
+  wire [W_Y-1:0] y_shift;
+  wire [WIDTH-1:0] y_q;
+
+  localparam [WIDTH-1:0] MAX_Q = {1'b0, {(WIDTH-1){1'b1}}};
+  localparam [WIDTH-1:0] MIN_Q = {1'b1, {(WIDTH-1){1'b0}}};
+
+  localparam [W_Y-1:0] MAX_Q_EXT = {{(W_Y-WIDTH){1'b0}}, MAX_Q};
+  localparam [W_Y-1:0] MIN_Q_EXT = {{(W_Y-WIDTH){1'b1}}, MIN_Q};
+
+  assign y_shift = $signed(y) >>> FRAC;
+  assign y_q =  ($signed(y_shift) > $signed(MAX_Q_EXT)) ? MAX_Q :
+                ($signed(y_shift) < $signed(MIN_Q_EXT)) ? MIN_Q : y_shift[WIDTH-1:0];
 
   uart_tx #(
     .CLKS_PER_BIT  (CLKS_PER_BIT),
@@ -60,7 +71,7 @@ module sys_fir_filter #(
     .clk    (clk),
     .rstn   (rstn),
     .s_valid(valid),
-    .s_data (data_tx),
+    .s_data (y_q),
     .tx     (tx),
     .s_ready()
   );

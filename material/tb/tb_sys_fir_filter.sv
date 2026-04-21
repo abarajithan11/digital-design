@@ -6,6 +6,7 @@ module tb_sys_fir_filter;
   localparam  CLKS_PER_BIT     = 4,
               BITS_PER_WORD    = 8,
               WIDTH            = 8,
+              FRAC             = 7,
               W_K              = 4,
               N                = 3,
               W_Y              = WIDTH + W_K + $clog2(N),
@@ -19,7 +20,13 @@ module tb_sys_fir_filter;
   logic clk = 0, rstn = 0, rx, tx;
   data_t s_data, m_data;
   logic [W_Y-1:0] y_exp = 0;
-  logic [WIDTH-1:0] m_exp = 0;
+  logic [W_Y-1:0] y_exp_shift;
+  logic [WIDTH-1:0] y_exp_q;
+
+  localparam [WIDTH-1:0] MAX_Q = {1'b0, {(WIDTH-1){1'b1}}};
+  localparam [WIDTH-1:0] MIN_Q = {1'b1, {(WIDTH-1){1'b0}}};
+  localparam [W_Y-1:0] MAX_Q_EXT = {{(W_Y-WIDTH){1'b0}}, MAX_Q};
+  localparam [W_Y-1:0] MIN_Q_EXT = {{(W_Y-WIDTH){1'b1}}, MIN_Q};
 
   logic [WIDTH-1:0] zq [$];
   initial repeat(N+1) zq.push_back('0);
@@ -31,6 +38,7 @@ module tb_sys_fir_filter;
     .BITS_PER_WORD  (BITS_PER_WORD),
     .PACKET_SIZE_TX (PACKET_SIZE_TX),
     .WIDTH          (WIDTH),
+    .FRAC           (FRAC),
     .N              (N),
     .W_K            (W_K),
     .K              (K)
@@ -66,15 +74,18 @@ module tb_sys_fir_filter;
       y_exp = 0;
       for (int i = 0; i < N+1; i += 1)
         y_exp = $signed(y_exp) + $signed(zq[i]) * $signed(K[i]);
-      m_exp = y_exp[W_Y-1 -: WIDTH];
+
+      y_exp_shift = $signed(y_exp) >>> FRAC;
+      y_exp_q =   ($signed(y_exp_shift) > $signed(MAX_Q_EXT)) ? MAX_Q :
+                  ($signed(y_exp_shift) < $signed(MIN_Q_EXT)) ? MIN_Q : y_exp_shift[WIDTH-1:0];
 
       fork
         vip_rx.send_packet(s_data);
         vip_tx.recv_packet(m_data);
       join
 
-      assert (m_data == m_exp) $display("Outputs match: %p", m_data);
-      else $error("Expected: %p != Output: %p", m_exp, m_data);
+      assert (m_data == y_exp_q) $display("Outputs match: %p", m_data);
+      else $error("Expected: %p != Output: %p", y_exp_q, m_data);
 
       repeat ($urandom_range(1,20)) @(posedge clk);
     end
