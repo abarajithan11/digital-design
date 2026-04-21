@@ -3,9 +3,9 @@
 module n_adder #(
   parameter N=8
 )(
-  input  logic signed [N-1:0] A, B,
+  input  logic [N-1:0] A, B,
   input  logic ci,
-  output logic signed [N-1:0] S,
+  output logic [N-1:0] S,
   output logic co
 );
   logic [N:0] C;

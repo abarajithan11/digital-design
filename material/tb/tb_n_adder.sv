@@ -3,7 +3,7 @@
 module tb_n_adder;  
   localparam N = 8;
 
-  logic signed [N-1:0] A, B, S;
+  logic [N-1:0] A, B, S;
   logic ci, co;
   
   bit [N-1:0] m;
@@ -24,10 +24,10 @@ module tb_n_adder;
     repeat(10) begin
       #1
       status = std::randomize(ci);
-      status = std::randomize(A) with { A inside {[-128:127]}; };
-      status = std::randomize(B) with { B inside {[-128:127]}; };
+      status = std::randomize(A) with { A inside {[0:255]}; };
+      status = std::randomize(B) with { B inside {[0:255]}; };
       #1ps
-      assert ({co,S} == A+B+ci)
+      assert ({co,S} == $signed(A) + $signed(B) + $signed(ci))
         else $error("%d+%d+%d != {%d,%d}", A,B,ci,co,S);
     end
 
