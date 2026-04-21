@@ -83,6 +83,7 @@ endif
 
 build_pages:
 	sphinx-build -a -b html docs site
+	python scripts/generate_outputs.py copy-site-downloads
 
 serve: generate_outputs build_pages
 	python3 -m http.server 8000 --directory site

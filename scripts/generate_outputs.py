@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 """Generate docs/design_outputs.md from existing simulation and GDS artifacts."""
+from __future__ import annotations
+
+import sys
 from pathlib import Path
 import shutil
 
@@ -7,6 +10,12 @@ LAYOUT_IMAGES = [
     "final_routing.webp",
     "final_placement.webp",
     "final_worst_path.webp",
+]
+DOWNLOADABLE_ASSETS = [
+    ("VCD", "{design_numbered}.vcd"),
+    ("Full SVG", "{design_numbered}_full.svg"),
+    ("GDS", "{design_numbered}.gds"),
+    ("GDS Logs", "logs.zip"),
 ]
 
 REPO_URL = "https://github.com/abarajithan11/digital-design"
@@ -33,6 +42,46 @@ def parse_design_entry(design_numbered: str, repo: Path) -> dict:
         "top_tb_rel": f"material/{tb_files[0]}" if tb_files else None,
     }
 
+def first_existing_path(*candidates: Path | None) -> Path | None:
+    """Return the first existing path from candidates."""
+    for candidate in candidates:
+        if candidate is not None and candidate.exists():
+            return candidate
+    return None
+
+
+def downloadable_asset_source(repo: Path, design_numbered: str, filename: str, deployed_dir: Path | None = None) -> Path | None:
+    """Return the best available source for a downloadable asset."""
+    gds_result = (
+        repo / "material" / "openroad" / "work" / "results" / "asap7" / design_numbered / "base" / "6_final.gds"
+        if filename.endswith(".gds")
+        else None
+    )
+    return first_existing_path(
+        repo / "material" / "sim" / design_numbered / filename,
+        repo / "out" / "gds-assets" / design_numbered / filename,
+        gds_result,
+        (deployed_dir / filename) if deployed_dir is not None else None,
+    )
+
+
+def copy_site_downloadables(repo: Path) -> None:
+    """Copy heavy downloadable assets directly into the built site."""
+    site_assets_root = repo / "site" / "_static" / "design-outputs"
+    site_assets_root.mkdir(parents=True, exist_ok=True)
+
+    for flist in sorted((repo / "material" / "designs").glob("*.f"), key=lambda p: int(p.stem.split("_", 1)[0])):
+        design_numbered = flist.stem
+        dst = site_assets_root / design_numbered
+        dst.mkdir(parents=True, exist_ok=True)
+
+        for _, filename_tmpl in DOWNLOADABLE_ASSETS:
+            filename = filename_tmpl.format(design_numbered=design_numbered)
+            source = downloadable_asset_source(repo, design_numbered, filename)
+            if source is not None:
+                shutil.copy2(source, dst / filename)
+
+
 def build_markdown(designs_data: list[dict], assets_root: Path) -> list[str]:
     """Return markdown lines for all designs given pre-resolved data."""
     lines = f"""# Design Examples
@@ -50,7 +99,7 @@ In this course, digital design concepts and SystemVerilog features will be intro
 | 7 | Verilog Functions | — | — | — | — |
 | 8 | Flip Flop | [link]({ROOT_MAT}/designs/8_flip_flop.f) | [link]({ROOT_MAT}/rtl/flip_flop.sv) | [link]({ROOT_MAT}/tb/tb_flip_flop.sv) | [link](flip-flop) |
 | 9 | Up counter | [link]({ROOT_MAT}/designs/9_up_counter.f) | [link]({ROOT_MAT}/rtl/up_counter.sv) | [link]({ROOT_MAT}/tb/tb_up_counter.sv) | [link](up-counter) |
-| 10 | Binary Reduction Tree | [link]({ROOT_MAT}/designs/18_reduction_tree_min.f) | [link]({ROOT_MAT}/rtl/reduction_tree_min.sv) | [link]({ROOT_MAT}/tb/tb_reduction_tree_min.sv) | [link](reduction-tree-min) |
+| 10 | Binary Reduction Tree | [link]({ROOT_MAT}/designs/10_reduction_tree_min.f) | [link]({ROOT_MAT}/rtl/reduction_tree_min.sv) | [link]({ROOT_MAT}/tb/tb_reduction_tree_min.sv) | [link](reduction-tree-min) |
 | 11 | Parallel to Serial Converter | [link]({ROOT_MAT}/designs/11_parallel_to_serial.f) | [link]({ROOT_MAT}/rtl/parallel_to_serial.sv) | [link]({ROOT_MAT}/tb/tb_parallel_to_serial.sv) | [link](parallel-to-serial) |
 | 12 | Down counter | [link]({ROOT_MAT}/designs/12_down_counter.f) | [link]({ROOT_MAT}/rtl/down_counter.sv) | [link]({ROOT_MAT}/tb/tb_down_counter.sv) | [link](down-counter) |
 | 13 | UART RX | [link]({ROOT_MAT}/designs/13_uart_rx.f) | [link]({ROOT_MAT}/rtl/uart_rx.sv) | [link]({ROOT_MAT}/tb/tb_uart_rx.sv) | [link](uart-rx) |
@@ -88,20 +137,21 @@ To reproduce this on your machine, check out our [docker setup](setting-up-docke
         repo_root = REPO_URL + "/blob/main/"
         short_svg = dst / f"{design_numbered}_short.svg"
         full_svg = dst / f"{design_numbered}_full.svg"
-        full_svg_link = f"_static/design-outputs/{design_numbered}/{design_numbered}_full.svg"
-        full_vcd_link = f"_static/design-outputs/{design_numbered}/{design_numbered}.vcd"
-        full_gds_link = f"_static/design-outputs/{design_numbered}/{design_numbered}.gds"
-        gds_logs_link = f"_static/design-outputs/{design_numbered}/logs.zip"
         flist_rel = d["flist_rel"]
         top_rtl_rel = d["top_rtl_rel"]
         top_tb_rel = d["top_tb_rel"]
+        artifact_links = [
+            f'<a href="_static/design-outputs/{design_numbered}/{filename}">{label}</a>'
+            for label, filename in d["downloadable_assets"]
+        ]
+        artifact_line = ", ".join(artifact_links) if artifact_links else "Preview assets only"
 
         lines.extend([f'''## {heading}
 
 **Run results**
 
 - Simulation: {sim_result}, RTL2GDS: {rtl2gds_result}
-- Artifacts : [VCD]({full_vcd_link}), [Full SVG]({full_svg_link}), [GDS]({full_gds_link}), [GDS Logs]({gds_logs_link})
+- Artifacts : {artifact_line}
 
 **Waveform (0-10 ns)**
 '''])
@@ -182,42 +232,23 @@ def generate_outputs(repo: Path) -> None:
         dst = assets_root / design_numbered
         dst.mkdir(parents=True, exist_ok=True)
         deployed_dir = deployed_assets_root / design_numbered
+        downloadable_assets: list[tuple[str, str]] = []
 
         # Copy waveform SVGs produced by a local sim_outputs_all run or by CI artifacts.
-        sim_svg_short = sim_assets_root / design_numbered / f"{design_numbered}_short.svg"
-        if not sim_svg_short.exists():
-            sim_svg_short = deployed_dir / f"{design_numbered}_short.svg"
-        if sim_svg_short.exists():
+        sim_svg_short = first_existing_path(
+            sim_assets_root / design_numbered / f"{design_numbered}_short.svg",
+            deployed_dir / f"{design_numbered}_short.svg",
+        )
+        if sim_svg_short is not None:
             shutil.copy2(sim_svg_short, dst / f"{design_numbered}_short.svg")
 
-        sim_svg_full = sim_assets_root / design_numbered / f"{design_numbered}_full.svg"
-        if not sim_svg_full.exists():
-            sim_svg_full = deployed_dir / f"{design_numbered}_full.svg"
-        if sim_svg_full.exists():
-            shutil.copy2(sim_svg_full, dst / f"{design_numbered}_full.svg")
-
-        sim_vcd = sim_assets_root / design_numbered / f"{design_numbered}.vcd"
-        if not sim_vcd.exists():
-            sim_vcd = deployed_dir / f"{design_numbered}.vcd"
-        if sim_vcd.exists():
-            shutil.copy2(sim_vcd, dst / f"{design_numbered}.vcd")
+        for label, filename_tmpl in DOWNLOADABLE_ASSETS:
+            filename = filename_tmpl.format(design_numbered=design_numbered)
+            source_path = downloadable_asset_source(repo, design_numbered, filename, deployed_dir)
+            if source_path is not None:
+                downloadable_assets.append((label, filename))
 
         local_reports_dir = local_gds_assets_root / design_numbered / "base"
-        gds_file = gds_assets_root / design_numbered / f"{design_numbered}.gds"
-        if not gds_file.exists():
-            local_gds_file = repo / "material" / "openroad" / "work" / "results" / "asap7" / design_numbered / "base" / "6_final.gds"
-            if local_gds_file.exists():
-                gds_file = local_gds_file
-            else:
-                gds_file = deployed_dir / f"{design_numbered}.gds"
-        if gds_file.exists():
-            shutil.copy2(gds_file, dst / f"{design_numbered}.gds")
-
-        gds_logs_file = gds_assets_root / design_numbered / "logs.zip"
-        if not gds_logs_file.exists():
-            gds_logs_file = deployed_dir / "logs.zip"
-        if gds_logs_file.exists():
-            shutil.copy2(gds_logs_file, dst / "logs.zip")
 
         for image in LAYOUT_IMAGES:
             source_image = local_reports_dir / image
@@ -237,7 +268,7 @@ def generate_outputs(repo: Path) -> None:
         if raw_status is None and per_design_sim_status.exists():
             raw_status = per_design_sim_status.read_text(encoding="utf-8").strip()
         if raw_status is None:
-            if sim_svg_short.exists() or sim_svg_full.exists() or sim_vcd.exists():
+            if sim_svg_short is not None:
                 raw_status = "pass"
             else:
                 raw_status = "unknown"
@@ -248,6 +279,7 @@ def generate_outputs(repo: Path) -> None:
             rtl2gds_result = "passed" if (dst / "final_routing.webp").exists() else "failed"
         designs_data.append({
             **entry,
+            "downloadable_assets": downloadable_assets,
             "sim_result": "passed" if raw_status == "pass" else raw_status,
             "rtl2gds_result": rtl2gds_result,
         })
@@ -257,9 +289,11 @@ def generate_outputs(repo: Path) -> None:
 
 
 def main() -> None:
-
     repo = Path(__file__).resolve().parents[1]
-    generate_outputs(repo)
+    if len(sys.argv) > 1 and sys.argv[1] == "copy-site-downloads":
+        copy_site_downloadables(repo)
+    else:
+        generate_outputs(repo)
 
 
 if __name__ == "__main__":
