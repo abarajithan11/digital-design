@@ -13,7 +13,7 @@ LAYOUT_IMAGES = [
 ]
 DOWNLOADABLE_ASSETS = [
     ("VCD", "{design_numbered}.vcd"),
-    ("Full SVG", "{design_numbered}_full.svg"),
+    ("Long SVG", "{design_numbered}_long.svg"),
     ("GDS", "{design_numbered}.gds"),
     ("GDS Logs", "logs.zip"),
 ]
@@ -136,7 +136,7 @@ To reproduce this on your machine, check out our [docker setup](setting-up-docke
         dst = assets_root / design_numbered
         repo_root = REPO_URL + "/blob/main/"
         short_svg = dst / f"{design_numbered}_short.svg"
-        full_svg = dst / f"{design_numbered}_full.svg"
+        long_svg = dst / f"{design_numbered}_long.svg"
         flist_rel = d["flist_rel"]
         top_rtl_rel = d["top_rtl_rel"]
         top_tb_rel = d["top_tb_rel"]
@@ -156,7 +156,7 @@ To reproduce this on your machine, check out our [docker setup](setting-up-docke
 **Waveform (0-10 ns)**
 '''])
         if short_svg.exists():
-            if full_svg.exists():
+            if long_svg.exists():
                 lines.append("")
             lines.append(f"![{design_numbered} waveform](_static/design-outputs/{design_numbered}/{design_numbered}_short.svg)")
         else:
@@ -241,6 +241,13 @@ def generate_outputs(repo: Path) -> None:
         )
         if sim_svg_short is not None:
             shutil.copy2(sim_svg_short, dst / f"{design_numbered}_short.svg")
+
+        sim_svg_long = first_existing_path(
+            sim_assets_root / design_numbered / f"{design_numbered}_long.svg",
+            deployed_dir / f"{design_numbered}_long.svg",
+        )
+        if sim_svg_long is not None:
+            shutil.copy2(sim_svg_long, dst / f"{design_numbered}_long.svg")
 
         for label, filename_tmpl in DOWNLOADABLE_ASSETS:
             filename = filename_tmpl.format(design_numbered=design_numbered)

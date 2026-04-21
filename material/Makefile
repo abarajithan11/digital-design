@@ -28,10 +28,10 @@ PLATFORM_LYP := $(firstword \
 	$(wildcard $(CONT_MATERIAL)/openroad/OpenROAD-flow-scripts/flow/platforms/$(PLATFORM)/KLayout/*.lyp) \
 	$(wildcard $(CONT_MATERIAL)/openroad/OpenROAD-flow-scripts/flow/platforms/$(PLATFORM)/*.lyp))
 
-YOSYS_EXE    := /OpenROAD-flow-scripts/tools/install/yosys/bin/yosys
-OPENROAD_EXE := /OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad
-KLAYOUT_CMD  := /usr/bin/klayout
-GDS3XTRUDE_EXE   ?= /usr/local/bin/gds3xtrude
+YOSYS_EXE        ?= yosys
+OPENROAD_EXE     ?= openroad
+KLAYOUT_CMD      ?= klayout
+GDS3XTRUDE_EXE   ?= gds3xtrude
 GDS3XTRUDE_TECH  ?= $(CONT_MATERIAL)/openroad/gds3xtrude/$(PLATFORM).layerstack
 GDS3XTRUDE_TOP   ?= $(DESIGN_BASE)
 GDS3XTRUDE_OUT   ?= $(RESULTS_DIR)/6_final.scad
@@ -41,11 +41,10 @@ TOP_TB       ?= tb_$(DESIGN_BASE)
 SIM_WORKDIR  := $(CONT_MATERIAL)/sim/$(DESIGN_NUMBERED)
 SIM_GEN      := py/$(DESIGN_BASE)_gen.py
 WAVE_VCD     ?= $(SIM_WORKDIR)/$(DESIGN_NUMBERED).vcd
-WAVE_SAVE    ?= $(SIM_WORKDIR)/$(DESIGN_NUMBERED).gtkw
 WAVE_SVG_SHORT ?= $(SIM_WORKDIR)/$(DESIGN_NUMBERED)_short.svg
-WAVE_SVG_FULL  ?= $(SIM_WORKDIR)/$(DESIGN_NUMBERED)_full.svg
-WAVE_START   ?= auto
-WAVE_END     ?= auto
+WAVE_SVG_LONG  ?= $(SIM_WORKDIR)/$(DESIGN_NUMBERED)_long.svg
+WAVE_LONG_START ?= 0
+WAVE_LONG_END   ?= 500000
 WAVE_SHORT_START ?= 0
 WAVE_SHORT_END   ?= 10000
 WAVE_WINDOW  ?= 65536
@@ -72,21 +71,14 @@ gds: prepare
 
 sim: prepare
 	mkdir -p "$(SIM_WORKDIR)"
-	cd "$(CONT_MATERIAL)"
 	if [ -f "$(SIM_GEN)" ]; then python3 "$(SIM_GEN)"; fi
 	verilator --binary --trace-vcd --timing --sv --top-module "$(TOP_TB)" -Mdir "$(SIM_WORKDIR)/obj_dir" "-DVCD_PATH=\"$(WAVE_VCD)\"" -f "designs/$(DESIGN_NUMBERED).f"
 	"$(SIM_WORKDIR)/obj_dir/V$(TOP_TB)"
 
 gtkwave:
-	cd "$(CONT_MATERIAL)"
-	if [[ -f "$(WAVE_SAVE)" ]]; then
-		gtkwave "$(WAVE_VCD)" "$(WAVE_SAVE)"
-	else
-		gtkwave "$(WAVE_VCD)"
-	fi
+	gtkwave "$(WAVE_VCD)"
 
 wave_svg: sim
-	cd "$(CONT_MATERIAL)"
 	mkdir -p "$(SIM_WORKDIR)"
 	python3 "$(CONT_REPO)/scripts/vcd_to_svg.py" \
 		--vcd "$(WAVE_VCD)" \
@@ -99,13 +91,13 @@ wave_svg: sim
 		--max-depth 1
 	python3 "$(CONT_REPO)/scripts/vcd_to_svg.py" \
 		--vcd "$(WAVE_VCD)" \
-		--svg "$(WAVE_SVG_FULL)" \
-		--start "$(WAVE_START)" \
-		--end "$(WAVE_END)" \
+		--svg "$(WAVE_SVG_LONG)" \
+		--start "$(WAVE_LONG_START)" \
+		--end "$(WAVE_LONG_END)" \
 		--window "$(WAVE_WINDOW)" \
 		--sample-rate "$(WAVE_SAMPLE)" \
 		--hscale "$(WAVE_HSCALE)"
-	echo "Wrote waveform images: $(WAVE_SVG_SHORT) $(WAVE_SVG_FULL)"
+	echo "Wrote waveform images: $(WAVE_SVG_SHORT) $(WAVE_SVG_LONG)"
 
 sim_all:
 	for design_file in designs/*.f; do \
@@ -125,9 +117,6 @@ show_layout: require_container
 	$(KLAYOUT_CMD) -l "$(PLATFORM_LYP)" "$(FINAL_GDS)"
 
 show_3d: require_container
-	test -x "$(GDS3XTRUDE_EXE)"
-	test -f "$(FINAL_GDS)"
-	test -f "$(GDS3XTRUDE_TECH)"
 	echo "DISPLAY=$${DISPLAY:-<unset>}"
 	"$(GDS3XTRUDE_EXE)" -v --tech "$(GDS3XTRUDE_TECH)" --input "$(FINAL_GDS)" --cell "$(GDS3XTRUDE_TOP)" --output "$(GDS3XTRUDE_OUT)" --view $(GDS3XTRUDE_FLAGS)
 

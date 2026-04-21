@@ -60,7 +60,8 @@ RUN groupadd -g "${GID}" "${USERNAME}" \
 USER ${USERNAME}
 WORKDIR ${CONT_ROOT}
 
-ENV LIBGL_ALWAYS_SOFTWARE=1 \
+ENV PATH="/OpenROAD-flow-scripts/tools/install/yosys/bin:/OpenROAD-flow-scripts/tools/install/OpenROAD/bin:${PATH}" \
+    LIBGL_ALWAYS_SOFTWARE=1 \
     QT_X11_NO_MITSHM=1
 
 RUN cat >> "/home/${USERNAME}/.bashrc" <<'EOF_BASHRC'
