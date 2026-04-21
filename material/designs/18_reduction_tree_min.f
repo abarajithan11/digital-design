@@ -1,0 +1,2 @@
+rtl/reduction_tree_min.sv
+tb/tb_reduction_tree_min.sv
