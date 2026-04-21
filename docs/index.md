@@ -53,9 +53,27 @@ SystemVerilog/Verilog is one of the most complex languages ever, with a lot of h
 
 ## Final Projects
 
-- **FIR Filter on FPGA to extract bass/treble from your favorite song** - A Worked example gradually built through our lectures and discussions
+- **FIR Filter on FPGA to extract bass/treble from your favorite song** 
+  - A Worked example gradually built through our lectures and discussions.
+  - We will **NOT** teach the mathematics of calculating the filter coefficients. [Here is our python file](https://github.com/abarajithan11/digital-design/blob/main/material/py/sys_fir_filter_gen.py) to generate them. We will teach you how such filters work, and how to implement them as a circuit.
+  - You can listen to the audio before and after applying our [8-bit-quantized, 100-tap low pass filter](https://media.abapages.com/course-site/filter.png) with a cutoff of 800 Hz, here:
 
-[[Original song](https://github.com/abarajithan11/digital-design-content/raw/main/chill_sub.wav)] [[Bass extracted with a 100-tap, 8-bit filter of 800Hz cutoff](https://media.abapages.com/course-site/bass_only_8bit.wav)] [[Filter plots](https://media.abapages.com/course-site/filter.png)]
+```{raw} html
+<table style="border-collapse:collapse; width:100%; max-width:900px;">
+  <tr>
+    <td style="padding:0.5rem 1rem 0.5rem 0; vertical-align:top; width:50%;">
+      <audio controls preload="metadata" style="display:block; width:100%;" src="https://raw.githubusercontent.com/abarajithan11/digital-design-content/main/chill_sub.wav"></audio>
+    </td>
+    <td style="padding:0.5rem 0 0.5rem 1rem; vertical-align:top; width:50%;">
+      <audio controls preload="metadata" style="display:block; width:100%;" src="https://media.abapages.com/course-site/bass_only_8bit.wav"></audio>
+    </td>
+  </tr>
+  <tr>
+    <td style="padding:0.25rem 1rem 0 0; vertical-align:top; text-align:center;">Original song</td>
+    <td style="padding:0.25rem 0 0 1rem; vertical-align:top; text-align:center;">Bass only (800 Hz cutoff)</td>
+  </tr>
+</table>
+```
 
 - **A fully-parallel neural network accelerator on FPGA to classify handwritten numbers** - The project you will gradually build as a series of guided assignments
   - Simple fixed-point quantization and ReLU: *Week 2 - Combinational Circuits Assignment*
