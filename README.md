@@ -14,13 +14,14 @@ make enter
 From inside docker container
 
 ```bash
-make sim DESIGN=adder
-make gds DESIGN=adder
-make show_layout DESIGN=adder
+make sim DESIGN=alu
+make gds DESIGN=alu
+make show_layout DESIGN=alu
+make show_3d DESIGN=alu
 ```
 
 * The root `Makefile` only manages the Docker image and container. The `material/Makefile` handles simulation and RTL2GDS.
-* Reports and layout images are stored in `material/openroad/work/reports/asap7/adder/base`
+* Reports and layout images are stored in `material/openroad/work/reports/asap7/alu/base`
 
 ## To locally serve the site
 

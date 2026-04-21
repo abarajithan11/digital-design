@@ -7,29 +7,14 @@ This is a five-week course, with 30 hours of lectures. We expect the following p
 * Familiarity with any programming language (Python, C...etc.)
 
 :::{admonition} Why take this course?
-Digital design is both an art and a craft. 
-This course is meant to give you a first taste of both.
+This course is meant to give you a first taste of the art and craft of digital design.
 Along the way, you will experience the joy of designing real digital circuits and the challenge of making them work.
 
-It is the first step in your digital design journey towards more advanced courses at the university, bigger projects, and eventually the many career paths in one of today’s most exciting and in-demand areas of technology.
+It is the first step in your journey towards more advanced courses at the university, bigger projects, and eventually the many career paths in one of today’s most exciting and in-demand areas of technology.
 :::
 
-### Pages
-
-```{toctree}
-:maxdepth: 1
-
-Home <self>
-design_outputs
-week-1
-week-2
-week-3
-week-4
-week-5
-setting-up-docker
-setting-up-pynq
-contact-us
-```
+8-bit ripple carry adder circuit in 7nm (ASAP7) visualized in 3D
+![GDS](https://media.abapages.com/course-site/n_adder.png)
 
 ## Learning Outcomes
 
@@ -70,9 +55,7 @@ SystemVerilog/Verilog is one of the most complex languages ever, with a lot of h
 
 - **FIR Filter on FPGA to extract bass/treble from your favorite song** - A Worked example gradually built through our lectures and discussions
 
-[[Original song](https://github.com/abarajithan11/digital-design-content/raw/main/chill_sub.wav)] [[Bass extracted with a 100-tap, 8-bit filter of 800Hz cutoff](https://media.abapages.com/course-site/bass_only_8bit.wav)]
-
-![Filter Image](https://media.abapages.com/course-site/filter.png)
+[[Original song](https://github.com/abarajithan11/digital-design-content/raw/main/chill_sub.wav)] [[Bass extracted with a 100-tap, 8-bit filter of 800Hz cutoff](https://media.abapages.com/course-site/bass_only_8bit.wav)] [[Filter plots](https://media.abapages.com/course-site/filter.png)]
 
 - **A fully-parallel neural network accelerator on FPGA to classify handwritten numbers** - The project you will gradually build as a series of guided assignments
   - Simple fixed-point quantization and ReLU: *Week 2 - Combinational Circuits Assignment*
@@ -87,3 +70,20 @@ SystemVerilog/Verilog is one of the most complex languages ever, with a lot of h
   * [SystemVerilog RTL](https://github.com/abarajithan11/digital-design/tree/main/material/rtl)
   * [SystemVerilog Testbenches](https://github.com/abarajithan11/digital-design/tree/main/material/tb)
   * [Outputs](design_outputs.md)
+
+### Pages
+
+```{toctree}
+:maxdepth: 1
+
+Home <self>
+design_outputs
+week-1
+week-2
+week-3
+week-4
+week-5
+setting-up-docker
+setting-up-pynq
+contact-us
+```

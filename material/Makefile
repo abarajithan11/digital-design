@@ -27,10 +27,11 @@ PLATFORM_LYP := $(firstword \
 YOSYS_EXE    := /OpenROAD-flow-scripts/tools/install/yosys/bin/yosys
 OPENROAD_EXE := /OpenROAD-flow-scripts/tools/install/OpenROAD/bin/openroad
 KLAYOUT_CMD  := /usr/bin/klayout
-GDS3D_EXE   ?= /usr/local/bin/GDS3D
-GDS3D_PROC  ?= $(CONT_MATERIAL)/gds3d/$(PLATFORM).txt
-GDS3D_TOP   ?= $(DESIGN_BASE)
-GDS3D_FLAGS ?=
+GDS3XTRUDE_EXE   ?= /usr/local/bin/gds3xtrude
+GDS3XTRUDE_TECH  ?= $(CONT_MATERIAL)/openroad/gds3xtrude/$(PLATFORM).layerstack
+GDS3XTRUDE_TOP   ?= $(DESIGN_BASE)
+GDS3XTRUDE_OUT   ?= $(RESULTS_DIR)/6_final.scad
+GDS3XTRUDE_FLAGS ?=
 
 TOP_TB       ?= tb_$(DESIGN_BASE)
 SIM_WORKDIR  := $(CONT_MATERIAL)/sim/$(DESIGN_NUMBERED)
@@ -119,20 +120,21 @@ gds_all:
 show_layout: require_container
 	$(KLAYOUT_CMD) -l "$(PLATFORM_LYP)" "$(FINAL_GDS)"
 
-GDS3D_EXE   ?= /usr/local/bin/GDS3D
-GDS3D_PROC  ?= $(CONT_MATERIAL)/gds3d/$(PLATFORM).txt
-GDS3D_TOP   ?=
-GDS3D_FLAGS ?=
+GDS3XTRUDE_EXE   ?= /usr/local/bin/gds3xtrude
+GDS3XTRUDE_TECH  ?= $(CONT_MATERIAL)/openroad/gds3xtrude/$(PLATFORM).layerstack
+GDS3XTRUDE_TOP   ?=
+GDS3XTRUDE_OUT   ?= $(RESULTS_DIR)/6_final.scad
+GDS3XTRUDE_FLAGS ?=
 
-show_layout_3d: require_container
-	test -x "$(GDS3D_EXE)"
+show_3d: require_container
+	test -x "$(GDS3XTRUDE_EXE)"
 	test -f "$(FINAL_GDS)"
-	test -f "$(GDS3D_PROC)"
+	test -f "$(GDS3XTRUDE_TECH)"
 	echo "DISPLAY=$${DISPLAY:-<unset>}"
-	if [[ -n "$(GDS3D_TOP)" ]]; then \
-		"$(GDS3D_EXE)" -v -p "$(GDS3D_PROC)" -i "$(FINAL_GDS)" $(GDS3D_FLAGS); \
+	if [[ -n "$(GDS3XTRUDE_TOP)" ]]; then \
+		"$(GDS3XTRUDE_EXE)" -v --tech "$(GDS3XTRUDE_TECH)" --input "$(FINAL_GDS)" --cell "$(GDS3XTRUDE_TOP)" --output "$(GDS3XTRUDE_OUT)" --view $(GDS3XTRUDE_FLAGS); \
 	else \
-		"$(GDS3D_EXE)" -v -p "$(GDS3D_PROC)" -i "$(FINAL_GDS)" $(GDS3D_FLAGS); \
+		"$(GDS3XTRUDE_EXE)" -v --tech "$(GDS3XTRUDE_TECH)" --input "$(FINAL_GDS)" --output "$(GDS3XTRUDE_OUT)" --view $(GDS3XTRUDE_FLAGS); \
 	fi
 
 check_tools: require_container

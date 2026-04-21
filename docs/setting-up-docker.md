@@ -26,6 +26,7 @@ From inside the container
 make sim DESIGN=alu
 make gds DESIGN=alu
 make show_layout DESIGN=alu
+make show_3d DESIGN=alu
 # exit - to leave the container 
 ```
 
