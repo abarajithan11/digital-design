@@ -13,19 +13,19 @@ module tb_up_counter;
     $dumpfile(`VCD_PATH); $dumpvars;
     
     @(posedge clk);
-    #1 rstn  = 1;
+    #1ps rstn  = 1;
 
     repeat(2) @(posedge clk);
-    #1 incr = 1;
+    #1ps incr = 1;
 
     @(posedge clk);
-    #1 rstn  = 0; incr = 1;
+    #1ps rstn  = 0; incr = 1;
 
     repeat(4) @(posedge clk);
-    #1 incr = 0;
+    #1ps incr = 0;
 
     repeat(4) @(posedge clk);
-    #1 rstn  = 1;
+    #1ps rstn  = 1;
     
     $finish();
   end

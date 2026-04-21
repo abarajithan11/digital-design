@@ -29,7 +29,7 @@ module tb_fir_filter;
     #10 rstn = 1;
     
     while (!$feof(file_x))
-      @(posedge clk) #1 status = $fscanf(file_x,"%d\r", x);
+      @(posedge clk) #1ps status = $fscanf(file_x,"%d\r", x);
     $fclose(file_x);
     $fclose(file_y);
     $finish();
