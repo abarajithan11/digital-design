@@ -77,8 +77,9 @@ sim: prepare
 gtkwave:
 	gtkwave "$(WAVE_VCD)"
 
-wave_svg: sim
+wave_svg:
 	mkdir -p "$(SIM_WORKDIR)"
+	test -f "$(WAVE_VCD)"
 	python3 "$(CONT_REPO)/scripts/vcd_to_svg.py" \
 		--vcd "$(WAVE_VCD)" \
 		--svg "$(WAVE_SVG_SHORT)" \

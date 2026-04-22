@@ -102,11 +102,16 @@ serve: generate_outputs build_pages
 sim_output:
 	test -n "$(DESIGN)"
 	mkdir -p out/sim
+	mkdir -p out/sim-assets/$(DESIGN)
 	if $(MAKE) run CMD="make sim DESIGN=$(DESIGN_BASE)" IMAGE="$(IMAGE)"; then \
 		$(MAKE) run CMD="make wave_svg DESIGN=$(DESIGN_BASE)" IMAGE="$(IMAGE)" || true; \
 		if [ -n "$(VCD_TRIM_END)" ]; then \
 			$(MAKE) run CMD="python3 /repo/scripts/trim_vcd.py /repo/material/sim/$(DESIGN)/$(DESIGN).vcd --end $(VCD_TRIM_END)" IMAGE="$(IMAGE)"; \
 		fi; \
+		vcd_src="material/sim/$(DESIGN)/$(DESIGN).vcd"; \
+		[ -f "$$vcd_src" ] && cp "$$vcd_src" "out/sim-assets/$(DESIGN)/$(DESIGN).vcd" || true; \
+		svg_src="material/sim/$(DESIGN)/$(DESIGN)_short.svg"; \
+		[ -f "$$svg_src" ] && cp "$$svg_src" "out/sim-assets/$(DESIGN)/$(DESIGN)_short.svg" || true; \
 		printf '%s\n' "pass" > "out/sim/$(DESIGN).status"; \
 	else \
 		printf '%s\n' "fail" > "out/sim/$(DESIGN).status"; \
@@ -115,6 +120,7 @@ sim_output:
 
 sim_outputs_all:
 	rm -rf out/sim; \
+	rm -rf out/sim-assets; \
 	mkdir -p out/sim; \
 	fail=0; \
 	for design in $(DESIGNS); do \

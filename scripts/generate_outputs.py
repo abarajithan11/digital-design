@@ -57,6 +57,7 @@ def downloadable_asset_source(repo: Path, design_numbered: str, filename: str, d
         else None
     )
     return first_existing_path(
+        repo / "out" / "sim-assets" / design_numbered / filename,
         repo / "material" / "sim" / design_numbered / filename,
         repo / "out" / "gds-assets" / design_numbered / filename,
         gds_result,
@@ -186,6 +187,7 @@ def generate_outputs(repo: Path) -> None:
     """Assemble markdown from pre-built local or CI-downloaded artifacts."""
     docs_md = repo / "docs" / "design_outputs.md"
     assets_root = repo / "docs" / "_static" / "design-outputs"
+    sim_out_assets_root = repo / "out" / "sim-assets"
     sim_assets_root = repo / "material" / "sim"
     local_gds_assets_root = repo / "material" / "openroad" / "work" / "reports" / "asap7"
     gds_assets_root = repo / "out" / "gds-assets"
@@ -232,6 +234,7 @@ def generate_outputs(repo: Path) -> None:
 
         # Copy waveform SVGs produced by a local sim_outputs_all run or by CI artifacts.
         sim_svg_short = first_existing_path(
+            sim_out_assets_root / design_numbered / f"{design_numbered}_short.svg",
             sim_assets_root / design_numbered / f"{design_numbered}_short.svg",
             deployed_dir / f"{design_numbered}_short.svg",
         )
