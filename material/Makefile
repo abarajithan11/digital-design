@@ -44,9 +44,6 @@ SIM_WORKDIR  := $(CONT_MATERIAL)/sim/$(DESIGN_NUMBERED)
 SIM_GEN      := py/$(DESIGN_BASE)_gen.py
 WAVE_VCD     ?= $(SIM_WORKDIR)/$(DESIGN_NUMBERED).vcd
 WAVE_SVG_SHORT ?= $(SIM_WORKDIR)/$(DESIGN_NUMBERED)_short.svg
-WAVE_SVG_LONG  ?= $(SIM_WORKDIR)/$(DESIGN_NUMBERED)_long.svg
-WAVE_LONG_START ?= 0
-WAVE_LONG_END   ?= 500000
 WAVE_SHORT_START ?= 0
 WAVE_SHORT_END   ?= 10000
 WAVE_WINDOW  ?= 65536
@@ -91,15 +88,7 @@ wave_svg: sim
 		--sample-rate "$(WAVE_SAMPLE)" \
 		--hscale "$(WAVE_HSCALE)" \
 		--max-depth 1
-	python3 "$(CONT_REPO)/scripts/vcd_to_svg.py" \
-		--vcd "$(WAVE_VCD)" \
-		--svg "$(WAVE_SVG_LONG)" \
-		--start "$(WAVE_LONG_START)" \
-		--end "$(WAVE_LONG_END)" \
-		--window "$(WAVE_WINDOW)" \
-		--sample-rate "$(WAVE_SAMPLE)" \
-		--hscale "$(WAVE_HSCALE)"
-	echo "Wrote waveform images: $(WAVE_SVG_SHORT) $(WAVE_SVG_LONG)"
+	echo "Wrote waveform image: $(WAVE_SVG_SHORT)"
 
 sim_all:
 	for design_file in designs/*.f; do \

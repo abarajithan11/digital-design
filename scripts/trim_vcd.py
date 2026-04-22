@@ -43,14 +43,21 @@ def parse_limit_to_ps(limit: str) -> int:
 
 
 def extract_timescale_ps(text: str) -> int:
-    match = re.search(r"\$timescale\s+(\d+)\s*(s|ms|us|ns|ps|fs)\s+\$end", text, re.MULTILINE)
-    if not match:
-        match = re.search(r"\$timescale\s+(\d+)\s*(s|ms|us|ns|ps|fs)\b", text, re.MULTILINE)
+    match = re.search(
+        r"\$timescale\b(?P<body>.*?)\$end",
+        text,
+        re.MULTILINE | re.DOTALL,
+    )
     if not match:
         raise ValueError("Could not find $timescale in VCD header")
 
-    value = int(match.group(1))
-    unit = match.group(2)
+    body = match.group("body")
+    body_match = re.search(r"(\d+)\s*(s|ms|us|ns|ps|fs)\b", body)
+    if not body_match:
+        raise ValueError("Could not parse VCD $timescale value")
+
+    value = int(body_match.group(1))
+    unit = body_match.group(2)
     scale = TIMESCALE_UNITS[unit]
     total_ps = value * scale
     if int(total_ps) != total_ps:

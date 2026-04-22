@@ -103,11 +103,11 @@ sim_output:
 	test -n "$(DESIGN)"
 	mkdir -p out/sim
 	if $(MAKE) run CMD="make sim DESIGN=$(DESIGN_BASE)" IMAGE="$(IMAGE)"; then \
-		printf '%s\n' "pass" > "out/sim/$(DESIGN).status"; \
 		$(MAKE) run CMD="make wave_svg DESIGN=$(DESIGN_BASE)" IMAGE="$(IMAGE)" || true; \
 		if [ -n "$(VCD_TRIM_END)" ]; then \
 			$(MAKE) run CMD="python3 /repo/scripts/trim_vcd.py /repo/material/sim/$(DESIGN)/$(DESIGN).vcd --end $(VCD_TRIM_END)" IMAGE="$(IMAGE)"; \
 		fi; \
+		printf '%s\n' "pass" > "out/sim/$(DESIGN).status"; \
 	else \
 		printf '%s\n' "fail" > "out/sim/$(DESIGN).status"; \
 		exit 1; \
