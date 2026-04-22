@@ -13,7 +13,12 @@ set clk_ports [get_ports clk]
 if {[llength $clk_ports] > 0} {
   set clk_name clk
   create_clock -name $clk_name -period $clk_period_ps $clk_ports
-  set non_clock_inputs [remove_from_collection [all_inputs] $clk_ports]
+  set non_clock_inputs {}
+  foreach input_port [all_inputs] {
+    if {[lsearch -exact $clk_ports $input_port] < 0} {
+      lappend non_clock_inputs $input_port
+    }
+  }
 } else {
   set clk_name virtual_clock
   create_clock -name $clk_name -period $clk_period_ps
