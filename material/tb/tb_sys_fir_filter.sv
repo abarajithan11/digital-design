@@ -47,6 +47,12 @@ module tb_sys_fir_filter;
   ) vip_tx (.*);
 
   initial begin
+    #(`SIM_MAX_TIME);
+    $display("\n\nTimeout at time: %0t\n\n", $time);
+    $finish();
+  end
+
+  initial begin
     $dumpfile(`VCD_PATH); $dumpvars;
 
     // Read files

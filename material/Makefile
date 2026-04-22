@@ -42,6 +42,7 @@ GDS3XTRUDE_FLAGS ?=
 TOP_TB       ?= tb_$(DESIGN_BASE)
 SIM_WORKDIR  := $(CONT_MATERIAL)/sim/$(DESIGN_NUMBERED)
 SIM_GEN      := py/$(DESIGN_BASE)_gen.py
+SIM_MAX_TIME ?= 1s
 WAVE_VCD     ?= $(SIM_WORKDIR)/$(DESIGN_NUMBERED).vcd
 WAVE_SVG_SHORT ?= $(SIM_WORKDIR)/$(DESIGN_NUMBERED)_short.svg
 WAVE_SHORT_START ?= 0
@@ -71,7 +72,7 @@ gds: prepare
 sim: prepare
 	mkdir -p "$(SIM_WORKDIR)"
 	if [ -f "$(SIM_GEN)" ]; then python3 "$(SIM_GEN)"; fi
-	verilator --binary --trace-vcd --timing --sv --top-module "$(TOP_TB)" -Mdir "$(SIM_WORKDIR)/obj_dir" "-DVCD_PATH=\"$(WAVE_VCD)\"" -f "designs/$(DESIGN_NUMBERED).f"
+	verilator --binary --trace-vcd --timing --sv --top-module "$(TOP_TB)" -Mdir "$(SIM_WORKDIR)/obj_dir" "-DVCD_PATH=\"$(WAVE_VCD)\"" "-DSIM_MAX_TIME=$(SIM_MAX_TIME)" -f "designs/$(DESIGN_NUMBERED).f"
 	"$(SIM_WORKDIR)/obj_dir/V$(TOP_TB)"
 
 gtkwave:

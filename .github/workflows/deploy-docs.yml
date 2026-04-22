@@ -108,7 +108,7 @@ jobs:
         run: docker pull "${GHCR_IMAGE}:${IMAGE_TAG}"
 
       - name: Run simulations and generate waveform SVGs
-        run: make sim_outputs_all IMAGE="${GHCR_IMAGE}:${IMAGE_TAG}" VCD_TRIM_END=500ns SIM_PRUNE_WORKDIR=1
+        run: make sim_outputs_all IMAGE="${GHCR_IMAGE}:${IMAGE_TAG}" SIM_MAX_TIME=200ns
 
       - name: Upload sim results
         if: always()

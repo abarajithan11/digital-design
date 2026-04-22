@@ -26,8 +26,6 @@ GL_ENV       := $(if $(wildcard /usr/lib/wsl/lib),-e LD_LIBRARY_PATH=/usr/lib/ws
 FRESH ?= 0
 DESIGNS := $(basename $(notdir $(wildcard material/designs/*.f)))
 DESIGN_BASE := $(subst $(firstword $(subst _, ,$(DESIGN)))_,,$(DESIGN))
-VCD_TRIM_END ?=
-SIM_PRUNE_WORKDIR ?= 0
 
 # Docker container targets
 
@@ -105,17 +103,11 @@ sim_output:
 	mkdir -p out/sim
 	mkdir -p out/sim-assets/$(DESIGN)
 	if $(MAKE) run CMD="make sim DESIGN=$(DESIGN_BASE)" IMAGE="$(IMAGE)"; then \
-		if [ -n "$(VCD_TRIM_END)" ]; then \
-			$(MAKE) run CMD="python3 /repo/scripts/trim_vcd.py /repo/material/sim/$(DESIGN)/$(DESIGN).vcd --end $(VCD_TRIM_END)" IMAGE="$(IMAGE)"; \
-		fi; \
 		$(MAKE) run CMD="make wave_svg DESIGN=$(DESIGN_BASE)" IMAGE="$(IMAGE)" || true; \
 		vcd_src="material/sim/$(DESIGN)/$(DESIGN).vcd"; \
 		[ -f "$$vcd_src" ] && cp "$$vcd_src" "out/sim-assets/$(DESIGN)/$(DESIGN).vcd" || true; \
 		svg_src="material/sim/$(DESIGN)/$(DESIGN)_short.svg"; \
 		[ -f "$$svg_src" ] && cp "$$svg_src" "out/sim-assets/$(DESIGN)/$(DESIGN)_short.svg" || true; \
-		if [ "$(SIM_PRUNE_WORKDIR)" = "1" ]; then \
-			rm -rf "material/sim/$(DESIGN)"; \
-		fi; \
 		printf '%s\n' "pass" > "out/sim/$(DESIGN).status"; \
 	else \
 		printf '%s\n' "fail" > "out/sim/$(DESIGN).status"; \
@@ -125,23 +117,7 @@ sim_output:
 sim_outputs_all:
 	rm -rf out/sim; \
 	rm -rf out/sim-assets; \
-	if [ "$(SIM_PRUNE_WORKDIR)" = "1" ]; then \
-		rm -rf material/sim; \
-	fi; \
 	mkdir -p out/sim; \
-	heartbeat_pid=""; \
-	cleanup() { \
-		if [ -n "$$heartbeat_pid" ]; then \
-			kill "$$heartbeat_pid" 2>/dev/null || true; \
-			wait "$$heartbeat_pid" 2>/dev/null || true; \
-		fi; \
-	}; \
-	trap cleanup EXIT; \
-	while :; do \
-		sleep 60; \
-		printf '[sim] still running at %s\n' "$$(date -u +%Y-%m-%dT%H:%M:%SZ)"; \
-	done & \
-	heartbeat_pid="$$!"; \
 	fail=0; \
 	for design in $(DESIGNS); do \
 		printf '\n==== [sim] %s ====\n' "$$design"; \
@@ -160,8 +136,6 @@ sim_outputs_all:
 	done; \
 	printf '\n==== [sim] summary ====\n'; \
 	cat out/sim/status.tsv; \
-	trap - EXIT; \
-	cleanup; \
 	exit $$fail
 
 gds_output:
