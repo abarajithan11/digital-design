@@ -23,7 +23,7 @@ html_js_files = ["lightbox-init.js", "model-viewer-init.js"]
 
 def setup(app):
     app.add_js_file(
-        "https://cdn.jsdelivr.net/npm/@google/model-viewer/dist/model-viewer.min.js",
+        "https://cdn.jsdelivr.net/npm/@google/model-viewer@4.2.0/dist/model-viewer.min.js",
         type="module",
     )
 

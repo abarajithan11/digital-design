@@ -18,6 +18,7 @@ It is the first step in your journey towards more advanced courses at the univer
   <model-viewer
     class="hero-model-viewer"
     src="_static/n_adder.glb"
+    poster="https://media.abapages.com/course-site/n_adder.png"
     alt="8-bit ripple carry adder circuit in 7nm (ASAP7) visualized in 3D"
     orientation="135deg 0deg 0deg"
     camera-controls
@@ -35,8 +36,16 @@ It is the first step in your journey towards more advanced courses at the univer
     loading="eager"
   >
     <div class="hero-model-fallback" hidden>
-      3D model preview unavailable.
-      <a href="_static/n_adder.glb">Open the GLB file directly.</a>
+      <img
+        class="hero-model-fallback-image"
+        src="https://media.abapages.com/course-site/n_adder.png"
+        alt="Top-down routing view of the 8-bit ripple carry adder"
+        loading="lazy"
+      />
+      <p>
+        Interactive 3D preview unavailable in this browser.
+        <a href="_static/n_adder.glb">Open the GLB file directly.</a>
+      </p>
     </div>
   </model-viewer>
   <figcaption>

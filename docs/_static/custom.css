@@ -38,11 +38,22 @@ main img {
 
 .hero-model-fallback {
   display: grid;
+  gap: 1rem;
   place-items: center;
   min-height: 100%;
   padding: 1.5rem;
   text-align: center;
   font-size: 0.95rem;
+}
+
+.hero-model-fallback-image {
+  width: min(100%, 36rem);
+  border-radius: 12px;
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.18);
+}
+
+.hero-model-fallback p {
+  margin: 0;
 }
 
 .hero-model-fallback[hidden] {
