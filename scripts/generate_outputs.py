@@ -88,7 +88,7 @@ def build_markdown(designs_data: list[dict], assets_root: Path) -> list[str]:
 
 In this course, digital design concepts and SystemVerilog features will be introduced through examples of gradually increasing complexity, inspired by real digital systems, as follows:
 
-| # | Design | File List | RTL | TB | Sim & GDS |
+| # | Design | File List | RTL | TB | Outputs |
 |---|---|---|---|---|---|
 | 1 | Not Gate | [link]({ROOT_MAT}/designs/1_not_gate.f) | [link]({ROOT_MAT}/rtl/not_gate.sv) | [link]({ROOT_MAT}/tb/tb_not_gate.sv) | [link](not-gate) |
 | 2 | Full Adder | [link]({ROOT_MAT}/designs/2_full_adder.f) | [link]({ROOT_MAT}/rtl/full_adder.sv) | [link]({ROOT_MAT}/tb/tb_full_adder.sv) | [link](full-adder) |

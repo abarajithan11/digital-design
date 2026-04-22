@@ -26,6 +26,7 @@ GL_ENV       := $(if $(wildcard /usr/lib/wsl/lib),-e LD_LIBRARY_PATH=/usr/lib/ws
 FRESH ?= 0
 DESIGNS := $(basename $(notdir $(wildcard material/designs/*.f)))
 DESIGN_BASE := $(subst $(firstword $(subst _, ,$(DESIGN)))_,,$(DESIGN))
+SIM_MAX_TIME ?= 1s
 
 # Docker container targets
 
@@ -102,7 +103,7 @@ sim_output:
 	test -n "$(DESIGN)"
 	mkdir -p out/sim
 	mkdir -p out/sim-assets/$(DESIGN)
-	if $(MAKE) run CMD="make sim DESIGN=$(DESIGN_BASE)" IMAGE="$(IMAGE)"; then \
+	if $(MAKE) run CMD="make sim DESIGN=$(DESIGN_BASE) SIM_MAX_TIME=$(SIM_MAX_TIME)" IMAGE="$(IMAGE)"; then \
 		$(MAKE) run CMD="make wave_svg DESIGN=$(DESIGN_BASE)" IMAGE="$(IMAGE)" || true; \
 		vcd_src="material/sim/$(DESIGN)/$(DESIGN).vcd"; \
 		[ -f "$$vcd_src" ] && cp "$$vcd_src" "out/sim-assets/$(DESIGN)/$(DESIGN).vcd" || true; \
