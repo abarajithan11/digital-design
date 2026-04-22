@@ -25,6 +25,7 @@ RESULTS_DIR  := $(WORK_HOME)/results/$(PLATFORM)/$(DESIGN_NUMBERED)/base
 FINAL_GDS    := $(RESULTS_DIR)/6_final.gds
 REPORT_IMAGE_SCALE ?= 4
 PLATFORM_LYP := $(firstword \
+	$(wildcard $(CONT_MATERIAL)/openroad/$(PLATFORM).lyp) \
 	$(wildcard $(CONT_MATERIAL)/openroad/OpenROAD-flow-scripts/flow/platforms/$(PLATFORM)/KLayout/*.lyp) \
 	$(wildcard $(CONT_MATERIAL)/openroad/OpenROAD-flow-scripts/flow/platforms/$(PLATFORM)/*.lyp))
 
