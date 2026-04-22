@@ -26,6 +26,7 @@ GL_ENV       := $(if $(wildcard /usr/lib/wsl/lib),-e LD_LIBRARY_PATH=/usr/lib/ws
 FRESH ?= 0
 DESIGNS := $(basename $(notdir $(wildcard material/designs/*.f)))
 DESIGN_BASE := $(subst $(firstword $(subst _, ,$(DESIGN)))_,,$(DESIGN))
+VCD_TRIM_END ?=
 
 # Docker container targets
 
@@ -90,6 +91,7 @@ endif
 
 build_pages:
 	sphinx-build -a -b html docs site
+	cp material/6_final.glb site/_static/n_adder.glb
 	python scripts/generate_outputs.py copy-site-downloads
 
 serve: generate_outputs build_pages
@@ -104,6 +106,9 @@ sim_output:
 	if $(MAKE) run CMD="make sim DESIGN=$(DESIGN_BASE)" IMAGE="$(IMAGE)"; then \
 		printf '%s\n' "pass" > "out/sim/$(DESIGN).status"; \
 		$(MAKE) run CMD="make wave_svg DESIGN=$(DESIGN_BASE)" IMAGE="$(IMAGE)" || true; \
+		if [ -n "$(VCD_TRIM_END)" ]; then \
+			$(MAKE) run CMD="python3 /repo/scripts/trim_vcd.py /repo/material/sim/$(DESIGN)/$(DESIGN).vcd --end $(VCD_TRIM_END)" IMAGE="$(IMAGE)"; \
+		fi; \
 	else \
 		printf '%s\n' "fail" > "out/sim/$(DESIGN).status"; \
 		exit 1; \
