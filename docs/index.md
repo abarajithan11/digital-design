@@ -24,12 +24,13 @@ It is the first step in your journey towards more advanced courses at the univer
     orientation="135deg 0deg 0deg"
     camera-controls
     camera-target="0m 0m 0m"
-    camera-orbit="0deg 150deg 1.75m"
+    camera-orbit="0deg 150deg 1m"
     field-of-view="50deg"
     interaction-prompt="when-focused"
     touch-action="pan-y"
     shadow-intensity="1"
-    exposure="1.05"
+    exposure="0.8"
+    tone-mapping="commerce"
     environment-image="neutral"
     ar-status="not-presenting"
     loading="eager"
@@ -104,11 +105,12 @@ SystemVerilog/Verilog is one of the most complex languages ever, with a lot of h
 </table>
 ```
 
-- **A fully-parallel neural network accelerator on FPGA to classify handwritten numbers** - The project you will gradually build as a series of guided assignments
-  - Simple fixed-point quantization and ReLU: *Week 2 - Combinational Circuits Assignment*
-  - Adder Tree, Vector Multiply-Adder: *Week 3 - Sequential Circuits Assignment*
-  - Fully-parallel dense layer, neural network, AXI-Stream: *Week 4 - Practical Circuits Assignment*
-  - Full system on FPGA with UART RX & TX, Python serial to send/receive input/outputs: *Week 5 - FIR Filter Example Project*
+- **A fully-parallel neural network accelerator on FPGA to classify handwritten numbers** 
+  - You will gradually build this as a series of guided assignments.
+  - Week 2: Simple fixed-point quantization and ReLU
+  - Week 3: Adder Tree, Vector Multiply-Adder: *Week 3 - Sequential Circuits Assignment*
+  - Week 4: Fully-parallel dense layer, neural network, AXI-Stream
+  - Week 5: Full system on FPGA with UART RX & TX, Python serial to send/receive input/outputs
 
 ## Course Material
 
