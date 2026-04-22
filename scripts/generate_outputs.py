@@ -49,6 +49,14 @@ def first_existing_path(*candidates: Path | None) -> Path | None:
     return None
 
 
+def first_existing_text_file(*candidates: Path | None) -> Path | None:
+    """Return the first existing regular file from candidates."""
+    for candidate in candidates:
+        if candidate is not None and candidate.is_file():
+            return candidate
+    return None
+
+
 def downloadable_asset_source(repo: Path, design_numbered: str, filename: str, deployed_dir: Path | None = None) -> Path | None:
     """Return the best available source for a downloadable asset."""
     gds_result = (
@@ -58,6 +66,7 @@ def downloadable_asset_source(repo: Path, design_numbered: str, filename: str, d
     )
     return first_existing_path(
         repo / "out" / "sim-assets" / design_numbered / filename,
+        repo / "sim-assets" / design_numbered / filename,
         repo / "material" / "sim" / design_numbered / filename,
         repo / "out" / "gds-assets" / design_numbered / filename,
         gds_result,
@@ -187,7 +196,10 @@ def generate_outputs(repo: Path) -> None:
     """Assemble markdown from pre-built local or CI-downloaded artifacts."""
     docs_md = repo / "docs" / "design_outputs.md"
     assets_root = repo / "docs" / "_static" / "design-outputs"
-    sim_out_assets_root = repo / "out" / "sim-assets"
+    sim_out_assets_roots = [
+        repo / "out" / "sim-assets",
+        repo / "sim-assets",
+    ]
     sim_assets_root = repo / "material" / "sim"
     local_gds_assets_root = repo / "material" / "openroad" / "work" / "reports" / "asap7"
     gds_assets_root = repo / "out" / "gds-assets"
@@ -200,8 +212,11 @@ def generate_outputs(repo: Path) -> None:
 
     # Read sim statuses from downloaded artifact
     sim_statuses: dict[str, str] = {}
-    status_file = repo / "out" / "sim" / "status.tsv"
-    if status_file.exists():
+    status_file = first_existing_text_file(
+        repo / "out" / "sim" / "status.tsv",
+        repo / "sim" / "status.tsv",
+    )
+    if status_file is not None:
         for row in status_file.read_text(encoding="utf-8").splitlines():
             if row.strip():
                 name, status = row.split("\t", maxsplit=1)
@@ -234,7 +249,10 @@ def generate_outputs(repo: Path) -> None:
 
         # Copy waveform SVGs produced by a local sim_outputs_all run or by CI artifacts.
         sim_svg_short = first_existing_path(
-            sim_out_assets_root / design_numbered / f"{design_numbered}_short.svg",
+            *[
+                root / design_numbered / f"{design_numbered}_short.svg"
+                for root in sim_out_assets_roots
+            ],
             sim_assets_root / design_numbered / f"{design_numbered}_short.svg",
             deployed_dir / f"{design_numbered}_short.svg",
         )
@@ -263,8 +281,11 @@ def generate_outputs(repo: Path) -> None:
                 shutil.copy2(source_image, dst / image)
 
         raw_status = sim_statuses.get(design_numbered)
-        per_design_sim_status = repo / "out" / "sim" / f"{design_numbered}.status"
-        if raw_status is None and per_design_sim_status.exists():
+        per_design_sim_status = first_existing_text_file(
+            repo / "out" / "sim" / f"{design_numbered}.status",
+            repo / "sim" / f"{design_numbered}.status",
+        )
+        if raw_status is None and per_design_sim_status is not None:
             raw_status = per_design_sim_status.read_text(encoding="utf-8").strip()
         if raw_status is None:
             if sim_svg_short is not None:

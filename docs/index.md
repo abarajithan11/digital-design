@@ -100,7 +100,7 @@ SystemVerilog/Verilog is one of the most complex languages ever, with a lot of h
 <table style="border-collapse:collapse; width:100%; max-width:900px;">
   <tr>
     <td style="padding:0.5rem 1rem 0.5rem 0; vertical-align:top; width:50%;">
-      <audio controls preload="metadata" style="display:block; width:100%;" src="https://raw.githubusercontent.com/abarajithan11/digital-design-content/main/chill_sub.wav"></audio>
+      <audio controls preload="metadata" style="display:block; width:100%;" src="https://media.abapages.com/course-site/chill_sub.wav"></audio>
     </td>
     <td style="padding:0.5rem 0 0.5rem 1rem; vertical-align:top; width:50%;">
       <audio controls preload="metadata" style="display:block; width:100%;" src="https://media.abapages.com/course-site/bass_only_8bit.wav"></audio>
