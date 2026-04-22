@@ -59,6 +59,11 @@
   let dragging = false;
   let startX = 0;
   let startY = 0;
+  let savedScrollY = 0;
+  let savedBodyPosition = "";
+  let savedBodyTop = "";
+  let savedBodyWidth = "";
+  let savedBodyOverflow = "";
 
   function applyTransform() {
     img.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
@@ -76,14 +81,30 @@
     img.alt = alt || "";
     resetTransform();
     overlay.classList.add("active");
+
+    savedScrollY = window.scrollY || window.pageYOffset || 0;
+    savedBodyPosition = document.body.style.position;
+    savedBodyTop = document.body.style.top;
+    savedBodyWidth = document.body.style.width;
+    savedBodyOverflow = document.body.style.overflow;
+
     document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${savedScrollY}px`;
+    document.body.style.width = "100%";
   }
 
   function closeLightbox() {
     overlay.classList.remove("active");
     img.src = "";
     resetTransform();
-    document.body.style.overflow = "";
+
+    document.body.style.overflow = savedBodyOverflow;
+    document.body.style.position = savedBodyPosition;
+    document.body.style.top = savedBodyTop;
+    document.body.style.width = savedBodyWidth;
+
+    window.scrollTo(0, savedScrollY);
   }
 
   overlay.addEventListener("click", function (e) {
