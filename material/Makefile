@@ -36,6 +36,7 @@ GDS3XTRUDE_EXE   ?= gds3xtrude
 GDS3XTRUDE_TECH  ?= $(CONT_MATERIAL)/openroad/gds3xtrude/$(PLATFORM).layerstack
 GDS3XTRUDE_TOP   ?= $(DESIGN_BASE)
 GDS3XTRUDE_OUT   ?= $(RESULTS_DIR)/6_final.scad
+GDS3XTRUDE_GLB   ?= $(patsubst %.scad,%.glb,$(GDS3XTRUDE_OUT))
 GDS3XTRUDE_FLAGS ?=
 
 TOP_TB       ?= tb_$(DESIGN_BASE)
@@ -52,7 +53,7 @@ WAVE_WINDOW  ?= 65536
 WAVE_SAMPLE  ?= 512
 WAVE_HSCALE  ?= 1
 
-.PHONY: require_container prepare gds sim sim_all gds_all gtkwave wave_svg clean show_layout show_3d check_tools
+.PHONY: require_container prepare gds sim sim_all gds_all gtkwave wave_svg clean show_layout show_3d web_model check_tools
 
 require_container:
 	test -f /.dockerenv
@@ -120,6 +121,12 @@ show_layout: require_container
 show_3d: require_container
 	echo "DISPLAY=$${DISPLAY:-<unset>}"
 	"$(GDS3XTRUDE_EXE)" -v --tech "$(GDS3XTRUDE_TECH)" --input "$(FINAL_GDS)" --cell "$(GDS3XTRUDE_TOP)" --output "$(GDS3XTRUDE_OUT)" --view $(GDS3XTRUDE_FLAGS)
+
+web_model: prepare
+	test -f "$(FINAL_GDS)"
+	"$(GDS3XTRUDE_EXE)" -v --tech "$(GDS3XTRUDE_TECH)" --input "$(FINAL_GDS)" --cell "$(GDS3XTRUDE_TOP)" --output "$(GDS3XTRUDE_OUT)" $(GDS3XTRUDE_FLAGS)
+	python3 "$(CONT_REPO)/scripts/scad_to_glb.py" "$(GDS3XTRUDE_OUT)" "$(GDS3XTRUDE_GLB)"
+	printf '%s\n' "$(GDS3XTRUDE_GLB)"
 
 check_tools: require_container
 	echo "openroad: $$($(OPENROAD_EXE) -version 2>/dev/null | head -n 1)"

@@ -18,7 +18,14 @@ html_title = "Digital Design"
 # Allow SVG and webp in docs
 html_static_path = ["_static"]
 html_css_files = ["custom.css"]
-html_js_files = ["lightbox-init.js"]
+html_js_files = ["lightbox-init.js", "model-viewer-init.js"]
+
+
+def setup(app):
+    app.add_js_file(
+        "https://cdn.jsdelivr.net/npm/@google/model-viewer/dist/model-viewer.min.js",
+        type="module",
+    )
 
 myst_enable_extensions = [
     "colon_fence",

@@ -18,3 +18,41 @@ h4 { font-size: 1rem; }
 main img {
 	cursor: zoom-in;
 }
+
+.hero-model {
+  margin: 2rem auto;
+}
+
+.hero-model-viewer {
+  width: 100%;
+  height: clamp(18rem, 48vw, 30rem);
+  border: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.55) 38%, rgba(230, 236, 242, 0.9)),
+    linear-gradient(180deg, rgba(248, 250, 252, 0.96), rgba(226, 232, 240, 0.96));
+  box-shadow: 0 20px 48px rgba(15, 23, 42, 0.14);
+  overflow: hidden;
+}
+
+.hero-model-fallback {
+  display: grid;
+  place-items: center;
+  min-height: 100%;
+  padding: 1.5rem;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.hero-model-fallback[hidden] {
+  display: none !important;
+}
+
+.hero-model-viewer.is-error .hero-model-fallback {
+  display: grid;
+}
+
+.hero-model figcaption {
+  margin-top: 0.85rem;
+  text-align: center;
+}

@@ -91,7 +91,6 @@ endif
 
 build_pages:
 	sphinx-build -a -b html docs site
-	cp material/6_final.glb site/_static/n_adder.glb
 	python scripts/generate_outputs.py copy-site-downloads
 
 serve: generate_outputs build_pages

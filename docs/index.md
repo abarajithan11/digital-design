@@ -13,13 +13,36 @@ Along the way, you will experience the joy of designing real digital circuits an
 It is the first step in your journey towards more advanced courses at the university, bigger projects, and eventually the many career paths in one of today’s most exciting and in-demand areas of technology.
 :::
 
-```{figure} https://media.abapages.com/course-site/n_adder.png
-:alt: 8-bit ripple carry adder circuit in 7nm (ASAP7) visualized in 3D
-:align: center
-:figwidth: image
-:width: 100%
-
-8-bit ripple carry adder circuit in 7nm (ASAP7) visualized in 3D
+```{raw} html
+<figure class="hero-model">
+  <model-viewer
+    class="hero-model-viewer"
+    src="https://media.abapages.com/course-site/n_adder.glb"
+    data-local-src="_static/n_adder.glb"
+    data-remote-src="https://media.abapages.com/course-site/n_adder.glb"
+    alt="8-bit ripple carry adder circuit in 7nm (ASAP7) visualized in 3D"
+    orientation="135deg 0deg 0deg"
+    camera-controls
+    camera-target="0m 0m 0m"
+    camera-orbit="0deg 150deg 1.75m"
+    field-of-view="50deg"
+    interaction-prompt="when-focused"
+    touch-action="pan-y"
+    shadow-intensity="1"
+    exposure="1.05"
+    environment-image="neutral"
+    ar-status="not-presenting"
+    loading="eager"
+  >
+    <div class="hero-model-fallback" hidden>
+      3D model preview unavailable.
+      <a href="https://media.abapages.com/course-site/n_adder.glb">Open the GLB file directly.</a>
+    </div>
+  </model-viewer>
+  <figcaption>
+    8-bit ripple carry adder circuit in 7nm (ASAP7) visualized in 3D. Drag to rotate, scroll to zoom.
+  </figcaption>
+</figure>
 ```
 
 ## Learning Outcomes
