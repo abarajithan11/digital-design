@@ -56,7 +56,7 @@ It is the first step in your journey towards more advanced courses at the univer
 
 ## Learning Outcomes
 
-The following will be taught through will be introduced through increasing complexity, inspired by real digital systems. The examples are [listed here](https://abapages.com/digital-design/design_outputs.html).
+The following will be taught through examples ([listed here](https://abapages.com/digital-design/design_outputs.html)) of increasing complexity, inspired by real digital systems.
 
 ### Digital Design concepts
 
@@ -77,9 +77,9 @@ The following will be taught through will be introduced through increasing compl
 
 ###  SystemVerilog for Verification
 
-- basic tbs, `function`, `task`, queues
-- randomizing with constraints, 
-- transactional tbs: simple driver/monitor, basic OOP
+- Basic testbenches, `function`, `task`, queues
+- Randomizing with constraints, 
+- Transactional testbenches: simple driver/monitor, basic OOP
 
 :::{admonition} Keywords & Features of SystemVerilog Avoided in this Course
 
