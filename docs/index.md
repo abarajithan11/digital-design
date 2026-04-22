@@ -17,9 +17,7 @@ It is the first step in your journey towards more advanced courses at the univer
 <figure class="hero-model">
   <model-viewer
     class="hero-model-viewer"
-    src="https://media.abapages.com/course-site/n_adder.glb"
-    data-local-src="_static/n_adder.glb"
-    data-remote-src="https://media.abapages.com/course-site/n_adder.glb"
+    src="_static/n_adder.glb"
     alt="8-bit ripple carry adder circuit in 7nm (ASAP7) visualized in 3D"
     orientation="135deg 0deg 0deg"
     camera-controls
@@ -37,7 +35,7 @@ It is the first step in your journey towards more advanced courses at the univer
   >
     <div class="hero-model-fallback" hidden>
       3D model preview unavailable.
-      <a href="https://media.abapages.com/course-site/n_adder.glb">Open the GLB file directly.</a>
+      <a href="_static/n_adder.glb">Open the GLB file directly.</a>
     </div>
   </model-viewer>
   <figcaption>

@@ -150,6 +150,13 @@ jobs:
       - name: Run RTL-to-GDS and copy layout images
         run: make gds_outputs_all IMAGE="${GHCR_IMAGE}:${IMAGE_TAG}"
 
+      - name: Generate homepage GLB
+        if: always()
+        run: |
+          make run CMD="make web_model DESIGN=n_adder" IMAGE="${GHCR_IMAGE}:${IMAGE_TAG}"
+          mkdir -p out/gds-assets/3_n_adder
+          cp material/openroad/work/results/asap7/3_n_adder/base/6_final.glb out/gds-assets/3_n_adder/n_adder.glb
+
       - name: Upload GDS assets
         if: always()
         uses: actions/upload-artifact@v4
@@ -192,6 +199,11 @@ jobs:
 
       - name: Build Sphinx site
         run: make build_pages
+
+      - name: Copy homepage GLB into published site
+        run: |
+          mkdir -p site/_static
+          cp out/gds-assets/3_n_adder/n_adder.glb site/_static/n_adder.glb
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

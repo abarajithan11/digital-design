@@ -50,7 +50,7 @@ WAVE_WINDOW  ?= 65536
 WAVE_SAMPLE  ?= 512
 WAVE_HSCALE  ?= 1
 
-.PHONY: require_container prepare gds sim sim_all gds_all gtkwave wave_svg clean show_layout show_3d web_model check_tools
+.PHONY: require_container prepare gds sim sim_all gds_all gtkwave wave_svg clean show_layout show_3d scad_model web_model check_tools
 
 require_container:
 	test -f /.dockerenv
@@ -112,9 +112,11 @@ show_3d: require_container
 	echo "DISPLAY=$${DISPLAY:-<unset>}"
 	"$(GDS3XTRUDE_EXE)" -v --tech "$(GDS3XTRUDE_TECH)" --input "$(FINAL_GDS)" --cell "$(GDS3XTRUDE_TOP)" --output "$(GDS3XTRUDE_OUT)" --view $(GDS3XTRUDE_FLAGS)
 
-web_model: prepare
+scad_model: prepare
 	test -f "$(FINAL_GDS)"
 	"$(GDS3XTRUDE_EXE)" -v --tech "$(GDS3XTRUDE_TECH)" --input "$(FINAL_GDS)" --cell "$(GDS3XTRUDE_TOP)" --output "$(GDS3XTRUDE_OUT)" $(GDS3XTRUDE_FLAGS)
+
+web_model: scad_model
 	python3 "$(CONT_REPO)/scripts/scad_to_glb.py" "$(GDS3XTRUDE_OUT)" "$(GDS3XTRUDE_GLB)"
 	printf '%s\n' "$(GDS3XTRUDE_GLB)"
 

@@ -44,6 +44,7 @@ RUN python3 -m pip install --no-cache-dir \
     vcdvcd \
     numpy \
     scipy \
+    trimesh \
     matplotlib
 
 RUN git clone --depth 1 --single-branch --branch "${VERILATOR_VERSION}" https://github.com/verilator/verilator.git /tmp/verilator \
