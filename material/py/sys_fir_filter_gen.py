@@ -2,7 +2,7 @@
 import os
 import urllib.request
 import numpy as np
-from scipy.signal import firwin
+from scipy.signal import remez
 from scipy.io import wavfile
 
 from plot_filter import plot_filter_response
@@ -12,8 +12,10 @@ output_file = "data/bass_only_8bit.wav"
 download_url = "https://media.abapages.com/course-site/chill_sub.wav"
 
 N = 101
-cutoff_hz = 800.0
-frac = 7   # number of fractional bits, must be <= 7 for signed int8
+cutoff_hz = 250.0
+transition_hz = 200.0
+frac = 7   # number of fractional bits for fixed-point values
+K_BITS = 4
 scale = 1 << frac
 
 os.makedirs("data", exist_ok=True)
@@ -41,11 +43,19 @@ np.savetxt("data/x_music.txt", x_q, fmt='%d')
 '''
 Create FIR Filter
 '''
-h = firwin(N, cutoff=cutoff_hz, fs=fs, pass_zero="lowpass")
-h_q = np.clip(np.round(h * scale), -128, 127).astype(np.int8)
+bands = [0.0, cutoff_hz, cutoff_hz + transition_hz, fs / 2]
+
+h = remez(N, bands, desired=[1, 0], weight=[1, 4], fs=fs)
+h_q = np.round(h * scale).astype(np.int8)
+
+exceeded = h_q[(h_q < -2**(K_BITS-1)) | (h_q > 2**(K_BITS-1)+1)]
+if exceeded.size > 0:
+    print(f"WARNING: {exceeded.size} coeff outside {K_BITS}-bits. {exceeded.tolist()}")
+
+h_q = np.clip(h_q, -2**(K_BITS-1), 2**(K_BITS-1)+1).astype(np.int8)
 
 with open("data/coef.svh", "w") as f:
-    f.write(",\n".join(f"  8'd{int(np.uint8(v))}" for v in h_q))
+    f.write(",\n".join(f"{'-' if v < 0 else ''}{K_BITS}'d{abs(int(v))}" for v in h_q))
 
 '''
 Apply FIR Filter

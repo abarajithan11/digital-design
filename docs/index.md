@@ -94,7 +94,7 @@ SystemVerilog/Verilog is one of the most complex languages ever, with a lot of h
 - **FIR Filter on FPGA to extract bass/treble from your favorite song** 
   - A worked example gradually built through our lectures and discussions.
   - We will **NOT** teach the mathematics of calculating the filter coefficients. [Here is our python file](https://github.com/abarajithan11/digital-design/blob/main/material/py/sys_fir_filter_gen.py) to generate them. We will teach you how such filters work, and how to implement them as a circuit.
-  - You can listen to the audio before and after applying our 8-bit-quantized, 100-tap low pass filter ([**see filter characteristics**](https://media.abapages.com/course-site/filter.png)) with a cutoff of 800 Hz, here:
+  - You can listen to the audio before and after applying our 8-bit-quantized, 100-tap low pass filter ([**see filter characteristics**](https://media.abapages.com/course-site/filter.png)) with a cutoff of 250 Hz, here:
 
 ```{raw} html
 <table style="border-collapse:collapse; width:100%; max-width:900px;">
@@ -107,8 +107,8 @@ SystemVerilog/Verilog is one of the most complex languages ever, with a lot of h
     </td>
   </tr>
   <tr>
-    <td style="padding:0.25rem 1rem 0 0; vertical-align:top; text-align:center;">Original song</td>
-    <td style="padding:0.25rem 0 0 1rem; vertical-align:top; text-align:center;">Bass only (800 Hz cutoff)</td>
+    <td style="padding:0.25rem 1rem 0 0; vertical-align:top; text-align:center;">Original music</td>
+    <td style="padding:0.25rem 0 0 1rem; vertical-align:top; text-align:center;">Bass only (250 Hz cutoff)</td>
   </tr>
 </table>
 ```

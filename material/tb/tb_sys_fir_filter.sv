@@ -6,9 +6,9 @@ module tb_sys_fir_filter;
   localparam  CLKS_PER_BIT     = 4,
               WIDTH            = 8,
               FRAC             = 7,
-              W_K              = 8,
+              W_K              = 4,
               N                = 100,
-              W_Y              = WIDTH + W_K + $clog2(N),
+              W_Y              = WIDTH + W_K + $clog2(N+1),
               PACKET_SIZE_TX   = WIDTH+5,
               N_WORDS          = 1;
 

@@ -9,7 +9,7 @@ module sys_fir_filter #(
       WIDTH          = 8,
       FRAC           = 7,
       N              = 100,
-      W_K            = 8,
+      W_K            = 4,
     parameter [(N+1)*W_K-1:0] K = {
       `include "data/coef.svh"
     },

@@ -1,9 +1,9 @@
 `timescale 1ns/1ps
 
 module fir_filter_retimed #(
-  parameter N = 5, W_X = 8, W_K = 3,
+  parameter N = 5, W_X = 8, W_K = 4,
   parameter logic [(N+1)*W_K-1:0] K = {
-    8'd1, 8'd2, 8'd3, 8'd4, 8'd5, 8'd6
+    4'sd1, 4'sd2, 4'sd3, 4'sd4, 4'sd5, 4'sd6
     },//'{default:0},
   
   localparam W_Y = W_X + W_K + $clog2(N+1)

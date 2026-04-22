@@ -51,7 +51,7 @@ def plot_filter_response(x_q, h_q, fs, scale, cutoff_hz, output_path="data/filte
     x_seg = x_plot[start_idx:end_idx]
     y_seg = y_plot[start_idx:end_idx]
     tx = np.arange(start_idx, end_idx) / fs
-    hf_idx = np.arange(len(h_plot))
+    hf_idx = np.arange(len(h_q))
 
     fig, axes = plt.subplots(3, 2, figsize=(14, 10))
 
@@ -61,8 +61,8 @@ def plot_filter_response(x_q, h_q, fs, scale, cutoff_hz, output_path="data/filte
     _plot_time(axes[1, 0], tx, y_seg, "Filtered Signal - Time Domain")
     _plot_freq(axes[1, 1], fy, y_db, "Filtered Signal - Frequency Domain", fs)
 
-    axes[2, 0].stem(hf_idx, h_plot, basefmt=" ")
-    axes[2, 0].set(title="FIR Filter - Time Domain", xlabel="Sample", ylabel="Amplitude")
+    axes[2, 0].stem(hf_idx, h_q, basefmt=" ")
+    axes[2, 0].set(title="FIR Filter - Time Domain", xlabel="Sample", ylabel="Quantized Value")
     axes[2, 0].grid(True)
 
     _plot_freq(
