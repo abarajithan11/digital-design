@@ -8,6 +8,7 @@ out/
 __pycache__
 docs/design_outputs.md
 *.vcd
+docs/_static/n_adder.glb
 
 material/data/*.wav
 material/data/coef.svh

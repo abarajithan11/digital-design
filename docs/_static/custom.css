@@ -24,13 +24,14 @@ main img {
 }
 
 .hero-model-viewer {
+  --hero-model-surface:
+    radial-gradient(circle at top, color-mix(in srgb, var(--color-background-primary) 94%, white 6%), color-mix(in srgb, var(--color-background-primary) 72%, transparent) 38%, color-mix(in srgb, var(--color-background-secondary) 92%, transparent)),
+    linear-gradient(180deg, color-mix(in srgb, var(--color-background-primary) 96%, white 4%), color-mix(in srgb, var(--color-background-secondary) 94%, black 6%));
   width: 100%;
   height: clamp(18rem, 48vw, 30rem);
   border: 1px solid color-mix(in srgb, currentColor 18%, transparent);
   border-radius: 18px;
-  background:
-    radial-gradient(circle at top, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.55) 38%, rgba(230, 236, 242, 0.9)),
-    linear-gradient(180deg, rgba(248, 250, 252, 0.96), rgba(226, 232, 240, 0.96));
+  background: var(--hero-model-surface);
   box-shadow: 0 20px 48px rgba(15, 23, 42, 0.14);
   overflow: hidden;
 }

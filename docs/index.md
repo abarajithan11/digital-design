@@ -30,6 +30,7 @@ It is the first step in your journey towards more advanced courses at the univer
     exposure="0.8"
     tone-mapping="commerce"
     environment-image="neutral"
+    transparent-background
     ar-status="not-presenting"
     loading="eager"
   >
