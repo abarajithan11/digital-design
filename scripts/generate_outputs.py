@@ -168,15 +168,8 @@ To reproduce this on your machine, check out our [docker setup](setting-up-docke
 - Simulation: {sim_result}, RTL2GDS: {rtl2gds_result}
 - Artifacts : {artifact_line}
 
-**Waveform (0-10 ns)**
+**Layout Reports**
 '''])
-        if short_svg.exists():
-            lines.append(f"![{design_numbered} waveform](_static/design-outputs/{design_numbered}/{design_numbered}_short.svg)")
-        else:
-            lines.append("Waveform SVG not generated.")
-        lines.append("")
-
-        lines.extend(["**Layout Reports**", ""])
 
         routing_path = f"_static/design-outputs/{design_numbered}/final_routing.webp"
         placement_path = f"_static/design-outputs/{design_numbered}/final_placement.webp"
@@ -195,6 +188,13 @@ To reproduce this on your machine, check out our [docker setup](setting-up-docke
         else:
             lines.append("One or more layout images were not generated.")
             lines.append("")
+
+        lines.extend(["**Waveform (0-10 ns)**", ""])
+        if short_svg.exists():
+            lines.append(f"![{design_numbered} waveform](_static/design-outputs/{design_numbered}/{design_numbered}_short.svg)")
+        else:
+            lines.append("Waveform SVG not generated.")
+        lines.append("")
 
     return lines
 
