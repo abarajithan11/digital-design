@@ -22,7 +22,7 @@ DXG_DEVICE   := $(if $(wildcard /dev/dxg),--device /dev/dxg)
 WSL_LIB_MOUNT := $(if $(wildcard /usr/lib/wsl/lib),-v /usr/lib/wsl:/usr/lib/wsl)
 GL_ENV       := $(if $(wildcard /usr/lib/wsl/lib),-e LD_LIBRARY_PATH=/usr/lib/wsl/lib -e LIBGL_ALWAYS_SOFTWARE=0 -e GALLIUM_DRIVER=d3d12 -e MESA_LOADER_DRIVER_OVERRIDE=d3d12,-e LIBGL_ALWAYS_SOFTWARE=1)
 
-.PHONY: image start enter kill fresh run sim_output sim_outputs_all gds_output gds_outputs_all generate_outputs build_pages serve 3d_fallback
+.PHONY: image start enter kill fresh restart run sim_output sim_outputs_all gds_output gds_outputs_all gds_glb_assets 3d_assets generate_outputs build_pages site serve
 FRESH ?= 0
 DESIGNS := $(basename $(notdir $(wildcard material/designs/*.f)))
 SIM_MAX_TIME ?= 1s
@@ -86,13 +86,15 @@ ifeq ($(FRESH),1)
 	$(MAKE) sim_outputs_all IMAGE="$(IMAGE)"
 	$(MAKE) gds_outputs_all IMAGE="$(IMAGE)"
 endif
-	python scripts/generate_outputs.py
+	python3 scripts/generate_outputs.py
 
 build_pages:
 	rm -rf site
 	sphinx-build -a -b html docs site
 
-serve: generate_outputs build_pages
+site: generate_outputs build_pages
+
+serve: site
 	python3 -m http.server 8000 --directory site
 
 
@@ -166,7 +168,7 @@ gds_glb_assets:
 		if [ ! -f material/openroad/work/results/asap7/n_adder/base/6_final.gds ]; then \
 			$(MAKE) run CMD="make gds DESIGN=n_adder" IMAGE="$(IMAGE)"; \
 		fi; \
-		$(MAKE) run CMD="make web_model DESIGN=n_adder" IMAGE="$(IMAGE)"; \
+		$(MAKE) run CMD="make glb DESIGN=n_adder" IMAGE="$(IMAGE)"; \
 	fi
 	missing_cells=0; \
 	for cell in INVx1 NAND2x1 AOI211x1 DFFHQNx1; do \
@@ -175,15 +177,15 @@ gds_glb_assets:
 		fi; \
 	done; \
 	if [ "$$missing_cells" = "1" ]; then \
-		$(MAKE) run CMD="make week1_cell_glbs SHOW=0" IMAGE="$(IMAGE)"; \
+		$(MAKE) run CMD="make cell_glbs" IMAGE="$(IMAGE)"; \
 	fi
 	cp material/openroad/work/results/asap7/n_adder/base/6_final.glb out/gds-assets/n_adder/n_adder.glb
 	for cell in INVx1 NAND2x1 AOI211x1 DFFHQNx1; do \
 		cp "material/openroad/work/results/cell_3d/$${cell}_ASAP7_75t_R.glb" "out/gds-assets/cell_3d/$${cell}_ASAP7_75t_R.glb"; \
 	done
 
-3d_fallback: gds_glb_assets
-	python3 scripts/render_3d_fallbacks.py
+3d_assets:
+	$(MAKE) run CMD="make 3d_assets" IMAGE="$(IMAGE)"
 
 gds_outputs_all:
 	rm -rf out/gds-assets; \

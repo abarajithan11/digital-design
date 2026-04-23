@@ -163,7 +163,7 @@ def build_markdown(designs_data: list[dict], assets_root: Path) -> list[str]:
         flist_link = f"[link]({ROOT_MAT}/designs/{d['design_name']}.f)"
         rtl_link = f"[link]({REPO_URL}/blob/main/{d['top_rtl_rel']})" if d["top_rtl_rel"] else "—"
         tb_link = f"[link]({REPO_URL}/blob/main/{d['top_tb_rel']})" if d["top_tb_rel"] else "—"
-        outputs_link = f"[link]({d['slug']})"
+        outputs_link = f'<a href="#{d["slug"]}">link</a>'
         lines.append(
             f"| {d['index']} | {d['description']} | {flist_link} | {rtl_link} | {tb_link} | {outputs_link} |"
         )
@@ -205,7 +205,7 @@ def build_markdown(designs_data: list[dict], assets_root: Path) -> list[str]:
         ]
         artifact_line = ", ".join(artifact_links) if artifact_links else "Preview assets only"
 
-        lines.extend([f"## {heading}", ""])
+        lines.extend([f'<a id="{d["slug"]}"></a>', "", f"## {heading}", ""])
         lines.extend(
             [
                 "**Run results**",

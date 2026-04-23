@@ -191,11 +191,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install sphinx furo myst-parser
 
-      - name: Generate design outputs page
-        run: make generate_outputs
-
-      - name: Build Sphinx site
-        run: make build_pages
+      - name: Build site
+        run: make site
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

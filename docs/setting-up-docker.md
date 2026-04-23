@@ -25,12 +25,16 @@ From inside the container
 ```bash
 make sim          DESIGN=alu
 make gds          DESIGN=alu
+make sim_all
+make gds_all
 make show_layout  DESIGN=alu
+make show_layout_cells
 make show_3d      DESIGN=alu
-make show_3d_cell CELL=NAND2x1 # just make show_3d_cell gives all cells
+make show_3d_cell CELL=NAND2x1 # omit CELL to list available cells
+make 3d_assets
 # exit - to leave the container 
 ```
 
-* The root `Makefile` only manages the Docker image and container. 
-* The `material/Makefile` handles simulation and RTL2GDS.
+* The root `Makefile` handles Docker, artifact collection, and site generation.
+* The `material/Makefile` handles the in-container design flows.
 * Reports and layout images are stored in `material/openroad/work/reports/asap7/4_alu/base`

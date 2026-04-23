@@ -35,7 +35,6 @@ GDS3XTRUDE_FLAGS ?=
 ASAP7_LIB_GDS    := $(CONT_MATERIAL)/openroad/OpenROAD-flow-scripts/flow/platforms/asap7/gds/asap7sc7p5t_28_R_220121a.gds
 CELL ?=
 CELL_3D_DIR      := $(CONT_MATERIAL)/openroad/work/results/cell_3d
-SHOW ?= 1
 
 TOP_TB       ?= tb_$(DESIGN)
 SIM_WORKDIR  := $(CONT_MATERIAL)/sim/$(DESIGN)
@@ -49,7 +48,7 @@ WAVE_WINDOW  ?= 65536
 WAVE_SAMPLE  ?= 512
 WAVE_HSCALE  ?= 1
 
-.PHONY: require_container prepare gds sim sim_all gds_all gtkwave wave_svg clean show_layout show_3d show_3d_cell week1_cell_glbs scad_model web_model check_tools
+.PHONY: require_container prepare gds sim sim_all gds_all gtkwave wave_svg clean show_layout show_layout_cells show_3d show_3d_cell glb cell_glbs 3d_assets
 
 require_container:
 	test -f /.dockerenv
@@ -108,9 +107,18 @@ gds_all:
 show_layout: require_container
 	$(KLAYOUT_CMD) -l "$(PLATFORM_LYP)" "$(FINAL_GDS)"
 
+show_layout_cells: require_container
+	$(KLAYOUT_CMD) -l "$(PLATFORM_LYP)" "$(ASAP7_LIB_GDS)"
+
 show_3d: require_container
 	echo "DISPLAY=$${DISPLAY:-<unset>}"
 	"$(GDS3XTRUDE_EXE)" -v --tech "$(GDS3XTRUDE_TECH)" --input "$(FINAL_GDS)" --cell "$(GDS3XTRUDE_TOP)" --output "$(GDS3XTRUDE_OUT)" --view $(GDS3XTRUDE_FLAGS)
+
+glb: prepare
+	test -f "$(FINAL_GDS)"
+	"$(GDS3XTRUDE_EXE)" -v --tech "$(GDS3XTRUDE_TECH)" --input "$(FINAL_GDS)" --cell "$(GDS3XTRUDE_TOP)" --output "$(GDS3XTRUDE_OUT)" $(GDS3XTRUDE_FLAGS)
+	python3 "$(CONT_REPO)/scripts/scad_to_glb.py" "$(GDS3XTRUDE_OUT)" "$(GDS3XTRUDE_GLB)"
+	printf '%s\n' "$(GDS3XTRUDE_GLB)"
 
 show_3d_cell: require_container
 	mkdir -p "$(CELL_3D_DIR)"
@@ -120,33 +128,29 @@ show_3d_cell: require_container
 		exit 0; \
 	fi
 	full_cell="$(CELL)_ASAP7_75t_R"
-	if [ "$(SHOW)" = "1" ]; then \
-		"$(GDS3XTRUDE_EXE)" -v --tech "$(GDS3XTRUDE_TECH)" --input "$(ASAP7_LIB_GDS)" --cell "$$full_cell" --output "$(CELL_3D_DIR)/$$full_cell.scad" --view $(GDS3XTRUDE_FLAGS); \
-	else \
-		"$(GDS3XTRUDE_EXE)" -v --tech "$(GDS3XTRUDE_TECH)" --input "$(ASAP7_LIB_GDS)" --cell "$$full_cell" --output "$(CELL_3D_DIR)/$$full_cell.scad" $(GDS3XTRUDE_FLAGS); \
-	fi
+	"$(GDS3XTRUDE_EXE)" -v --tech "$(GDS3XTRUDE_TECH)" --input "$(ASAP7_LIB_GDS)" --cell "$$full_cell" --output "$(CELL_3D_DIR)/$$full_cell.scad" --view $(GDS3XTRUDE_FLAGS)
 
-week1_cell_glbs: require_container
+cell_glbs: require_container
 	mkdir -p "$(CELL_3D_DIR)"
 	for cell in INVx1 NAND2x1 AOI211x1 DFFHQNx1; do \
-		$(MAKE) show_3d_cell CELL="$$cell" SHOW="$(SHOW)"; \
+		full_cell="$${cell}_ASAP7_75t_R"; \
+		"$(GDS3XTRUDE_EXE)" -v --tech "$(GDS3XTRUDE_TECH)" --input "$(ASAP7_LIB_GDS)" --cell "$$full_cell" --output "$(CELL_3D_DIR)/$$full_cell.scad" $(GDS3XTRUDE_FLAGS); \
 		python3 "$(CONT_REPO)/scripts/scad_to_glb.py" "$(CELL_3D_DIR)/$${cell}_ASAP7_75t_R.scad" "$(CELL_3D_DIR)/$${cell}_ASAP7_75t_R.glb"; \
 	done
 
-scad_model: prepare
-	test -f "$(FINAL_GDS)"
-	"$(GDS3XTRUDE_EXE)" -v --tech "$(GDS3XTRUDE_TECH)" --input "$(FINAL_GDS)" --cell "$(GDS3XTRUDE_TOP)" --output "$(GDS3XTRUDE_OUT)" $(GDS3XTRUDE_FLAGS)
-
-web_model: scad_model
-	python3 "$(CONT_REPO)/scripts/scad_to_glb.py" "$(GDS3XTRUDE_OUT)" "$(GDS3XTRUDE_GLB)"
-	printf '%s\n' "$(GDS3XTRUDE_GLB)"
-
-check_tools: require_container
-	echo "openroad: $$($(OPENROAD_EXE) -version 2>/dev/null | head -n 1)"
-	echo "yosys: $$($(YOSYS_EXE) -V)"
-	echo "klayout: $$(klayout -zz -v 2>&1 | head -n 1)"
-	echo "verilator: $$(verilator --version)"
-	echo "gtkwave: $$(gtkwave --version | head -n 1)"
+3d_assets: require_container
+	mkdir -p "$(CONT_REPO)/out/gds-assets/n_adder"
+	mkdir -p "$(CONT_REPO)/out/gds-assets/cell_3d"
+	if [ ! -f "$(CONT_MATERIAL)/openroad/work/results/$(PLATFORM)/n_adder/base/6_final.gds" ]; then \
+		$(MAKE) gds DESIGN=n_adder; \
+	fi
+	$(MAKE) glb DESIGN=n_adder
+	$(MAKE) cell_glbs
+	cp "$(CONT_MATERIAL)/openroad/work/results/$(PLATFORM)/n_adder/base/6_final.glb" "$(CONT_REPO)/out/gds-assets/n_adder/n_adder.glb"
+	for cell in INVx1 NAND2x1 AOI211x1 DFFHQNx1; do \
+		cp "$(CELL_3D_DIR)/$${cell}_ASAP7_75t_R.glb" "$(CONT_REPO)/out/gds-assets/cell_3d/$${cell}_ASAP7_75t_R.glb"; \
+	done
+	python3 "$(CONT_REPO)/scripts/render_3d_fallbacks.py"
 
 clean: require_container
 	rm -rf $(CONT_MATERIAL)/sim $(CONT_MATERIAL)/openroad/work

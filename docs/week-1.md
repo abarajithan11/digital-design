@@ -3,8 +3,7 @@
 Following are 3D visualizations of some standard cells in ASAP7 PDK. You can drag to rotate, scroll to zoom. To generate them from our docker container, do:
 
 ```bash
-make show_3d_cell CELL=NAND2x1 
-# just make show_3d_cell lists all possible cells
+make 3d_assets
 ```
 
 ```{raw} html
