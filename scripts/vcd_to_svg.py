@@ -48,11 +48,40 @@ def _display_name(name: str) -> str:
     return ".".join(parts) if parts else name
 
 
-def _scope_depth(name: str) -> int:
+def _normalized_parts(name: str):
     parts = name.split(".")
     if parts and re.fullmatch(r"tb_[A-Za-z0-9_]+", parts[0]):
         parts = parts[1:]
+    return parts
+
+
+def _scope_depth(name: str) -> int:
+    parts = _normalized_parts(name)
     return max(0, len(parts) - 1)
+
+
+def _has_all_caps_segment(name: str) -> bool:
+    for part in _normalized_parts(name):
+        if re.fullmatch(r"[A-Z0-9_]*[A-Z][A-Z0-9_]*", part):
+            return True
+    return False
+
+
+def _prefer_top_level_signals(signals):
+    top_level_leaf_names = {
+        parts[-1]
+        for name in signals
+        for parts in [_normalized_parts(name)]
+        if len(parts) == 1 and parts
+    }
+
+    selected = []
+    for name in signals:
+        parts = _normalized_parts(name)
+        if len(parts) > 1 and parts and parts[-1] in top_level_leaf_names:
+            continue
+        selected.append(name)
+    return selected
 
 
 def _encode_scalar(samples):
@@ -151,6 +180,8 @@ def main() -> None:
 
     vcd = VCDVCD(args.vcd, store_tvs=True)
     signals = [s for s in vcd.signals if getattr(vcd[s], "tv", [])]
+    signals = [s for s in signals if not _has_all_caps_segment(s)]
+    signals = _prefer_top_level_signals(signals)
     if args.max_depth is not None:
         signals = [s for s in signals if _scope_depth(s) <= args.max_depth]
     signals = signals[: args.max_signals]
