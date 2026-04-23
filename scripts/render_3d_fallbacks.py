@@ -27,7 +27,7 @@ MODELS = [
     {
         "page_name": "n_adder.html",
         "png_name": "n_adder.png",
-        "glb_path": "out/gds-assets/3_n_adder/n_adder.glb",
+        "glb_path": "out/gds-assets/n_adder/n_adder.glb",
         "alt": "8-bit ripple carry adder circuit in 7nm (ASAP7) visualized in 3D",
         "camera_target": "0m 0m 0m",
         "camera_orbit": "0deg 150deg 1m",

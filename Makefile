@@ -25,7 +25,6 @@ GL_ENV       := $(if $(wildcard /usr/lib/wsl/lib),-e LD_LIBRARY_PATH=/usr/lib/ws
 .PHONY: image start enter kill fresh run sim_output sim_outputs_all gds_output gds_outputs_all generate_outputs build_pages serve 3d_fallback
 FRESH ?= 0
 DESIGNS := $(basename $(notdir $(wildcard material/designs/*.f)))
-DESIGN_BASE := $(subst $(firstword $(subst _, ,$(DESIGN)))_,,$(DESIGN))
 SIM_MAX_TIME ?= 1s
 
 # Docker container targets
@@ -103,7 +102,7 @@ sim_output:
 	test -n "$(DESIGN)"
 	mkdir -p out/sim
 	mkdir -p out/sim-assets/$(DESIGN)
-	if $(MAKE) run CMD="make sim DESIGN=$(DESIGN_BASE) SIM_MAX_TIME=$(SIM_MAX_TIME) && (make wave_svg DESIGN=$(DESIGN_BASE) || true)" IMAGE="$(IMAGE)"; then \
+	if $(MAKE) run CMD="make sim DESIGN=$(DESIGN) SIM_MAX_TIME=$(SIM_MAX_TIME) && (make wave_svg DESIGN=$(DESIGN) || true)" IMAGE="$(IMAGE)"; then \
 		vcd_src="material/sim/$(DESIGN)/$(DESIGN).vcd"; \
 		[ -f "$$vcd_src" ] && cp "$$vcd_src" "out/sim-assets/$(DESIGN)/$(DESIGN).vcd" || true; \
 		svg_src="material/sim/$(DESIGN)/$(DESIGN)_short.svg"; \
@@ -141,7 +140,7 @@ sim_outputs_all:
 gds_output:
 	test -n "$(DESIGN)"
 	mkdir -p "out/gds-assets/$(DESIGN)"
-	if $(MAKE) run CMD="make gds DESIGN=$(DESIGN_BASE)" IMAGE="$(IMAGE)"; then \
+	if $(MAKE) run CMD="make gds DESIGN=$(DESIGN)" IMAGE="$(IMAGE)"; then \
 		printf '%s\n' "pass" > "out/gds-assets/$(DESIGN)/status.txt"; \
 	else \
 		printf '%s\n' "fail" > "out/gds-assets/$(DESIGN)/status.txt"; \
@@ -161,10 +160,10 @@ gds_output:
 	exit $${status:-0}
 
 gds_glb_assets:
-	mkdir -p out/gds-assets/3_n_adder
+	mkdir -p out/gds-assets/n_adder
 	mkdir -p out/gds-assets/cell_3d
-	if [ ! -f material/openroad/work/results/asap7/3_n_adder/base/6_final.glb ]; then \
-		if [ ! -f material/openroad/work/results/asap7/3_n_adder/base/6_final.gds ]; then \
+	if [ ! -f material/openroad/work/results/asap7/n_adder/base/6_final.glb ]; then \
+		if [ ! -f material/openroad/work/results/asap7/n_adder/base/6_final.gds ]; then \
 			$(MAKE) run CMD="make gds DESIGN=n_adder" IMAGE="$(IMAGE)"; \
 		fi; \
 		$(MAKE) run CMD="make web_model DESIGN=n_adder" IMAGE="$(IMAGE)"; \
@@ -178,7 +177,7 @@ gds_glb_assets:
 	if [ "$$missing_cells" = "1" ]; then \
 		$(MAKE) run CMD="make week1_cell_glbs SHOW=0" IMAGE="$(IMAGE)"; \
 	fi
-	cp material/openroad/work/results/asap7/3_n_adder/base/6_final.glb out/gds-assets/3_n_adder/n_adder.glb
+	cp material/openroad/work/results/asap7/n_adder/base/6_final.glb out/gds-assets/n_adder/n_adder.glb
 	for cell in INVx1 NAND2x1 AOI211x1 DFFHQNx1; do \
 		cp "material/openroad/work/results/cell_3d/$${cell}_ASAP7_75t_R.glb" "out/gds-assets/cell_3d/$${cell}_ASAP7_75t_R.glb"; \
 	done
