@@ -34,7 +34,7 @@ jobs:
           fetch-depth: 0
 
       - id: check-changes
-        name: Detect Dockerfile / Makefile changes
+        name: Detect Docker image input changes
         shell: bash
         run: |
           set -e
@@ -54,11 +54,11 @@ jobs:
           echo "Changed files:"
           echo "$files"
 
-          if echo "$files" | grep -E '^(Dockerfile|Makefile)$' >/dev/null; then
+          if echo "$files" | grep -E '^Dockerfile$' >/dev/null; then
             echo "Docker image inputs changed -> rebuild"
             echo "docker_changed=true" >> "$GITHUB_OUTPUT"
           else
-            echo "No Dockerfile/Makefile changes -> reuse existing image"
+            echo "No Docker image input changes -> reuse existing image"
             echo "docker_changed=false" >> "$GITHUB_OUTPUT"
           fi
 

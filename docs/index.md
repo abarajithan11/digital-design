@@ -94,7 +94,7 @@ SystemVerilog/Verilog is one of the most complex languages ever, with a lot of h
 - **FIR Filter on FPGA to extract bass/treble from your favorite song** 
   - A worked example gradually built through our lectures and discussions.
   - We will **NOT** teach the mathematics of calculating the filter coefficients. [Here is our python file](https://github.com/abarajithan11/digital-design/blob/main/material/py/sys_fir_filter_gen.py) to generate them. We will teach you how such filters work, and how to implement them as a circuit.
-  - You can listen to the audio before and after applying our 8-bit-quantized, 100-tap low pass filter ([**see filter characteristics**](https://media.abapages.com/course-site/filter.png)) with a cutoff of 250 Hz, here:
+  - You can listen to the audio before and after applying our 4-bit-quantized, 100-tap low pass filter ([**see filter characteristics**](https://media.abapages.com/course-site/filter.png)) with a cutoff of 250 Hz, here:
 
 ```{raw} html
 <table style="border-collapse:collapse; width:100%; max-width:900px;">

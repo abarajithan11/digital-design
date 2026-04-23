@@ -5,7 +5,6 @@ import argparse
 import json
 from pathlib import Path
 import re
-import xml.etree.ElementTree as ET
 
 import wavedrom
 from vcdvcd import VCDVCD
@@ -120,48 +119,128 @@ def _encode_bus(samples):
     return "".join(wave), data
 
 
-def _force_white_background(svg_path: Path) -> None:
-    tree = ET.parse(svg_path)
-    root = tree.getroot()
+def _apply_theme_colors(svg_path: Path) -> None:
+    svg = svg_path.read_text(encoding="utf-8")
 
-    if root.tag.startswith("{"):
-        ns_uri = root.tag.split("}", 1)[0][1:]
-        ns = {"svg": ns_uri}
-    else:
-        ns_uri = ""
-        ns = {}
+    # Use the page text color for marker fills/arcs too.
+    svg = re.sub(r'(?i)(marker[^>]*style="[^"]*fill:)[^;"]+', r"\1currentColor", svg)
 
-    def qname(tag: str) -> str:
-        return f"{{{ns_uri}}}{tag}" if ns_uri else tag
+    # Make WaveDrom's default black strokes/fills follow the SVG's current color.
+    svg = re.sub(r"(?i)(stroke\s*:\s*)#000(?:000)?", r"\1currentColor", svg)
+    svg = re.sub(r'(?i)(stroke\s*=\s*")#000(?:000)?(")', r"\1currentColor\2", svg)
+    svg = re.sub(r"(?i)(fill\s*:\s*)#000(?:000)?", r"\1currentColor", svg)
+    svg = re.sub(r'(?i)(fill\s*=\s*")#000(?:000)?(")', r"\1currentColor\2", svg)
 
-    width = root.get("width", "100%")
-    height = root.get("height", "100%")
+    # Make per-element text styling follow the page text color too.
+    svg = re.sub(
+        r"(<text\b[^>]*\bstyle=\")([^\"]*)(\")",
+        lambda m: (
+            m.group(1)
+            + re.sub(r"(?i)fill\s*:\s*[^;]+;?", "fill:currentColor;", m.group(2))
+            + ("; fill:currentColor" if "fill:" not in m.group(2).lower() else "")
+            + m.group(3)
+        ),
+        svg,
+    )
+    svg = re.sub(r'(?i)(<text\b[^>]*\bfill=")[^"]*(")', r"\1currentColor\2", svg)
+    svg = re.sub(
+        r"(<tspan\b[^>]*\bstyle=\")([^\"]*)(\")",
+        lambda m: (
+            m.group(1)
+            + re.sub(r"(?i)fill\s*:\s*[^;]+;?", "fill:currentColor;", m.group(2))
+            + ("; fill:currentColor" if "fill:" not in m.group(2).lower() else "")
+            + m.group(3)
+        ),
+        svg,
+    )
+    svg = re.sub(r'(?i)(<tspan\b[^>]*\bfill=")[^"]*(")', r"\1currentColor\2", svg)
 
-    existing_bg = None
-    for child in list(root):
-        if child.tag == qname("rect") and child.get("data-codex-bg") == "white":
-            existing_bg = child
-            break
+    # Remove filled bus boxes so the waveform remains transparent in both themes.
+    svg = re.sub(
+        r'(?i)(<(?:rect|path|polygon|polyline)\b[^>]*\bfill=")#fff(?:fff)?(")',
+        r"\1none\2",
+        svg,
+    )
+    svg = re.sub(
+        r'(?i)(fill\s*:\s*)#fff(?:fff)?',
+        r"\1none",
+        svg,
+    )
 
-    if existing_bg is None:
-        bg = ET.Element(
-            qname("rect"),
-            {
-                "data-codex-bg": "white",
-                "x": "0",
-                "y": "0",
-                "width": width,
-                "height": height,
-                "fill": "#ffffff",
-            },
+    final_override = """
+<style data-codex-wave-override="true"><![CDATA[
+text, tspan {
+  fill: currentColor !important;
+  stroke: none !important;
+  font-size: 8pt !important;
+  font-weight: 400 !important;
+}
+.info, .muted, .warning, .error, .success,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  fill: currentColor !important;
+  stroke: none !important;
+  font-size: 8pt !important;
+  font-weight: 400 !important;
+}
+.s7, .s8, .s9, .s10, .s11, .s12, .s13, .s14 {
+  fill: none !important;
+  fill-opacity: 0 !important;
+  stroke: none !important;
+}
+.s15 {
+  fill: currentColor !important;
+}
+.s16 {
+  stroke: currentColor !important;
+}
+]]></style>
+""".strip()
+
+    svg = re.sub(
+        r"<style\b[^>]*\bdata-codex-wave-override=\"true\"[^>]*>.*?</style>\s*",
+        "",
+        svg,
+        flags=re.IGNORECASE | re.DOTALL,
+    )
+    svg = re.sub(r"(</svg>\s*)$", final_override + r"\n</svg>\n", svg, count=1, flags=re.IGNORECASE)
+
+    # Strip any previously injected solid background rect.
+    svg = re.sub(
+        r'<rect\b[^>]*\bdata-codex-bg="white"[^>]*/>\s*',
+        "",
+        svg,
+        flags=re.IGNORECASE,
+    )
+
+    # Strip any previous self-themed style block so the page theme can drive color.
+    svg = re.sub(
+        r"<style\b[^>]*\bdata-codex-theme=\"waveform\"[^>]*>.*?</style>\s*",
+        "",
+        svg,
+        flags=re.IGNORECASE | re.DOTALL,
+    )
+
+    if "<svg" in svg and "style=" not in svg.split(">", 1)[0]:
+        svg = re.sub(
+            r"(<svg\b[^>]*?)>",
+            r'\1 style="background: transparent; color: currentColor;">',
+            svg,
+            count=1,
         )
-        root.insert(0, bg)
     else:
-        existing_bg.set("width", width)
-        existing_bg.set("height", height)
-        existing_bg.set("fill", "#ffffff")
+        svg = re.sub(
+            r'(<svg\b[^>]*\bstyle=")([^"]*)(")',
+            lambda m: (
+                m.group(1)
+                + (m.group(2).rstrip("; ") + "; " if m.group(2).strip() else "")
+                + "background: transparent; color: currentColor"
+                + m.group(3)
+            ),
+            svg,
+            count=1,
+        )
 
-    tree.write(svg_path, encoding="utf-8", xml_declaration=True)
+    svg_path.write_text(svg, encoding="utf-8")
 
 
 def main() -> None:
@@ -234,7 +313,7 @@ def main() -> None:
     out.parent.mkdir(parents=True, exist_ok=True)
     svg = wavedrom.render(json.dumps(source))
     svg.saveas(str(out))
-    _force_white_background(out)
+    _apply_theme_colors(out)
 
 
 if __name__ == "__main__":

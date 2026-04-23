@@ -38,18 +38,17 @@ main img {
 
 .hero-model-fallback {
   display: grid;
-  gap: 1rem;
+  gap: 0;
   place-items: center;
   min-height: 100%;
-  padding: 1.5rem;
-  text-align: center;
-  font-size: 0.95rem;
+  padding: 0;
 }
 
 .hero-model-fallback-image {
-  width: min(100%, 36rem);
-  border-radius: 12px;
-  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.18);
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .hero-model-fallback p {
@@ -60,8 +59,13 @@ main img {
   display: none !important;
 }
 
-.hero-model-viewer.is-error .hero-model-fallback {
-  display: grid;
+.model-viewer-fallback-host {
+  display: block;
+  overflow: hidden;
+}
+
+.model-viewer-fallback-host[hidden] {
+  display: none !important;
 }
 
 .hero-model figcaption {
@@ -130,4 +134,21 @@ main img {
 
 .contact-form button:active {
   transform: translateY(1px);
+}
+
+.waveform-svg {
+  color: var(--color-foreground-primary);
+  margin: 1rem 0;
+  overflow-x: auto;
+}
+
+.waveform-svg svg {
+  display: block;
+  height: auto;
+  max-width: none;
+  min-width: 100%;
+}
+
+.waveform-svg a {
+  color: inherit;
 }

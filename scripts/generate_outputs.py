@@ -189,9 +189,14 @@ To reproduce this on your machine, check out our [docker setup](setting-up-docke
             lines.append("One or more layout images were not generated.")
             lines.append("")
 
-        lines.extend(["**Waveform (0-10 ns)**", ""])
+        lines.extend(["**Waveform (0-16 ns)**", ""])
         if short_svg.exists():
-            lines.append(f"![{design_numbered} waveform](_static/design-outputs/{design_numbered}/{design_numbered}_short.svg)")
+            waveform_path = f"_static/design-outputs/{design_numbered}/{design_numbered}_short.svg"
+            lines.extend([
+                f'<div class="waveform-svg" data-svg-src="{waveform_path}" role="img" aria-label="{design_numbered} waveform">',
+                f'  <a href="{waveform_path}">{design_numbered} waveform</a>',
+                "</div>",
+            ])
         else:
             lines.append("Waveform SVG not generated.")
         lines.append("")

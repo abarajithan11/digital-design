@@ -1,18 +1,34 @@
 document.addEventListener("DOMContentLoaded", function () {
   const upgradeTimeoutMs = 2500;
+  const modelViewerTag = "model-viewer";
 
   document.querySelectorAll("model-viewer").forEach(function (viewer) {
     const fallback = viewer.querySelector(".hero-model-fallback");
     if (!fallback) return;
 
+    const fallbackHost = document.createElement("div");
+    fallbackHost.className = viewer.className + " model-viewer-fallback-host";
+    fallbackHost.hidden = true;
+
+    const fallbackClone = fallback.cloneNode(true);
+    fallbackClone.hidden = false;
+    const fallbackText = fallbackClone.querySelector("p");
+    if (fallbackText) {
+      fallbackText.remove();
+    }
+    fallbackHost.appendChild(fallbackClone);
+    viewer.insertAdjacentElement("afterend", fallbackHost);
+
     const showFallback = function () {
-      viewer.classList.add("is-error");
-      fallback.hidden = false;
+      viewer.hidden = true;
+      fallback.hidden = true;
+      fallbackHost.hidden = false;
     };
 
     const hideFallback = function () {
-      viewer.classList.remove("is-error");
+      viewer.hidden = false;
       fallback.hidden = true;
+      fallbackHost.hidden = true;
     };
 
     viewer.addEventListener("error", function () {
@@ -28,5 +44,11 @@ document.addEventListener("DOMContentLoaded", function () {
         showFallback();
       }
     }, upgradeTimeoutMs);
+
+    if (window.customElements && typeof window.customElements.whenDefined === "function") {
+      window.customElements.whenDefined(modelViewerTag).then(function () {
+        hideFallback();
+      });
+    }
   });
 });
