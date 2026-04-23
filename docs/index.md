@@ -141,6 +141,5 @@ week-3
 week-4
 week-5
 setting-up-docker
-setting-up-pynq
 contact-us
 ```

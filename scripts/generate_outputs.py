@@ -44,11 +44,11 @@ DESIGNS = [
     },
     {
         "design_name": "fir_filter",
-        "description": f"FIR Filter [Retimed RTL]({ROOT_MAT}/rtl/fir_filter_retimed.sv)",
+        "description": f"FIR Filter [[Retimed RTL]({ROOT_MAT}/rtl/fir_filter_retimed.sv)]",
     },
     {
         "design_name": "sys_fir_filter",
-        "description": f"System: UART RX + 100-tap FIR Filter + UART TX [Python filter]({ROOT_MAT}/py/sys_fir_filter_gen.py)",
+        "description": f"System: 100-tap FIR Filter via UART [[Python filter]({ROOT_MAT}/py/sys_fir_filter_gen.py)]",
     },
 ]
 STATIC_GLB_ASSETS = [
@@ -283,15 +283,9 @@ def generate_outputs(repo: Path) -> None:
 
     configured_designs = [design_meta["design_name"] for design_meta in DESIGNS]
     discovered_designs = sorted(path.stem for path in (repo / "material" / "designs").glob("*.f"))
-    missing_from_config = sorted(set(discovered_designs) - set(configured_designs))
     missing_from_tree = sorted(set(configured_designs) - set(discovered_designs))
-    if missing_from_config or missing_from_tree:
-        problems = []
-        if missing_from_config:
-            problems.append(f"missing from DESIGNS: {', '.join(missing_from_config)}")
-        if missing_from_tree:
-            problems.append(f"missing from material/designs: {', '.join(missing_from_tree)}")
-        print("\nDesign metadata is out of sync with material/designs: " + "; ".join(problems))
+    if missing_from_tree:
+        print("\nConfigured designs are missing from material/designs: " + ", ".join(missing_from_tree))
 
     design_entries = [build_design_entry(index, design_meta, repo) for index, design_meta in enumerate(DESIGNS, start=1)]
 
