@@ -38,6 +38,10 @@ GDS3XTRUDE_TOP   ?= $(DESIGN_BASE)
 GDS3XTRUDE_OUT   ?= $(RESULTS_DIR)/6_final.scad
 GDS3XTRUDE_GLB   ?= $(patsubst %.scad,%.glb,$(GDS3XTRUDE_OUT))
 GDS3XTRUDE_FLAGS ?=
+ASAP7_LIB_GDS    := $(CONT_MATERIAL)/openroad/OpenROAD-flow-scripts/flow/platforms/asap7/gds/asap7sc7p5t_28_R_220121a.gds
+CELL ?=
+CELL_3D_DIR      := $(CONT_MATERIAL)/openroad/work/results/cell_3d
+SHOW ?= 1
 
 TOP_TB       ?= tb_$(DESIGN_BASE)
 SIM_WORKDIR  := $(CONT_MATERIAL)/sim/$(DESIGN_NUMBERED)
@@ -51,7 +55,7 @@ WAVE_WINDOW  ?= 65536
 WAVE_SAMPLE  ?= 512
 WAVE_HSCALE  ?= 1
 
-.PHONY: require_container prepare gds sim sim_all gds_all gtkwave wave_svg clean show_layout show_3d scad_model web_model check_tools
+.PHONY: require_container prepare gds sim sim_all gds_all gtkwave wave_svg clean show_layout show_3d show_3d_cell scad_model web_model check_tools
 
 require_container:
 	test -f /.dockerenv
@@ -60,6 +64,7 @@ prepare: require_container
 	test -n "$(DESIGN_NUMBERED)"
 	mkdir -p "$(WORK_HOME)"
 	mkdir -p "$(CONT_MATERIAL)/sim"
+	mkdir -p $(CELL_3D_DIR)
 
 gds: prepare
 	if [ -f "$(SIM_GEN)" ]; then python3 "$(SIM_GEN)"; fi
@@ -112,6 +117,20 @@ show_layout: require_container
 show_3d: require_container
 	echo "DISPLAY=$${DISPLAY:-<unset>}"
 	"$(GDS3XTRUDE_EXE)" -v --tech "$(GDS3XTRUDE_TECH)" --input "$(FINAL_GDS)" --cell "$(GDS3XTRUDE_TOP)" --output "$(GDS3XTRUDE_OUT)" --view $(GDS3XTRUDE_FLAGS)
+
+show_3d_cell: require_container
+	mkdir -p "$(CELL_3D_DIR)"
+	if [ -z "$(CELL)" ]; then \
+		printf '\n%s\n\n' "Possible values for CELL:"; \
+		strings "$(ASAP7_LIB_GDS)" | grep '_ASAP7_75t_R$$' | sed 's/_ASAP7_75t_R$$//' | sort -u | paste -sd '\t' -; \
+		exit 0; \
+	fi
+	full_cell="$(CELL)_ASAP7_75t_R"
+	if [ "$(SHOW)" = "1" ]; then \
+		"$(GDS3XTRUDE_EXE)" -v --tech "$(GDS3XTRUDE_TECH)" --input "$(ASAP7_LIB_GDS)" --cell "$$full_cell" --output "$(CELL_3D_DIR)/$$full_cell.scad" --view $(GDS3XTRUDE_FLAGS); \
+	else \
+		"$(GDS3XTRUDE_EXE)" -v --tech "$(GDS3XTRUDE_TECH)" --input "$(ASAP7_LIB_GDS)" --cell "$$full_cell" --output "$(CELL_3D_DIR)/$$full_cell.scad" $(GDS3XTRUDE_FLAGS); \
+	fi
 
 scad_model: prepare
 	test -f "$(FINAL_GDS)"

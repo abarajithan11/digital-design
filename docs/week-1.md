@@ -1,5 +1,157 @@
 # Week 1 – Digital Logic Design
 
+Following are 3D visualizations of some standard cells in ASAP7 PDK. You can drag to rotate, scroll to zoom. To generate them from our docker container, do:
+
+```bash
+make show_3d_cell CELL=NAND2x1 
+# just make show_3d_cell lists all possible cells
+```
+
+```{raw} html
+<style>
+  .week1-cell-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin: 1.25rem 0 1.75rem;
+  }
+
+  .week1-cell-card {
+    margin: 0;
+  }
+
+  .week1-cell-viewer {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+    border: 1px solid #d7dee8;
+    border-radius: 0.75rem;
+  }
+
+  .week1-cell-card figcaption {
+    margin-top: 0.55rem;
+    text-align: center;
+    font-size: 0.95rem;
+  }
+
+  @media (max-width: 900px) {
+    .week1-cell-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<section class="week1-cell-grid">
+  <figure class="week1-cell-card">
+    <model-viewer
+      class="week1-cell-viewer"
+      src="_static/INVx1_ASAP7_75t_R.glb"
+      alt="NOT gate standard cell in ASAP7 visualized in 3D"
+      orientation="135deg 0deg 0deg"
+      camera-controls
+      camera-target="0m 0m 0m"
+      camera-orbit="0deg 150deg 0.9m"
+      field-of-view="50deg"
+      interaction-prompt="when-focused"
+      touch-action="pan-y"
+      shadow-intensity="1"
+      exposure="0.85"
+      tone-mapping="commerce"
+      environment-image="neutral"
+      transparent-background
+      ar-status="not-presenting"
+      loading="eager"
+    >
+      <div class="hero-model-fallback" hidden>
+        <img
+          class="hero-model-fallback-image"
+          src="https://media.abapages.com/course-site/inv_3d.png"
+          alt="NOT gate standard cell in ASAP7"
+          loading="lazy"
+        />
+        <p>
+          Interactive 3D preview unavailable in this browser.
+          <a href="_static/INVx1_ASAP7_75t_R.glb">Open the GLB file directly.</a>
+        </p>
+      </div>
+    </model-viewer>
+    <figcaption>NOT gate (INVx1)</figcaption>
+  </figure>
+
+  <figure class="week1-cell-card">
+    <model-viewer
+      class="week1-cell-viewer"
+      src="_static/NAND2x1_ASAP7_75t_R.glb"
+      alt="NAND gate standard cell in ASAP7 visualized in 3D"
+      orientation="135deg 0deg 0deg"
+      camera-controls
+      camera-target="0m 0m 0m"
+      camera-orbit="0deg 150deg 0.9m"
+      field-of-view="50deg"
+      interaction-prompt="when-focused"
+      touch-action="pan-y"
+      shadow-intensity="1"
+      exposure="0.85"
+      tone-mapping="commerce"
+      environment-image="neutral"
+      transparent-background
+      ar-status="not-presenting"
+      loading="eager"
+    >
+      <div class="hero-model-fallback" hidden>
+        <img
+          class="hero-model-fallback-image"
+          src="https://media.abapages.com/course-site/nand_3d.png"
+          alt="NAND gate standard cell in ASAP7"
+          loading="lazy"
+        />
+        <p>
+          Interactive 3D preview unavailable in this browser.
+          <a href="_static/NAND2x1_ASAP7_75t_R.glb">Open the GLB file directly.</a>
+        </p>
+      </div>
+    </model-viewer>
+    <figcaption>NAND gate (NAND2x1)</figcaption>
+  </figure>
+
+  <figure class="week1-cell-card">
+    <model-viewer
+      class="week1-cell-viewer"
+      src="_static/DFFHQNx1_ASAP7_75t_R.glb"
+      alt="D flip-flop standard cell in ASAP7 visualized in 3D"
+      orientation="135deg 0deg 0deg"
+      camera-controls
+      camera-target="0m 0m 0m"
+      camera-orbit="0deg 150deg 1m"
+      field-of-view="50deg"
+      interaction-prompt="when-focused"
+      touch-action="pan-y"
+      shadow-intensity="1"
+      exposure="0.85"
+      tone-mapping="commerce"
+      environment-image="neutral"
+      transparent-background
+      ar-status="not-presenting"
+      loading="eager"
+    >
+      <div class="hero-model-fallback" hidden>
+        <img
+          class="hero-model-fallback-image"
+          src="https://media.abapages.com/course-site/dff_3d.png"
+          alt="D flip-flop standard cell in ASAP7"
+          loading="lazy"
+        />
+        <p>
+          Interactive 3D preview unavailable in this browser.
+          <a href="_static/DFFHQNx1_ASAP7_75t_R.glb">Open the GLB file directly.</a>
+        </p>
+      </div>
+    </model-viewer>
+    <figcaption>D Flip-Flop (DFFHQNx1)</figcaption>
+  </figure>
+</section>
+```
+
 ## Lecture 1
 
 - Electronic Chip - Demystified

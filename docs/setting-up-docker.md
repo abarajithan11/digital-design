@@ -23,10 +23,11 @@ make enter   # to enter after you exit
 From inside the container
 
 ```bash
-make sim DESIGN=alu
-make gds DESIGN=alu
-make show_layout DESIGN=alu
-make show_3d DESIGN=alu
+make sim          DESIGN=alu
+make gds          DESIGN=alu
+make show_layout  DESIGN=alu
+make show_3d      DESIGN=alu
+make show_3d_cell CELL=NAND2x1 # just make show_3d_cell gives all cells
 # exit - to leave the container 
 ```
 

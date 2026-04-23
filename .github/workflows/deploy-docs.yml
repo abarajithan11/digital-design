@@ -157,6 +157,15 @@ jobs:
           mkdir -p out/gds-assets/3_n_adder
           cp material/openroad/work/results/asap7/3_n_adder/base/6_final.glb out/gds-assets/3_n_adder/n_adder.glb
 
+      - name: Generate week 1 standard-cell GLBs
+        if: always()
+        run: |
+          mkdir -p out/gds-assets/cell_3d
+          for cell in INVx1 NAND2x1 DFFHQNx1; do
+            make run CMD="make show_3d_cell CELL=${cell} SHOW=0 && python3 /repo/scripts/scad_to_glb.py /repo/material/openroad/work/results/cell_3d/${cell}_ASAP7_75t_R.scad /repo/material/openroad/work/results/cell_3d/${cell}_ASAP7_75t_R.glb" IMAGE="${GHCR_IMAGE}:${IMAGE_TAG}"
+            cp "material/openroad/work/results/cell_3d/${cell}_ASAP7_75t_R.glb" "out/gds-assets/cell_3d/${cell}_ASAP7_75t_R.glb"
+          done
+
       - name: Upload GDS assets
         if: always()
         uses: actions/upload-artifact@v4
@@ -204,6 +213,9 @@ jobs:
         run: |
           mkdir -p site/_static
           cp out/gds-assets/3_n_adder/n_adder.glb site/_static/n_adder.glb
+          cp out/gds-assets/cell_3d/INVx1_ASAP7_75t_R.glb site/_static/INVx1_ASAP7_75t_R.glb
+          cp out/gds-assets/cell_3d/NAND2x1_ASAP7_75t_R.glb site/_static/NAND2x1_ASAP7_75t_R.glb
+          cp out/gds-assets/cell_3d/DFFHQNx1_ASAP7_75t_R.glb site/_static/DFFHQNx1_ASAP7_75t_R.glb
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
