@@ -55,7 +55,7 @@ WAVE_WINDOW  ?= 65536
 WAVE_SAMPLE  ?= 512
 WAVE_HSCALE  ?= 1
 
-.PHONY: require_container prepare gds sim sim_all gds_all gtkwave wave_svg clean show_layout show_3d show_3d_cell scad_model web_model check_tools
+.PHONY: require_container prepare gds sim sim_all gds_all gtkwave wave_svg clean show_layout show_3d show_3d_cell week1_cell_glbs scad_model web_model check_tools
 
 require_container:
 	test -f /.dockerenv
@@ -131,6 +131,13 @@ show_3d_cell: require_container
 	else \
 		"$(GDS3XTRUDE_EXE)" -v --tech "$(GDS3XTRUDE_TECH)" --input "$(ASAP7_LIB_GDS)" --cell "$$full_cell" --output "$(CELL_3D_DIR)/$$full_cell.scad" $(GDS3XTRUDE_FLAGS); \
 	fi
+
+week1_cell_glbs: require_container
+	mkdir -p "$(CELL_3D_DIR)"
+	for cell in INVx1 NAND2x1 DFFHQNx1; do \
+		$(MAKE) show_3d_cell CELL="$$cell" SHOW="$(SHOW)"; \
+		python3 "$(CONT_REPO)/scripts/scad_to_glb.py" "$(CELL_3D_DIR)/$${cell}_ASAP7_75t_R.scad" "$(CELL_3D_DIR)/$${cell}_ASAP7_75t_R.glb"; \
+	done
 
 scad_model: prepare
 	test -f "$(FINAL_GDS)"

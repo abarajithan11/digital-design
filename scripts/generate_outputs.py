@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-"""Generate docs/design_outputs.md from existing simulation and GDS artifacts."""
+"""Generate docs/design_outputs.md from existing simulation and layout artifacts."""
 from __future__ import annotations
 
-import sys
 from pathlib import Path
 import shutil
 
@@ -12,9 +11,13 @@ LAYOUT_IMAGES = [
     "final_worst_path.webp",
 ]
 DOWNLOADABLE_ASSETS = [
-    ("VCD", "{design_numbered}.vcd"),
-    ("GDS", "{design_numbered}.gds"),
-    ("GDS Logs", "logs.zip"),
+    ("VCD", "{design_numbered}.vcd")
+]
+STATIC_GLB_ASSETS = [
+    ("out/gds-assets/3_n_adder/n_adder.glb", "n_adder.glb"),
+    ("out/gds-assets/cell_3d/INVx1_ASAP7_75t_R.glb", "INVx1_ASAP7_75t_R.glb"),
+    ("out/gds-assets/cell_3d/NAND2x1_ASAP7_75t_R.glb", "NAND2x1_ASAP7_75t_R.glb"),
+    ("out/gds-assets/cell_3d/DFFHQNx1_ASAP7_75t_R.glb", "DFFHQNx1_ASAP7_75t_R.glb"),
 ]
 
 REPO_URL = "https://github.com/abarajithan11/digital-design"
@@ -59,29 +62,23 @@ def first_existing_text_file(*candidates: Path | None) -> Path | None:
 
 def downloadable_asset_source(repo: Path, design_numbered: str, filename: str, deployed_dir: Path | None = None) -> Path | None:
     """Return the best available source for a downloadable asset."""
-    gds_result = (
-        repo / "material" / "openroad" / "work" / "results" / "asap7" / design_numbered / "base" / "6_final.gds"
-        if filename.endswith(".gds")
-        else None
-    )
     return first_existing_path(
         repo / "out" / "sim-assets" / design_numbered / filename,
         repo / "sim-assets" / design_numbered / filename,
         repo / "material" / "sim" / design_numbered / filename,
         repo / "out" / "gds-assets" / design_numbered / filename,
-        gds_result,
         (deployed_dir / filename) if deployed_dir is not None else None,
     )
 
 
-def copy_site_downloadables(repo: Path) -> None:
-    """Copy heavy downloadable assets directly into the built site."""
-    site_assets_root = repo / "site" / "_static" / "design-outputs"
-    site_assets_root.mkdir(parents=True, exist_ok=True)
+def sync_static_assets(repo: Path) -> None:
+    """Stage downloadable and GLB assets under docs/_static before the site build."""
+    design_outputs_root = repo / "docs" / "_static" / "design-outputs"
+    design_outputs_root.mkdir(parents=True, exist_ok=True)
 
     for flist in sorted((repo / "material" / "designs").glob("*.f"), key=lambda p: int(p.stem.split("_", 1)[0])):
         design_numbered = flist.stem
-        dst = site_assets_root / design_numbered
+        dst = design_outputs_root / design_numbered
         dst.mkdir(parents=True, exist_ok=True)
 
         for _, filename_tmpl in DOWNLOADABLE_ASSETS:
@@ -89,6 +86,16 @@ def copy_site_downloadables(repo: Path) -> None:
             source = downloadable_asset_source(repo, design_numbered, filename)
             if source is not None:
                 shutil.copy2(source, dst / filename)
+
+    docs_static_root = repo / "docs" / "_static"
+    docs_static_root.mkdir(parents=True, exist_ok=True)
+    for src_rel, dst_name in STATIC_GLB_ASSETS:
+        source = repo / src_rel
+        destination = docs_static_root / dst_name
+        if source.exists():
+            shutil.copy2(source, destination)
+        elif destination.exists():
+            destination.unlink()
 
 
 def build_markdown(designs_data: list[dict], assets_root: Path) -> list[str]:
@@ -306,14 +313,12 @@ def generate_outputs(repo: Path) -> None:
 
     lines = build_markdown(designs_data, assets_root)
     docs_md.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    sync_static_assets(repo)
 
 
 def main() -> None:
     repo = Path(__file__).resolve().parents[1]
-    if len(sys.argv) > 1 and sys.argv[1] == "copy-site-downloads":
-        copy_site_downloadables(repo)
-    else:
-        generate_outputs(repo)
+    generate_outputs(repo)
 
 
 if __name__ == "__main__":

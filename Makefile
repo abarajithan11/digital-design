@@ -90,8 +90,8 @@ endif
 	python scripts/generate_outputs.py
 
 build_pages:
+	rm -rf site
 	sphinx-build -a -b html docs site
-	python scripts/generate_outputs.py copy-site-downloads
 
 serve: generate_outputs build_pages
 	python3 -m http.server 8000 --directory site
@@ -103,8 +103,7 @@ sim_output:
 	test -n "$(DESIGN)"
 	mkdir -p out/sim
 	mkdir -p out/sim-assets/$(DESIGN)
-	if $(MAKE) run CMD="make sim DESIGN=$(DESIGN_BASE) SIM_MAX_TIME=$(SIM_MAX_TIME)" IMAGE="$(IMAGE)"; then \
-		$(MAKE) run CMD="make wave_svg DESIGN=$(DESIGN_BASE)" IMAGE="$(IMAGE)" || true; \
+	if $(MAKE) run CMD="make sim DESIGN=$(DESIGN_BASE) SIM_MAX_TIME=$(SIM_MAX_TIME) && (make wave_svg DESIGN=$(DESIGN_BASE) || true)" IMAGE="$(IMAGE)"; then \
 		vcd_src="material/sim/$(DESIGN)/$(DESIGN).vcd"; \
 		[ -f "$$vcd_src" ] && cp "$$vcd_src" "out/sim-assets/$(DESIGN)/$(DESIGN).vcd" || true; \
 		svg_src="material/sim/$(DESIGN)/$(DESIGN)_short.svg"; \
@@ -148,18 +147,20 @@ gds_output:
 		printf '%s\n' "fail" > "out/gds-assets/$(DESIGN)/status.txt"; \
 		status=1; \
 	fi; \
-	gds_src="material/openroad/work/results/asap7/$(DESIGN)/base/6_final.gds"; \
-	[ -f "$$gds_src" ] && cp "$$gds_src" "out/gds-assets/$(DESIGN)/$(DESIGN).gds" || true; \
-	logs_src="material/openroad/work/logs/asap7/$(DESIGN)/base"; \
-	rm -f "out/gds-assets/$(DESIGN)/logs.zip"; \
-	if [ -d "$$logs_src" ]; then \
-		zip -qr "out/gds-assets/$(DESIGN)/logs.zip" "$$logs_src" || true; \
-	fi; \
 	for img in final_routing.webp final_placement.webp final_worst_path.webp; do \
 		src="material/openroad/work/reports/asap7/$(DESIGN)/base/$$img"; \
 		[ -f "$$src" ] && cp "$$src" "out/gds-assets/$(DESIGN)/$$img" || true; \
 	done; \
 	exit $${status:-0}
+
+gds_glb_assets:
+	mkdir -p out/gds-assets/3_n_adder
+	mkdir -p out/gds-assets/cell_3d
+	$(MAKE) run CMD="make web_model DESIGN=n_adder && make week1_cell_glbs SHOW=0" IMAGE="$(IMAGE)"
+	cp material/openroad/work/results/asap7/3_n_adder/base/6_final.glb out/gds-assets/3_n_adder/n_adder.glb
+	for cell in INVx1 NAND2x1 DFFHQNx1; do \
+		cp "material/openroad/work/results/cell_3d/$${cell}_ASAP7_75t_R.glb" "out/gds-assets/cell_3d/$${cell}_ASAP7_75t_R.glb"; \
+	done
 
 gds_outputs_all:
 	rm -rf out/gds-assets; \

@@ -3,6 +3,7 @@
 Use the form below to send us a message.
 
 <form
+  class="contact-form"
   action="https://formspree.io/f/mojynvkp"
   method="POST"
 >

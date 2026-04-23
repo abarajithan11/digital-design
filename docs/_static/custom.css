@@ -68,3 +68,66 @@ main img {
   margin-top: 0.85rem;
   text-align: center;
 }
+
+.contact-form {
+  width: 100%;
+}
+
+.contact-form p {
+  margin: 0 0 1rem;
+}
+
+.contact-form label {
+  display: block;
+}
+
+.contact-form input,
+.contact-form textarea,
+.contact-form button {
+  width: 100%;
+  margin-top: 0.45rem;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-background-secondary);
+  color: var(--color-foreground-primary);
+  font: inherit;
+}
+
+.contact-form input,
+.contact-form textarea {
+  padding: 0.8rem 0.95rem;
+  box-sizing: border-box;
+}
+
+.contact-form textarea {
+  resize: vertical;
+  min-height: 8rem;
+}
+
+.contact-form input::placeholder,
+.contact-form textarea::placeholder {
+  color: var(--color-foreground-secondary);
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus,
+.contact-form button:focus {
+  outline: 2px solid var(--color-brand-primary);
+  outline-offset: 2px;
+}
+
+.contact-form button {
+  padding: 0.8rem 1rem;
+  background: color-mix(in srgb, var(--color-background-secondary) 82%, var(--color-foreground-primary) 18%);
+  color: var(--color-foreground-primary);
+  cursor: pointer;
+  transition: filter 0.2s ease, transform 0.2s ease;
+}
+
+.contact-form button:hover {
+  filter: brightness(1.05);
+}
+
+.contact-form button:active {
+  transform: translateY(1px);
+}
