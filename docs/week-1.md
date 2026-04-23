@@ -11,7 +11,7 @@ make show_3d_cell CELL=NAND2x1
 <style>
   .week1-cell-grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1rem;
     margin: 1.25rem 0 1.75rem;
   }
@@ -22,10 +22,31 @@ make show_3d_cell CELL=NAND2x1
 
   .week1-cell-viewer {
     width: 100%;
-    aspect-ratio: 1 / 1;
-    background: linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+    height: clamp(14rem, 24vw, 18rem);
+    background: transparent;
     border: 1px solid #d7dee8;
     border-radius: 0.75rem;
+  }
+
+  .week1-cell-card .model-viewer-fallback-host {
+    width: 100%;
+    height: clamp(14rem, 24vw, 18rem);
+    border: 1px solid #d7dee8;
+    border-radius: 0.75rem;
+    background: transparent;
+  }
+
+  .week1-cell-card .hero-model-fallback {
+    width: 100%;
+    height: 100%;
+  }
+
+  .week1-cell-card .hero-model-fallback-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    background: transparent;
   }
 
   .week1-cell-card figcaption {
@@ -50,8 +71,8 @@ make show_3d_cell CELL=NAND2x1
       orientation="135deg 0deg 0deg"
       camera-controls
       camera-target="0m 0m 0m"
-      camera-orbit="0deg 150deg 0.9m"
-      field-of-view="50deg"
+      camera-orbit="0deg 150deg 2m"
+      field-of-view="30deg"
       interaction-prompt="when-focused"
       touch-action="pan-y"
       shadow-intensity="1"
@@ -86,8 +107,8 @@ make show_3d_cell CELL=NAND2x1
       orientation="135deg 0deg 0deg"
       camera-controls
       camera-target="0m 0m 0m"
-      camera-orbit="0deg 150deg 0.9m"
-      field-of-view="50deg"
+      camera-orbit="0deg 150deg 2.5m"
+      field-of-view="30deg"
       interaction-prompt="when-focused"
       touch-action="pan-y"
       shadow-intensity="1"
@@ -117,13 +138,49 @@ make show_3d_cell CELL=NAND2x1
   <figure class="week1-cell-card">
     <model-viewer
       class="week1-cell-viewer"
+      src="_static/AOI211x1_ASAP7_75t_R.glb"
+      alt="And-or-invert standard cell in ASAP7 visualized in 3D"
+      orientation="135deg 0deg 0deg"
+      camera-controls
+      camera-target="0m 0m 0m"
+      camera-orbit="0deg 150deg 1.5m"
+      field-of-view="30deg"
+      interaction-prompt="when-focused"
+      touch-action="pan-y"
+      shadow-intensity="1"
+      exposure="0.85"
+      tone-mapping="commerce"
+      environment-image="neutral"
+      transparent-background
+      ar-status="not-presenting"
+      loading="eager"
+    >
+      <div class="hero-model-fallback" hidden>
+        <img
+          class="hero-model-fallback-image"
+          src="https://media.abapages.com/course-site/aoi211_3d.png"
+          alt="And-or-invert standard cell in ASAP7"
+          loading="lazy"
+        />
+        <p>
+          Interactive 3D preview unavailable in this browser.
+          <a href="_static/AOI211x1_ASAP7_75t_R.glb">Open the GLB file directly.</a>
+        </p>
+      </div>
+    </model-viewer>
+    <figcaption>AND-OR-INVERT (AOI211x1)</figcaption>
+  </figure>
+
+  <figure class="week1-cell-card">
+    <model-viewer
+      class="week1-cell-viewer"
       src="_static/DFFHQNx1_ASAP7_75t_R.glb"
       alt="D flip-flop standard cell in ASAP7 visualized in 3D"
       orientation="135deg 0deg 0deg"
       camera-controls
       camera-target="0m 0m 0m"
-      camera-orbit="0deg 150deg 1m"
-      field-of-view="50deg"
+      camera-orbit="0deg 150deg 1.5m"
+      field-of-view="30deg"
       interaction-prompt="when-focused"
       touch-action="pan-y"
       shadow-intensity="1"

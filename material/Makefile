@@ -50,7 +50,7 @@ SIM_MAX_TIME ?= 1s
 WAVE_VCD     ?= $(SIM_WORKDIR)/$(DESIGN_NUMBERED).vcd
 WAVE_SVG_SHORT ?= $(SIM_WORKDIR)/$(DESIGN_NUMBERED)_short.svg
 WAVE_SHORT_START ?= 0
-WAVE_SHORT_END   ?= 16000
+WAVE_SHORT_END   ?= 10000
 WAVE_WINDOW  ?= 65536
 WAVE_SAMPLE  ?= 512
 WAVE_HSCALE  ?= 1
@@ -134,7 +134,7 @@ show_3d_cell: require_container
 
 week1_cell_glbs: require_container
 	mkdir -p "$(CELL_3D_DIR)"
-	for cell in INVx1 NAND2x1 DFFHQNx1; do \
+	for cell in INVx1 NAND2x1 AOI211x1 DFFHQNx1; do \
 		$(MAKE) show_3d_cell CELL="$$cell" SHOW="$(SHOW)"; \
 		python3 "$(CONT_REPO)/scripts/scad_to_glb.py" "$(CELL_3D_DIR)/$${cell}_ASAP7_75t_R.scad" "$(CELL_3D_DIR)/$${cell}_ASAP7_75t_R.glb"; \
 	done

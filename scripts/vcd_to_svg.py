@@ -54,6 +54,10 @@ def _normalized_parts(name: str):
     return parts
 
 
+def _normalized_identifier(part: str) -> str:
+    return re.sub(r"\[[^\]]+\]$", "", part)
+
+
 def _scope_depth(name: str) -> int:
     parts = _normalized_parts(name)
     return max(0, len(parts) - 1)
@@ -61,7 +65,8 @@ def _scope_depth(name: str) -> int:
 
 def _has_all_caps_segment(name: str) -> bool:
     for part in _normalized_parts(name):
-        if re.fullmatch(r"[A-Z0-9_]*[A-Z][A-Z0-9_]*", part):
+        ident = _normalized_identifier(part)
+        if re.fullmatch(r"[A-Z0-9_]*[A-Z][A-Z0-9_]*", ident):
             return True
     return False
 

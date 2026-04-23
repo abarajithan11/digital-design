@@ -11,12 +11,16 @@ LAYOUT_IMAGES = [
     "final_worst_path.webp",
 ]
 DOWNLOADABLE_ASSETS = [
-    ("VCD", "{design_numbered}.vcd")
+    ("VCD", "{design_numbered}.vcd"),
+    ("SVG", "{design_numbered}_short.svg"),
+    ("GDS", "{design_numbered}.gds"),
+    ("GDS Logs", "logs.zip"),
 ]
 STATIC_GLB_ASSETS = [
     ("out/gds-assets/3_n_adder/n_adder.glb", "n_adder.glb"),
     ("out/gds-assets/cell_3d/INVx1_ASAP7_75t_R.glb", "INVx1_ASAP7_75t_R.glb"),
     ("out/gds-assets/cell_3d/NAND2x1_ASAP7_75t_R.glb", "NAND2x1_ASAP7_75t_R.glb"),
+    ("out/gds-assets/cell_3d/AOI211x1_ASAP7_75t_R.glb", "AOI211x1_ASAP7_75t_R.glb"),
     ("out/gds-assets/cell_3d/DFFHQNx1_ASAP7_75t_R.glb", "DFFHQNx1_ASAP7_75t_R.glb"),
 ]
 
@@ -62,11 +66,17 @@ def first_existing_text_file(*candidates: Path | None) -> Path | None:
 
 def downloadable_asset_source(repo: Path, design_numbered: str, filename: str, deployed_dir: Path | None = None) -> Path | None:
     """Return the best available source for a downloadable asset."""
+    gds_result = (
+        repo / "material" / "openroad" / "work" / "results" / "asap7" / design_numbered / "base" / "6_final.gds"
+        if filename.endswith(".gds")
+        else None
+    )
     return first_existing_path(
         repo / "out" / "sim-assets" / design_numbered / filename,
         repo / "sim-assets" / design_numbered / filename,
         repo / "material" / "sim" / design_numbered / filename,
         repo / "out" / "gds-assets" / design_numbered / filename,
+        gds_result,
         (deployed_dir / filename) if deployed_dir is not None else None,
     )
 
@@ -189,7 +199,7 @@ To reproduce this on your machine, check out our [docker setup](setting-up-docke
             lines.append("One or more layout images were not generated.")
             lines.append("")
 
-        lines.extend(["**Waveform (0-16 ns)**", ""])
+        lines.extend(["**Waveform (0-10 ns)**", ""])
         if short_svg.exists():
             waveform_path = f"_static/design-outputs/{design_numbered}/{design_numbered}_short.svg"
             lines.extend([

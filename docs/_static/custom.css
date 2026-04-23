@@ -42,12 +42,14 @@ main img {
   place-items: center;
   min-height: 100%;
   padding: 0;
+  background: var(--hero-model-surface);
 }
 
 .hero-model-fallback-image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center center;
   display: block;
 }
 
@@ -62,6 +64,7 @@ main img {
 .model-viewer-fallback-host {
   display: block;
   overflow: hidden;
+  background: var(--hero-model-surface);
 }
 
 .model-viewer-fallback-host[hidden] {

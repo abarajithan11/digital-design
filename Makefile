@@ -22,7 +22,7 @@ DXG_DEVICE   := $(if $(wildcard /dev/dxg),--device /dev/dxg)
 WSL_LIB_MOUNT := $(if $(wildcard /usr/lib/wsl/lib),-v /usr/lib/wsl:/usr/lib/wsl)
 GL_ENV       := $(if $(wildcard /usr/lib/wsl/lib),-e LD_LIBRARY_PATH=/usr/lib/wsl/lib -e LIBGL_ALWAYS_SOFTWARE=0 -e GALLIUM_DRIVER=d3d12 -e MESA_LOADER_DRIVER_OVERRIDE=d3d12,-e LIBGL_ALWAYS_SOFTWARE=1)
 
-.PHONY: image start enter kill fresh run sim_output sim_outputs_all gds_output gds_outputs_all generate_outputs build_pages serve
+.PHONY: image start enter kill fresh run sim_output sim_outputs_all gds_output gds_outputs_all generate_outputs build_pages serve 3d_fallback
 FRESH ?= 0
 DESIGNS := $(basename $(notdir $(wildcard material/designs/*.f)))
 DESIGN_BASE := $(subst $(firstword $(subst _, ,$(DESIGN)))_,,$(DESIGN))
@@ -147,6 +147,13 @@ gds_output:
 		printf '%s\n' "fail" > "out/gds-assets/$(DESIGN)/status.txt"; \
 		status=1; \
 	fi; \
+	gds_src="material/openroad/work/results/asap7/$(DESIGN)/base/6_final.gds"; \
+	[ -f "$$gds_src" ] && cp "$$gds_src" "out/gds-assets/$(DESIGN)/$(DESIGN).gds" || true; \
+	logs_src="material/openroad/work/logs/asap7/$(DESIGN)/base"; \
+	rm -f "out/gds-assets/$(DESIGN)/logs.zip"; \
+	if [ -d "$$logs_src" ]; then \
+		zip -qr "out/gds-assets/$(DESIGN)/logs.zip" "$$logs_src" || true; \
+	fi; \
 	for img in final_routing.webp final_placement.webp final_worst_path.webp; do \
 		src="material/openroad/work/reports/asap7/$(DESIGN)/base/$$img"; \
 		[ -f "$$src" ] && cp "$$src" "out/gds-assets/$(DESIGN)/$$img" || true; \
@@ -156,11 +163,28 @@ gds_output:
 gds_glb_assets:
 	mkdir -p out/gds-assets/3_n_adder
 	mkdir -p out/gds-assets/cell_3d
-	$(MAKE) run CMD="make web_model DESIGN=n_adder && make week1_cell_glbs SHOW=0" IMAGE="$(IMAGE)"
+	if [ ! -f material/openroad/work/results/asap7/3_n_adder/base/6_final.glb ]; then \
+		if [ ! -f material/openroad/work/results/asap7/3_n_adder/base/6_final.gds ]; then \
+			$(MAKE) run CMD="make gds DESIGN=n_adder" IMAGE="$(IMAGE)"; \
+		fi; \
+		$(MAKE) run CMD="make web_model DESIGN=n_adder" IMAGE="$(IMAGE)"; \
+	fi
+	missing_cells=0; \
+	for cell in INVx1 NAND2x1 AOI211x1 DFFHQNx1; do \
+		if [ ! -f "material/openroad/work/results/cell_3d/$${cell}_ASAP7_75t_R.glb" ]; then \
+			missing_cells=1; \
+		fi; \
+	done; \
+	if [ "$$missing_cells" = "1" ]; then \
+		$(MAKE) run CMD="make week1_cell_glbs SHOW=0" IMAGE="$(IMAGE)"; \
+	fi
 	cp material/openroad/work/results/asap7/3_n_adder/base/6_final.glb out/gds-assets/3_n_adder/n_adder.glb
-	for cell in INVx1 NAND2x1 DFFHQNx1; do \
+	for cell in INVx1 NAND2x1 AOI211x1 DFFHQNx1; do \
 		cp "material/openroad/work/results/cell_3d/$${cell}_ASAP7_75t_R.glb" "out/gds-assets/cell_3d/$${cell}_ASAP7_75t_R.glb"; \
 	done
+
+3d_fallback: gds_glb_assets
+	python3 scripts/render_3d_fallbacks.py
 
 gds_outputs_all:
 	rm -rf out/gds-assets; \
