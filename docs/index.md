@@ -1,10 +1,10 @@
-# Intro to Digital Design - An End to End Approach
+# Intro to Digital Design - An End-to-End Approach
 
 This is a five-week course, with 30 hours of lectures. We expect the following prior knowledge:
 
 * Converting a number between decimal, binary and hexadecimal representations
-* Basic knowledge on logical operations (AND, OR, NAND, XOR) and truth tables
-* Familiarity with any programming language (Python, C...etc.)
+* Basic knowledge of logical operations (AND, OR, NAND, XOR) and truth tables
+* Familiarity with any programming language (Python, C, etc.)
 
 :::{admonition} Why take this course?
 This course is meant to give you a first taste of the art and craft of digital design.
@@ -58,34 +58,34 @@ It is the first step in your journey towards more advanced courses at the univer
 
 The following will be taught through examples ([listed here](https://abapages.com/digital-design/design_outputs.html)) of increasing complexity, inspired by real digital systems.
 
-### Digital Design concepts
+### Digital Design Concepts
 
 - Decomposing boolean functions into gates
-- Combinational, Sequential elements
-- Finite State Machines
-- AXI-Stream protocol - Ready/valid handshake
-- UART protocol - Make your circuit talk to your PC
+- Combinational and sequential elements
+- Finite-state machines
+- AXI-Stream protocol - ready/valid handshake
+- UART protocol - make your circuit talk to your PC
 - Setup time, hold time, critical path, retiming
 
 ###  SystemVerilog for Design
 
 - Parametrization, hierarchical design
-- `always_ff`, `always_comb`, `logic`, 
+- `always_ff`, `always_comb`, `logic`
 - `generate for`, `if`, `case`, `function`, packed arrays
-- 3 procedure coding style of FSMs
+- 3-process coding style for FSMs
 - Wrapping SystemVerilog in old Verilog
 
 ###  SystemVerilog for Verification
 
 - Basic testbenches, `function`, `task`, queues
-- Randomizing with constraints, 
+- Randomizing with constraints
 - Transactional testbenches: simple driver/monitor, basic OOP
 
 :::{admonition} Keywords & Features of SystemVerilog Avoided in this Course
 
 `reg`, `wire`, `assign`, `always`, unpacked arrays
 
-SystemVerilog/Verilog is one of the most complex languages ever, with a lot of historical baggage and countless footguns. To prevent wasting our limited time in debating those, we will avoid the above. However, I will create a page here explaining each of their use in detail for the sake of completion.
+SystemVerilog/Verilog is one of the most complex languages ever, with a lot of historical baggage and countless footguns. To avoid wasting our limited time debating those, we will avoid the above. However, I will create a page here explaining each of their uses in detail for the sake of completeness.
 :::
 
 
@@ -93,8 +93,8 @@ SystemVerilog/Verilog is one of the most complex languages ever, with a lot of h
 
 - **FIR Filter on FPGA to extract bass/treble from your favorite song** 
   - A worked example gradually built through our lectures and discussions.
-  - We will **NOT** teach the mathematics of calculating the filter coefficients. [Here is our python file](https://github.com/abarajithan11/digital-design/blob/main/material/py/sys_fir_filter_gen.py) to generate them. We will teach you how such filters work, and how to implement them as a circuit.
-  - You can listen to the audio before and after applying our 4-bit-quantized, 100-tap low pass filter ([**see filter characteristics**](https://media.abapages.com/course-site/filter.png)) with a cutoff of 250 Hz, here:
+  - We will **NOT** teach the mathematics of calculating the filter coefficients. [Here is our Python file](https://github.com/abarajithan11/digital-design/blob/main/material/py/sys_fir_filter_gen.py) to generate them. We will teach you how such filters work and how to implement them as a circuit.
+  - You can listen to the audio before and after applying our 4-bit-quantized, 100-tap low-pass filter ([**see filter characteristics**](https://media.abapages.com/course-site/filter.png)) with a cutoff of 250 Hz here:
 
 ```{raw} html
 <table style="border-collapse:collapse; width:100%; max-width:900px;">
@@ -116,9 +116,9 @@ SystemVerilog/Verilog is one of the most complex languages ever, with a lot of h
 - **A fully-parallel neural network accelerator on FPGA to classify handwritten numbers** 
   - You will gradually build this as a series of guided assignments.
   - Week 2: Simple fixed-point quantization and ReLU
-  - Week 3: Adder Tree, Vector Multiply-Adder: *Week 3 - Sequential Circuits Assignment*
+  - Week 3: Adder Tree, Vector Multiply-Adder
   - Week 4: Fully-parallel dense layer, neural network, AXI-Stream
-  - Week 5: Full system on FPGA with UART RX & TX, Python serial to send/receive input/outputs
+  - Week 5: Full system on FPGA with UART RX & TX, plus Python serial to send and receive inputs/outputs
 
 ## Course Material
 

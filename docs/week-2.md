@@ -11,10 +11,10 @@
 
 ## Assignment
 
-- Create module to apply quantization and ReLU: `y = relu(quant(x))`
-  - Quantization: `q = y/(2^f)`, where `f` is a constant
-  - ReLU `z = (y > 0) ? y : 0`
+- Create a module to apply quantization and ReLU: `y = relu(quant(x))`
+  - Quantization: `q = clip(y / (2^f))`, where `f` is a constant
+  - ReLU: `z = max(0, q)`
 - For each combinational element in `[mux, encoder, decoder, relu]`
-  - Consider input of 3 bits
+  - Consider inputs of 3 bits
   - Decompose into sum of products
   - Decompose into product of sums 

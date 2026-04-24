@@ -1,6 +1,6 @@
 # Week 1 – Digital Logic Design
 
-Following are 3D visualizations of some standard cells in ASAP7 PDK. You can drag to rotate, scroll to zoom. To generate them from our docker container, do:
+The following are 3D visualizations of some standard cells in the ASAP7 PDK. You can drag to rotate and scroll to zoom. To generate them from our Docker container, run:
 
 ```bash
 make 3d_assets
@@ -214,10 +214,10 @@ make 3d_assets
   - Programming: program → assembly → machine code → Arduino's microprocessor
   - IC package, die, layers of transistors, metal wires
   - Visual 6502: [simulation of a CPU's layout](http://www.visual6502.org/JSSim/expert.html)
-  - Today: Megacities on a Chip
+  - Today: megacities on a chip
 - ASIC Design: Story of the first processor (Intel 4004)
-  - Computer Architecture, Layout, Ruby cutting - all by hand
-  - Today's chips are much more complex & performant - expensive software to help with the flow
+  - Computer architecture, layout, Ruby cutting - all by hand
+  - Today's chips are much more complex and performant, requiring expensive software to help with the flow
     - Logic design
     - Physical design
     - Standard cells
@@ -225,7 +225,7 @@ make 3d_assets
 - FPGA Design:
   - Meta-chip: a flexible chip that lets you realize your own digital circuit within it.
   - ASIC vs FPGA: speed, power, cost, time-to-market
-  - Real world applications
+  - Real-world applications
   - FPGA flow
 
 ## Lecture 2
@@ -247,7 +247,7 @@ make 3d_assets
 
 ## Discussion
 
-- Setting up our docker container in your machine
+- Setting up our Docker container on your machine
 - Setting up FPGA boards
 
 ## Assignment

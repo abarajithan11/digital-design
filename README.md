@@ -2,16 +2,16 @@
 
 Visit the site: [abapages.com/digital-design](https://abapages.com/digital-design/)
 
-### Setup, start and enter docker container, from Ubuntu or WSL2
+### Set up, start, and enter the Docker container from Ubuntu or WSL2
 
 ```bash
 make fresh
 make enter
 ```
 
-### Run simulation, and RTL-to-GDS2 flow with ASAP7
+### Run simulation and the RTL-to-GDS2 flow with ASAP7
 
-From inside docker container
+From inside the Docker container:
 
 ```bash
 make sim          DESIGN=alu

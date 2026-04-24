@@ -3,8 +3,8 @@
 ## Lecture
 
 - AXI-Stream Protocol
-  - Ready-Valid handshake
-  - Converting Adder Tree to AXI-Stream
+  - Ready/valid handshake
+  - Converting an adder tree to AXI-Stream
 - FSM
   - 3-process coding style
   - Parallel-to-serial converter
@@ -14,13 +14,13 @@
 
 ## Discussion: FPGA System
 
-- Put UART RX + TX back to back on FPGA
-- Write a Python script to send a series of numbers to FPGA via serial port, get numbers back and display
+- Put UART RX + TX back-to-back on an FPGA
+- Write a Python script to send a series of numbers to the FPGA via a serial port, get the numbers back, and display them
 
 ## Assignment
 
-- Put multiple `rq_cvmac` (relu-quantized-constant-vector-multiply-accumulate)s together to create a fully-parallel dense layer, test with our testbench
-- Convert dense into AXI Stream module
+- Put multiple `rq_cvmac` (ReLU-quantized constant-vector multiply-accumulate) blocks together to create a fully parallel dense layer, and test it with our testbench
+- Convert the dense layer into an AXI-Stream module
 - Chain multiple dense layers into a dense NN
 - Integrate into the UART FPGA system, and test with our testbench
 - Send MNIST inputs and get outputs

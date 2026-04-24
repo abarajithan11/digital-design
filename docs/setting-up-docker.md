@@ -9,18 +9,18 @@ git clone https://github.com/abarajithan11/digital-design.git
 ```
 
 
-## Build, start, and enter docker container - from Ubuntu or WSL2
+## Build, start, and enter the Docker container from Ubuntu or WSL2
 
 ```bash
 make fresh   # only once, unless something is broken
 make enter   # to enter after you exit
 
-# make restart - if your container gets stopped 
+# make restart - if your container gets stopped
 ```
 
 ## Run simulation and RTL-to-GDS2 flow with ASAP7
 
-From inside the container
+From inside the container:
 
 ```bash
 make sim          DESIGN=alu
@@ -32,7 +32,7 @@ make show_layout_cells
 make show_3d      DESIGN=alu
 make show_3d_cell CELL=NAND2x1 # omit CELL to list available cells
 make 3d_assets
-# exit - to leave the container 
+# exit - to leave the container
 ```
 
 * The root `Makefile` handles Docker, artifact collection, and site generation.
