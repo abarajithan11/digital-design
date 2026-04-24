@@ -44,7 +44,7 @@ DESIGNS = [
     },
     {
         "design_name": "fir_filter",
-        "description": f"FIR Filter [[Retimed RTL]({ROOT_MAT}/rtl/fir_filter_retimed.sv)]",
+        "description": f"FIR Filter [[Naive RTL]({ROOT_MAT}/rtl/fir_filter_naive.sv)]",
     },
     {
         "design_name": "sys_fir_filter",
@@ -155,7 +155,7 @@ def build_markdown(designs_data: list[dict], assets_root: Path) -> list[str]:
         "",
         "In this course, digital design concepts and SystemVerilog features will be introduced through examples of gradually increasing complexity, inspired by real digital systems, as follows:",
         "",
-        "| # | Design | File List | RTL | TB | Outputs |",
+        "| # | Design | Files | RTL | TB | Results |",
         "|---|---|---|---|---|---|",
     ]
 

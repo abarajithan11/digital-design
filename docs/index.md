@@ -118,7 +118,7 @@ SystemVerilog/Verilog is one of the most complex languages ever, with a lot of h
   - Week 2: Simple fixed-point quantization and ReLU
   - Week 3: Adder Tree, Vector Multiply-Adder
   - Week 4: Fully-parallel dense layer, neural network, AXI-Stream
-  - Week 5: Full system on FPGA with UART RX & TX, plus Python serial to send and receive inputs/outputs
+  - Week 5: Full system on FPGA with UART RX & TX, plus Python serial to send/receive inputs/outputs
 
 ## Course Material
 
