@@ -21,7 +21,7 @@ export CORE_AREA ?= 0.5 0.5 2.5 2.5
 
 else
 
-export CORE_UTILIZATION ?= $(if $(filter $(DESIGN),$(SMALL_DESIGNS)),15,50)
+export CORE_UTILIZATION ?= 50
 export CORE_ASPECT_RATIO ?= 1
 export CORE_MARGIN ?= 1
 

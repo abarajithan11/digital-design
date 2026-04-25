@@ -20,24 +20,19 @@ module fir_filter_naive #(
   localparam W_M = W_X + W_K;
   logic [N  :0][W_M-1:0] m;
   logic [N  :0][W_Y-1:0] a;
-  logic [N-1:0][W_Y-1:0] z;
+  logic [N  :0][W_X-1:0] z;
 
-  always_comb begin    
-    for (int i=0; i<N+1; i=i+1)
-      m[i] = $signed(x) * $signed(k_arr[N-i]);
-
-    a[0] = W_Y'($signed(m[0]));
-    for (int i=1; i<N+1; i=i+1)
-      a[i] =  W_Y'($signed(m[i]) + $signed(z[i-1]));
-    
-    y = a[N];
+  always_ff @(posedge clk or negedge rstn) begin
+    if (!rstn)   z[N:1] <= '0;
+    else if (en) z[N:1] <= z[N-1:0];
   end
+  
+  always_comb begin
+    z[0] = x;
 
-  for (n=0; n<N; n=n+1) begin
-    always_ff @(posedge clk or negedge rstn) begin    
-      if (!rstn)   z[n] <= '0;
-      else if (en) z[n] <= a[n];
-    end
+    y = 0;
+    for (int n=0; n < N+1; n=n+1)
+      y = $signed(y) + $signed(k_arr[n]) * $signed(z[n]);
   end
 
 endmodule
