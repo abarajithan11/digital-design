@@ -136,6 +136,7 @@ SystemVerilog/Verilog is one of the most complex languages ever, with a lot of h
 Home <self>
 3d-cells
 design_outputs
+Visualize & Animate SV <https://digitaljs.tilk.eu/>
 week-1
 week-2
 week-3
