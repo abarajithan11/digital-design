@@ -7,6 +7,8 @@ layerstack_root="${LAYERSTACK_ROOT:-$repo_root/material/openroad/gds3xtrude}"
 render_png="${RENDER_PNG:-1}"
 png_size="${PNG_SIZE:-800,880}"
 overwrite="${OVERWRITE:-0}"
+xy_scale_factor="${GDS3XTRUDE_XY_SCALE:-1.0}"
+z_scale_factor="${GDS3XTRUDE_Z_SCALE:-${GDS3XTRUDE_SCALE:-1.0}}"
 pdks=()
 
 for arg in "$@"; do
@@ -21,11 +23,16 @@ Usage: generate_cell_3d_models.sh [--overwrite] [pdk...]
 PDKs default to: asap7 nangate45 sky130
 
 Environment variables:
-  REPO_ROOT   Repository root path (default: /repo)
-  OUT_ROOT    Output root path (default: $REPO_ROOT/3d)
-  RENDER_PNG  1 to render PNG fallbacks, 0 to skip (default: 1)
-  PNG_SIZE    PNG size WIDTH,HEIGHT (default: 800,880)
-  OVERWRITE   1 to regenerate scad/glb/png (default: 0)
+  REPO_ROOT        Repository root path (default: /repo)
+  OUT_ROOT         Output root path (default: $REPO_ROOT/3d)
+  RENDER_PNG       1 to render PNG fallbacks, 0 to skip (default: 1)
+  PNG_SIZE         PNG size WIDTH,HEIGHT (default: 800,880)
+  OVERWRITE        1 to regenerate scad/glb/png (default: 0)
+  GDS3XTRUDE_SCALE Vertical-only scale factor (default: 1.0)
+  GDS3XTRUDE_XY_SCALE
+                   Uniform x/y scale passed to gds3xtrude (default: 1.0)
+  GDS3XTRUDE_Z_SCALE
+                   Vertical-only scale factor (default: GDS3XTRUDE_SCALE)
 EOF
       exit 0
       ;;
@@ -91,6 +98,24 @@ layerstack_path() {
   esac
 }
 
+apply_z_scale() {
+  local scad="$1"
+  local z_scale="$2"
+  local tmp
+
+  if [ "$z_scale" = "1" ] || [ "$z_scale" = "1.0" ] || [ "$z_scale" = "1.00" ]; then
+    return 0
+  fi
+
+  tmp="${scad}.zscale.$$"
+  {
+    printf 'scale(v = [1, 1, %.10f]) {\n' "$z_scale"
+    sed 's/^/\t/' "$scad"
+    printf '}\n'
+  } > "$tmp"
+  mv "$tmp" "$scad"
+}
+
 total_done=0
 total_skipped=0
 total_failed=0
@@ -111,6 +136,7 @@ for pdk in "${pdks[@]}"; do
   }
   tech="$(layerstack_path "$pdk")"
   out_dir="$out_root/$pdk"
+  pdk_z_scale="$z_scale_factor"
 
   if [ ! -f "$gds" ]; then
     printf 'Skipping %s: missing GDS %s\n' "$pdk" "$gds" >&2
@@ -125,8 +151,20 @@ for pdk in "${pdks[@]}"; do
   fi
 
   mkdir -p "$out_dir"
+  scale_stamp="$out_dir/.gds3xtrude_scale"
+  pdk_overwrite="$overwrite"
+  prev_scale=""
+  if [ -f "$scale_stamp" ]; then
+    prev_scale="$(cat "$scale_stamp")"
+  fi
+  scale_key="xy=$xy_scale_factor z=$pdk_z_scale"
+  if [ "$pdk_overwrite" != "1" ] && [ "$prev_scale" != "$scale_key" ]; then
+    pdk_overwrite=1
+    printf 'scale changed for %s: %s -> %s, forcing regeneration\n' "$pdk" "${prev_scale:-<unset>}" "$scale_key"
+  fi
+
   mapfile -t cells < <(cell_list "$pdk" "$gds")
-  printf 'Generating %s cells into %s (%d candidates)\n' "$pdk" "$out_dir" "${#cells[@]}"
+  printf 'Generating %s cells into %s (%d candidates, xy scale: %s, z scale: %s)\n' "$pdk" "$out_dir" "${#cells[@]}" "$xy_scale_factor" "$pdk_z_scale"
 
   pdk_done=0
   pdk_skipped=0
@@ -141,7 +179,7 @@ for pdk in "${pdks[@]}"; do
     need_glb=0
     need_png=0
 
-    if [ "$overwrite" = "1" ]; then
+    if [ "$pdk_overwrite" = "1" ]; then
       rm -f "$scad" "$glb"
       if [ "$render_png" = "1" ]; then
         rm -f "$png"
@@ -165,12 +203,13 @@ for pdk in "${pdks[@]}"; do
     fi
 
     if [ "$need_scad" = "1" ] && [ ! -s "$scad" ]; then
-      printf 'gds3xtrude %s %s\n' "$pdk" "$cell"
-      if ! gds3xtrude --tech "$tech" --input "$gds" --cell "$cell" --output "$scad"; then
+      printf 'gds3xtrude %s %s (xy scale: %s, z scale: %s)\n' "$pdk" "$cell" "$xy_scale_factor" "$pdk_z_scale"
+      if ! gds3xtrude --tech "$tech" --input "$gds" --cell "$cell" --output "$scad" --scale "$xy_scale_factor"; then
         printf 'failed %s %s: gds3xtrude did not produce %s\n' "$pdk" "$cell" "$scad" >&2
         pdk_failed=$((pdk_failed + 1))
         continue
       fi
+      apply_z_scale "$scad" "$pdk_z_scale"
     else
       printf 'reuse %s %s: %s exists\n' "$pdk" "$cell" "$scad"
     fi
@@ -195,6 +234,10 @@ for pdk in "${pdks[@]}"; do
       printf 'failed %s: fallback PNG rendering failed\n' "$pdk" >&2
       pdk_failed=$((pdk_failed + 1))
     fi
+  fi
+
+  if [ "$pdk_failed" -eq 0 ]; then
+    printf '%s\n' "$scale_key" > "$scale_stamp"
   fi
 
   printf 'Done %s: generated=%d skipped=%d failed=%d\n' "$pdk" "$pdk_done" "$pdk_skipped" "$pdk_failed"

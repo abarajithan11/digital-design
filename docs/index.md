@@ -134,9 +134,8 @@ SystemVerilog/Verilog is one of the most complex languages ever, with a lot of h
 :maxdepth: 1
 
 Home <self>
-3d-cells
 design_outputs
-Visualize & Animate SV <https://digitaljs.tilk.eu/>
+3d-cells
 week-1
 week-2
 week-3
@@ -144,4 +143,11 @@ week-4
 week-5
 setting-up-docker
 contact-us
+```
+
+```{toctree}
+:maxdepth: 1
+:caption: External Links
+
+Visualize & Animate SystemVerilog <https://digitaljs.tilk.eu/>
 ```
