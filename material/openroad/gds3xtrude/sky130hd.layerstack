@@ -1,0 +1,48 @@
+from gds3xtrude.include import layer
+from gds3xtrude.types import Material
+
+
+def mat(name, r, g, b):
+    return Material(name, color=[r, g, b])
+
+
+substrate = layer("255/0", material=mat("substrate", 0.15, 0.15, 0.15))
+pwell = layer("64/44", material=mat("pwell", 0.82, 0.74, 0.66))
+nwell = layer("64/20", material=mat("nwell", 0.70, 0.88, 0.84))
+diff = layer("65/20", material=mat("diff", 0.42, 0.78, 0.42))
+tap = layer("65/44", material=mat("tap", 0.42, 0.70, 0.52))
+poly = layer("66/20", material=mat("poly", 0.90, 0.30, 0.26))
+licon1 = layer("66/44", material=mat("licon1", 0.72, 0.72, 0.62))
+li1 = layer("67/20", material=mat("li1", 0.78, 0.58, 0.28))
+mcon = layer("67/44", material=mat("mcon", 0.65, 0.65, 0.70))
+met1 = layer("68/20", material=mat("met1", 0.24, 0.44, 0.90))
+via = layer("68/44", material=mat("via", 0.68, 0.52, 0.90))
+met2 = layer("69/20", material=mat("met2", 0.18, 0.66, 0.82))
+via2 = layer("69/44", material=mat("via2", 0.58, 0.58, 0.82))
+met3 = layer("70/20", material=mat("met3", 0.18, 0.75, 0.55))
+via3 = layer("70/44", material=mat("via3", 0.62, 0.78, 0.66))
+met4 = layer("71/20", material=mat("met4", 0.92, 0.63, 0.83))
+via4 = layer("71/44", material=mat("via4", 0.92, 0.78, 0.52))
+met5 = layer("72/20", material=mat("met5", 0.85, 0.78, 0.20))
+
+
+layerstack = [
+    (substrate, -1000.0, 0.0),
+    (pwell, -120.0, 0.0),
+    (nwell, -120.0, 0.0),
+    (diff, 0.0, 45.0),
+    (tap, 0.0, 45.0),
+    (poly, 45.0, 120.0),
+    (licon1, 120.0, 210.0),
+    (li1, 210.0, 300.0),
+    (mcon, 300.0, 390.0),
+    (met1, 390.0, 490.0),
+    (via, 490.0, 580.0),
+    (met2, 580.0, 700.0),
+    (via2, 700.0, 800.0),
+    (met3, 800.0, 940.0),
+    (via3, 940.0, 1050.0),
+    (met4, 1050.0, 1210.0),
+    (via4, 1210.0, 1330.0),
+    (met5, 1330.0, 1510.0),
+]

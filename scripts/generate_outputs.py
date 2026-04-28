@@ -53,10 +53,6 @@ DESIGNS = [
 ]
 STATIC_GLB_ASSETS = [
     ("out/gds-assets/n_adder/n_adder.glb", "n_adder.glb"),
-    ("out/gds-assets/cell_3d/INVx1_ASAP7_75t_R.glb", "INVx1_ASAP7_75t_R.glb"),
-    ("out/gds-assets/cell_3d/NAND2x1_ASAP7_75t_R.glb", "NAND2x1_ASAP7_75t_R.glb"),
-    ("out/gds-assets/cell_3d/AOI211x1_ASAP7_75t_R.glb", "AOI211x1_ASAP7_75t_R.glb"),
-    ("out/gds-assets/cell_3d/DFFHQNx1_ASAP7_75t_R.glb", "DFFHQNx1_ASAP7_75t_R.glb"),
 ]
 
 

@@ -140,17 +140,11 @@ cell_glbs: require_container
 
 3d_assets: require_container
 	mkdir -p "$(CONT_REPO)/out/gds-assets/n_adder"
-	mkdir -p "$(CONT_REPO)/out/gds-assets/cell_3d"
 	if [ ! -f "$(CONT_MATERIAL)/openroad/work/results/$(PLATFORM)/n_adder/base/6_final.gds" ]; then \
 		$(MAKE) gds DESIGN=n_adder; \
 	fi
 	$(MAKE) glb DESIGN=n_adder
-	$(MAKE) cell_glbs
 	cp "$(CONT_MATERIAL)/openroad/work/results/$(PLATFORM)/n_adder/base/6_final.glb" "$(CONT_REPO)/out/gds-assets/n_adder/n_adder.glb"
-	for cell in INVx1 NAND2x1 AOI211x1 DFFHQNx1; do \
-		cp "$(CELL_3D_DIR)/$${cell}_ASAP7_75t_R.glb" "$(CONT_REPO)/out/gds-assets/cell_3d/$${cell}_ASAP7_75t_R.glb"; \
-	done
-	python3 "$(CONT_REPO)/scripts/render_3d_fallbacks.py"
 
 clean: require_container
 	rm -rf $(CONT_MATERIAL)/sim $(CONT_MATERIAL)/openroad/work

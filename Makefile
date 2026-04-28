@@ -163,26 +163,13 @@ gds_output:
 
 gds_glb_assets:
 	mkdir -p out/gds-assets/n_adder
-	mkdir -p out/gds-assets/cell_3d
 	if [ ! -f material/openroad/work/results/asap7/n_adder/base/6_final.glb ]; then \
 		if [ ! -f material/openroad/work/results/asap7/n_adder/base/6_final.gds ]; then \
 			$(MAKE) run CMD="make gds DESIGN=n_adder" IMAGE="$(IMAGE)"; \
 		fi; \
 		$(MAKE) run CMD="make glb DESIGN=n_adder" IMAGE="$(IMAGE)"; \
 	fi
-	missing_cells=0; \
-	for cell in INVx1 NAND2x1 AOI211x1 DFFHQNx1; do \
-		if [ ! -f "material/openroad/work/results/cell_3d/$${cell}_ASAP7_75t_R.glb" ]; then \
-			missing_cells=1; \
-		fi; \
-	done; \
-	if [ "$$missing_cells" = "1" ]; then \
-		$(MAKE) run CMD="make cell_glbs" IMAGE="$(IMAGE)"; \
-	fi
 	cp material/openroad/work/results/asap7/n_adder/base/6_final.glb out/gds-assets/n_adder/n_adder.glb
-	for cell in INVx1 NAND2x1 AOI211x1 DFFHQNx1; do \
-		cp "material/openroad/work/results/cell_3d/$${cell}_ASAP7_75t_R.glb" "out/gds-assets/cell_3d/$${cell}_ASAP7_75t_R.glb"; \
-	done
 
 3d_assets:
 	$(MAKE) run CMD="make 3d_assets" IMAGE="$(IMAGE)"
