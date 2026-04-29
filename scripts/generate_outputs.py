@@ -129,16 +129,20 @@ def sync_static_assets(repo: Path) -> None:
 
         for _, filename_tmpl in DOWNLOADABLE_ASSETS:
             filename = filename_tmpl.format(design_name=design_name)
-            source = downloadable_asset_source(repo, design_name, filename)
+            deployed_dir = repo / "site" / "_static" / "design-outputs" / design_name
+            source = downloadable_asset_source(repo, design_name, filename, deployed_dir)
             if source is not None:
                 shutil.copy2(source, dst / filename)
 
     docs_static_root = repo / "docs" / "_static"
     docs_static_root.mkdir(parents=True, exist_ok=True)
     for src_rel, dst_name in STATIC_GLB_ASSETS:
-        source = repo / src_rel
+        source = first_existing_path(
+            repo / src_rel,
+            repo / "site" / "_static" / dst_name,
+        )
         destination = docs_static_root / dst_name
-        if source.exists():
+        if source is not None:
             shutil.copy2(source, destination)
         elif destination.exists():
             destination.unlink()
