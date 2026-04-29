@@ -1,5 +1,5 @@
 rtl/sys_fir_filter.v
-rtl/fir_filter.sv
+rtl/fir_filter_naive.sv
 rtl/uart_rx.sv
 rtl/uart_tx.sv
 rtl/down_counter.sv

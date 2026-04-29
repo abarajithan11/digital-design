@@ -34,7 +34,7 @@ module sys_fir_filter #(
     .m_data (data_rx)
   );
 
-  fir_filter #(
+  fir_filter_naive #(
     .N       (N),
     .W_X     (WIDTH),
     .W_K     (W_K),

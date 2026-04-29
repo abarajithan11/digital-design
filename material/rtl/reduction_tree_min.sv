@@ -10,6 +10,12 @@ module reduction_tree_min #(
     output logic        [W_X-1:0] y
   );
 
+  typedef logic [W_X-1:0] data_t;
+
+  function automatic data_t min(input data_t a, input data_t b);
+    return ($signed(a) < $signed(b)) ? a : b;
+  endfunction 
+
   genvar level, pos;
   logic [DEPTH:0][N-1:0][W_X-1:0] tree;
 
@@ -37,7 +43,7 @@ module reduction_tree_min #(
           if (i_right < CURR_N) begin
             vl = tree[level][i_left];
             vr = tree[level][i_right];
-            tree[level+1][pos] <= ($signed(vl) < $signed(vr)) ? vl : vr;
+            tree[level+1][pos] <= min(vl, vr);
           end else begin
             tree[level+1][pos] <= tree[level][i_left];
           end
