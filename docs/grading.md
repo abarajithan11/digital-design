@@ -31,7 +31,7 @@
 * In-person attendance (answering ALL quizzes) is mandatory for every session.
 * Since this course is fast-paced, missing even a single session (= lecture/discussion) will make you quickly lose track.
 * 5% will be subtracted from your grades **per session** missed.
-* You may miss **AT MOST TWO** in-person sessions and recover the 5% penalty points by submitting a printed set of slides of the missed session, with **sufficient** handwritten annotations on each slide on what you learned from watching the recording, within four days of missing the session.
+* You may miss **AT MOST TWO** in-person sessions and recover the 2% penalty points by submitting a printed set of slides of the missed session, with **sufficient** handwritten annotations on each slide on what you learned from watching the recording, within four days of missing the session.
 
 ## Assignments
 
