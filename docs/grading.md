@@ -6,11 +6,11 @@
 |    15% | Assignment 2: Designing ReLU, Quantizer                                 |
 |    15% | Assignment 3: Designing Vector Multiply-Add with ReLU, Quantized output |
 |    15% | Assignment 4: Fully-parallel Neural Network with given weights          |
-|    30% | Final Exam: in-person, paper test                                       |
+|    35% | Final Exam: in-person, paper test                                       |
 |     5% | In-class quizzes (correctness)                                          |
-|     5% | Discord participation                                                   |
 |**100%**| **Total**                                                               |
-|    -5% | Per each missed session (if any in-class quiz was not answered)         |
+|    -2% | Per each missed session (if any in-class quiz was not answered)         |
+|    +5% | Discord participation                                                   |
 |   +10% | Resource optimization of Neural Network                                 |
 |    +5% | Resource optimization of FIR Filter                                     |
 
