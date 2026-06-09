@@ -61,7 +61,7 @@ RUN git clone --depth 1 --single-branch --branch "${VERILATOR_VERSION}" https://
  && rm -rf /tmp/verilator
 
 RUN groupadd -g "${GID}" "${USERNAME}" \
- && useradd -m -u "${UID}" -g "${GID}" -s /bin/bash "${USERNAME}"
+ && useradd --no-log-init -m -u "${UID}" -g "${GID}" -s /bin/bash "${USERNAME}"
 
 USER ${USERNAME}
 WORKDIR ${CONT_ROOT}
