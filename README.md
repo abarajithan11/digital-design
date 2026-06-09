@@ -9,6 +9,13 @@ make fresh
 make enter
 ```
 
+`make fresh` pulls the latest course image from GHCR and starts the container. To build that same image tag locally from the Dockerfile and start it instead, use:
+
+```bash
+make scratch
+make enter
+```
+
 ### Run simulation and the RTL-to-GDS2 flow with ASAP7
 
 From inside the Docker container:
@@ -42,6 +49,8 @@ Then open `http://localhost:8000` in your browser.
 
 
 ## To publish the docker container
+
+Publishing is manual. `make publish-docker` builds the image locally as `ghcr.io/ucsd-cse140-s126/digital-design:latest` and pushes it. CI and `make fresh` only pull this image.
 
 Get your GHCR token as:
 
