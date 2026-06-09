@@ -9,6 +9,9 @@ PUBLISH_IMAGE := ghcr.io/ucsd-cse140-s126/digital-design
 IMAGE        ?= $(PUBLISH_IMAGE):latest
 GHCR_USER ?=
 CONTAINER    := orfs-$(USR)
+DOCKER_USER  ?= $(UID):$(GID)
+DOCKER_HOME  ?= /tmp
+DOCKER_PS1   ?= \[\e[0;32m\][$(USR)@$(HOSTNAME_VAR) \W]\$$\[\e[m\]\040
 
 HOST_REPO     := $(CURDIR)
 HOST_MATERIAL := $(HOST_REPO)/material
@@ -60,6 +63,10 @@ publish-docker: image-scratch
 
 run:
 	docker run --rm \
+		--user $(DOCKER_USER) \
+		-e HOME=$(DOCKER_HOME) \
+		-e USER=$(USR) \
+		-e LOGNAME=$(USR) \
 		-v $(HOST_REPO):$(CONT_REPO) \
 		-w $(CONT_MATERIAL) \
 		$(IMAGE) bash -lc '$(CMD)'
@@ -69,6 +76,10 @@ start:
 	mkdir -p "$(HOST_MATERIAL)/openroad/work"
 	docker run -d --name $(CONTAINER) \
 		-h $(HOSTNAME_VAR) \
+		--user $(DOCKER_USER) \
+		-e HOME=$(DOCKER_HOME) \
+		-e USER=$(USR) \
+		-e LOGNAME=$(USR) \
 		-e DISPLAY=$(DISPLAY) \
 		-e WAYLAND_DISPLAY=$(WAYLAND_DISPLAY) \
 		-e XDG_RUNTIME_DIR=$(CONT_XDG_RUNTIME) \
@@ -87,7 +98,7 @@ start:
 				$(IMAGE) /bin/bash -lc 'mkdir -p "$$XDG_RUNTIME_DIR" && chmod 700 "$$XDG_RUNTIME_DIR" && tail -f /dev/null'
 
 enter:
-	docker exec -it $(CONTAINER) bash -i
+	docker exec -it -e DOCKER_PS1='$(DOCKER_PS1)' $(CONTAINER) bash -lc 'printf '\''export PS1=%q\n'\'' "$$DOCKER_PS1" > /tmp/cse140-bashrc; exec bash --rcfile /tmp/cse140-bashrc -i'
 
 kill:
 	- docker kill $(CONTAINER) || true
