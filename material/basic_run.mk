@@ -88,6 +88,9 @@ sim: compile
 	"$(SIM_WORKDIR)/obj_dir/V$(TOP_TB)"
 
 gds: check_tools
+	if [ -n "$(SIM_GEN)" ] && [ -f "$(SIM_GEN)" ]; then \
+	    ( cd "$(CONT_MATERIAL)/rtl" && python3 "$(abspath $(SIM_GEN))" ); \
+	fi
 	mkdir -p "$(WORK_HOME)"
 	rm -rf \
 	    "$(WORK_HOME)/results/$(PDK)/$(DESIGN)" \
