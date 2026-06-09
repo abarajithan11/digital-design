@@ -5,6 +5,7 @@ ARG USERNAME=usr
 ARG CONT_ROOT=/repo/material
 ARG UID=1000
 ARG GID=1000
+ARG ORFS_HOME=/OpenROAD-flow-scripts
 ARG VERILATOR_VERSION=v5.046
 
 USER root
@@ -37,7 +38,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     z3 \
  && rm -rf /var/lib/apt/lists/*
 
-RUN python3 -m pip install --no-cache-dir \
+RUN python3 -m pip install --no-cache-dir --use-pep517 \
     gds3xtrude \
     klayout \
     wavedrom \
@@ -46,6 +47,10 @@ RUN python3 -m pip install --no-cache-dir \
     scipy \
     trimesh \
     matplotlib 
+
+RUN test -f "${ORFS_HOME}/flow/Makefile" \
+ && test -x "${ORFS_HOME}/tools/install/yosys/bin/yosys" \
+ && test -x "${ORFS_HOME}/tools/install/OpenROAD/bin/openroad"
 
 RUN git clone --depth 1 --single-branch --branch "${VERILATOR_VERSION}" https://github.com/verilator/verilator.git /tmp/verilator \
  && cd /tmp/verilator \
@@ -61,7 +66,8 @@ RUN groupadd -g "${GID}" "${USERNAME}" \
 USER ${USERNAME}
 WORKDIR ${CONT_ROOT}
 
-ENV PATH="/OpenROAD-flow-scripts/tools/install/yosys/bin:/OpenROAD-flow-scripts/tools/install/OpenROAD/bin:${PATH}" \
+ENV ORFS_HOME="${ORFS_HOME}" \
+    PATH="${ORFS_HOME}/tools/install/yosys/bin:${ORFS_HOME}/tools/install/OpenROAD/bin:${PATH}" \
     LIBGL_ALWAYS_SOFTWARE=1 \
     QT_X11_NO_MITSHM=1
 

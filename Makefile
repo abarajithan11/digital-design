@@ -6,6 +6,8 @@ UID          := $(shell id -u)
 GID          := $(shell id -g)
 HOSTNAME_VAR := $(shell bash -lc 'echo $${USER:0:3}')
 IMAGE        := $(USR)/cse140-openroad:dev
+PUBLISH_IMAGE := ghcr.io/ucsd-cse140-s126/digital-design
+GHCR_USER ?=
 CONTAINER    := orfs-$(USR)
 
 HOST_REPO     := $(CURDIR)
@@ -22,7 +24,7 @@ DXG_DEVICE   := $(if $(wildcard /dev/dxg),--device /dev/dxg)
 WSL_LIB_MOUNT := $(if $(wildcard /usr/lib/wsl/lib),-v /usr/lib/wsl:/usr/lib/wsl)
 GL_ENV       := $(if $(wildcard /usr/lib/wsl/lib),-e LD_LIBRARY_PATH=/usr/lib/wsl/lib -e LIBGL_ALWAYS_SOFTWARE=0 -e GALLIUM_DRIVER=d3d12 -e MESA_LOADER_DRIVER_OVERRIDE=d3d12,-e LIBGL_ALWAYS_SOFTWARE=1)
 
-.PHONY: image start enter kill fresh restart run sim_output sim_outputs_all gds_output gds_outputs_all gds_glb_assets 3d_assets generate_outputs build_pages site serve
+.PHONY: image publish-docker start enter kill fresh restart run sim_output sim_outputs_all gds_output gds_outputs_all gds_glb_assets 3d_assets generate_outputs build_pages site serve
 FRESH ?= 0
 DESIGNS := $(basename $(notdir $(wildcard material/designs/*.f)))
 SIM_MAX_TIME ?= 1s
@@ -34,7 +36,6 @@ fresh: kill image start
 restart: kill start
 
 image:
-	git submodule update --init --recursive
 	docker build \
 		-f Dockerfile \
 		--build-arg UID=$(UID) \
@@ -42,6 +43,16 @@ image:
 		--build-arg USERNAME=$(USR) \
 		--build-arg CONT_ROOT=$(CONT_MATERIAL) \
 		-t $(IMAGE) .
+
+publish-docker: image
+	if [ -n "$${GHCR_TOKEN:-}" ]; then \
+		test -n "$(GHCR_USER)" || { echo "Set GHCR_USER=<github-user> when GHCR_TOKEN is set"; exit 1; }; \
+		printf '%s' "$$GHCR_TOKEN" | docker login ghcr.io -u "$(GHCR_USER)" --password-stdin; \
+	else \
+		echo "GHCR_TOKEN not set; using existing docker login credentials for ghcr.io"; \
+	fi
+	docker tag $(IMAGE) $(PUBLISH_IMAGE)
+	docker push $(PUBLISH_IMAGE)
 
 run:
 	docker run --rm \

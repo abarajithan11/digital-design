@@ -39,3 +39,24 @@ make serve
 ```
 
 Then open `http://localhost:8000` in your browser.
+
+
+## To publish the docker container
+
+Get your GHCR token as:
+
+* Log into GitHub, click your profile picture in the top right corner, and select Settings.
+* Scroll all the way down the left sidebar and click on Developer settings.  
+* In the left menu, expand Personal access tokens, then select Tokens (classic).  
+* Click the Generate new token button, and choose Generate new token (classic).  
+* Give your token a descriptive name in the "Note" field (like "ghcr-login").  
+* Set an expiration date.
+* Under Select scopes, check the boxes based on what you need to do:
+  * read:packages: Required to download/pull container images.  
+  * write:packages: Required to upload/push container images. (Note: Checking this usually auto-selects the full repo scope. If you want to strictly limit the token to just packages for security, you can bypass the auto-select by clicking this specific link to create your token).
+  * delete:packages: Required if you need the ability to delete images.  
+* Scroll to the bottom and click Generate token.
+
+```bash
+GHCR_TOKEN=<github-token> make publish-docker GHCR_USER=<github-username>
+```

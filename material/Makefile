@@ -11,8 +11,9 @@ PDK ?= asap7
 HOST_MATERIAL := $(CURDIR)
 CONT_REPO ?= /repo
 CONT_MATERIAL := $(CONT_REPO)/material
+ORFS_HOME ?= /OpenROAD-flow-scripts
 
-ORFS_FLOW_DIR := $(CONT_MATERIAL)/openroad/OpenROAD-flow-scripts/flow
+ORFS_FLOW_DIR := $(ORFS_HOME)/flow
 WORK_HOME    := $(CONT_MATERIAL)/openroad/work
 DESIGN_CONFIG := $(CONT_MATERIAL)/openroad/config.mk
 RESULTS_DIR  := $(WORK_HOME)/results/$(PDK)/$(DESIGN)/base
@@ -20,8 +21,8 @@ FINAL_GDS    := $(RESULTS_DIR)/6_final.gds
 REPORT_IMAGE_SCALE ?= 4
 PLATFORM_LYP := $(firstword \
 	$(wildcard $(CONT_MATERIAL)/openroad/$(PDK).lyp) \
-	$(wildcard $(CONT_MATERIAL)/openroad/OpenROAD-flow-scripts/flow/platforms/$(PDK)/KLayout/*.lyp) \
-	$(wildcard $(CONT_MATERIAL)/openroad/OpenROAD-flow-scripts/flow/platforms/$(PDK)/*.lyp))
+	$(wildcard $(ORFS_HOME)/flow/platforms/$(PDK)/KLayout/*.lyp) \
+	$(wildcard $(ORFS_HOME)/flow/platforms/$(PDK)/*.lyp))
 
 YOSYS_EXE        ?= yosys
 OPENROAD_EXE     ?= openroad
@@ -36,9 +37,9 @@ GDS3XTRUDE_SCALE  ?= 1.0
 GDS3XTRUDE_XY_SCALE ?= 1.0
 GDS3XTRUDE_Z_SCALE ?= $(GDS3XTRUDE_SCALE)
 GDS3XTRUDE_FLAGS  ?= --scale $(GDS3XTRUDE_XY_SCALE)
-ASAP7_LIB_GDS    := $(CONT_MATERIAL)/openroad/OpenROAD-flow-scripts/flow/platforms/asap7/gds/asap7sc7p5t_28_R_220121a.gds
-NANGATE45_LIB_GDS := $(CONT_MATERIAL)/openroad/OpenROAD-flow-scripts/flow/platforms/nangate45/gds/NangateOpenCellLibrary.gds
-SKY130_LIB_GDS   := $(CONT_MATERIAL)/openroad/OpenROAD-flow-scripts/flow/platforms/sky130hd/gds/sky130_fd_sc_hd.gds
+ASAP7_LIB_GDS    := $(ORFS_HOME)/flow/platforms/asap7/gds/asap7sc7p5t_28_R_220121a.gds
+NANGATE45_LIB_GDS := $(ORFS_HOME)/flow/platforms/nangate45/gds/NangateOpenCellLibrary.gds
+SKY130_LIB_GDS   := $(ORFS_HOME)/flow/platforms/sky130hd/gds/sky130_fd_sc_hd.gds
 CELL ?=
 CELL_3D_DIR      := $(CONT_MATERIAL)/openroad/work/results/cell_3d
 
