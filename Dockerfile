@@ -1,4 +1,6 @@
-FROM openroad/orfs:latest
+ARG ORFS_IMAGE_TAG=26Q2-100-gae73a7dd2
+# Newer ORFS/OpenROAD images can SIGILL during CTS on GitHub-hosted runners.
+FROM openroad/orfs:${ORFS_IMAGE_TAG}
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG USERNAME=usr
