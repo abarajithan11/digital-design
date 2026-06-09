@@ -28,3 +28,4 @@ export CORE_MARGIN ?= 1
 endif
 
 export PLACE_DENSITY ?= 0.60
+export SKIP_CTS_REPAIR_TIMING ?= 1
