@@ -134,6 +134,7 @@ SystemVerilog/Verilog is one of the most complex languages ever, with a lot of h
 :maxdepth: 1
 
 Home <self>
+syllabus
 design_outputs
 3d-cells
 week-1
@@ -141,7 +142,6 @@ week-2
 week-3
 week-4
 week-5
-grading
 setting-up-docker
 contact-us
 ```
