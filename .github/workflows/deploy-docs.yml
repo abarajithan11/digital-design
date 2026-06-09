@@ -115,6 +115,7 @@ jobs:
 
   gds:
     runs-on: ubuntu-latest
+    timeout-minutes: 180
     needs: deploy-current
     steps:
       - name: Checkout
