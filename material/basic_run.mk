@@ -52,12 +52,7 @@ VERILOG_FILES ?=
 ifeq ($(FLIST),)
 _SIM_SOURCES ?= "$(CONT_MATERIAL)/$(RTL)/$(DESIGN).sv" "$(CONT_MATERIAL)/tb/$(TOP_TB).sv"
 else
-_TB_IN_FLIST := $(shell grep -q "^tb/" "$(FLIST)" 2>/dev/null && echo 1 || echo 0)
-ifeq ($(_TB_IN_FLIST),1)
 _SIM_SOURCES ?= -f "$(FLIST)"
-else
-_SIM_SOURCES ?= -f "$(FLIST)" "$(CONT_MATERIAL)/tb/$(TOP_TB).sv"
-endif
 endif
 
 _GDS_VERILOG_ARG = $(if $(VERILOG_FILES),VERILOG_FILES="$(VERILOG_FILES)")
