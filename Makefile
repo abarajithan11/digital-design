@@ -4,8 +4,12 @@ SHELL := /bin/bash
 USR          := $(shell id -un)
 UID          := $(shell id -u)
 GID          := $(shell id -g)
-PUBLISH_IMAGE := ghcr.io/ucsd-cse140-s126/digital-design
+ARCH         ?= amd64
+ORFS_REF     ?= 26Q2
+NUM_THREADS  ?= $(shell nproc)
+PUBLISH_IMAGE := ghcr.io/ucsd-cse140-s126/digital-design-$(ARCH)
 IMAGE        ?= $(PUBLISH_IMAGE):latest
+ARM64_BASE_IMAGE := ghcr.io/ucsd-cse140-s126/digital-design-arm64-base:$(ORFS_REF)
 GHCR_USER    ?=
 
 HOST_REPO     := $(CURDIR)
@@ -20,12 +24,38 @@ FRESH        ?= 0
 SIM_MAX_TIME ?= 1s
 DESIGNS := $(basename $(notdir $(wildcard material/designs/*.f)))
 
-.PHONY: image-scratch publish-docker generate_outputs build_pages site serve \
+.PHONY: image-scratch publish generate_outputs build_pages site serve \
         sim_output sim_outputs_all gds_output gds_outputs_all gds_glb_assets 3d_assets scratch
 
 scratch: kill image-scratch start
 
+# For ARCH=arm64, OpenROAD-flow-scripts is compiled from source (Dockerfile.arm64-base)
+# since openroad/orfs is amd64-only. That base is slow (~hours) to build, so it's
+# reused from $(ARM64_BASE_IMAGE) (registry or local) when available.
 image-scratch:
+ifeq ($(ARCH),arm64)
+	if docker manifest inspect $(ARM64_BASE_IMAGE) >/dev/null 2>&1; then \
+		echo "Using published arm64 base image $(ARM64_BASE_IMAGE)"; \
+	elif docker image inspect $(ARM64_BASE_IMAGE) >/dev/null 2>&1; then \
+		echo "Using local arm64 base image $(ARM64_BASE_IMAGE)"; \
+	else \
+		docker buildx build \
+			--platform linux/arm64 \
+			-f Dockerfile.arm64-base \
+			--build-arg ORFS_REF=$(ORFS_REF) \
+			--build-arg NUM_THREADS=$(NUM_THREADS) \
+			-t $(ARM64_BASE_IMAGE) \
+			--load .; \
+	fi
+	docker build \
+		-f Dockerfile \
+		--build-arg ORFS_BASE_IMAGE=$(ARM64_BASE_IMAGE) \
+		--build-arg UID=$(UID) \
+		--build-arg GID=$(GID) \
+		--build-arg USERNAME=$(USR) \
+		--build-arg CONT_ROOT=$(CONT_MATERIAL) \
+		-t $(IMAGE) .
+else
 	docker build \
 		-f Dockerfile \
 		--build-arg UID=$(UID) \
@@ -33,8 +63,9 @@ image-scratch:
 		--build-arg USERNAME=$(USR) \
 		--build-arg CONT_ROOT=$(CONT_MATERIAL) \
 		-t $(IMAGE) .
+endif
 
-publish-docker: image-scratch
+publish: image-scratch
 	if [ -n "$${GHCR_TOKEN:-}" ]; then \
 		test -n "$(GHCR_USER)" || { echo "Set GHCR_USER=<github-user> when GHCR_TOKEN is set"; exit 1; }; \
 		printf '%s' "$$GHCR_TOKEN" | docker login ghcr.io -u "$(GHCR_USER)" --password-stdin; \
@@ -42,6 +73,11 @@ publish-docker: image-scratch
 		echo "GHCR_TOKEN not set; using existing docker login credentials for ghcr.io"; \
 	fi
 	docker push $(IMAGE)
+ifeq ($(ARCH),arm64)
+	if ! docker manifest inspect $(ARM64_BASE_IMAGE) >/dev/null 2>&1 && docker image inspect $(ARM64_BASE_IMAGE) >/dev/null 2>&1; then \
+		docker push $(ARM64_BASE_IMAGE); \
+	fi
+endif
 
 generate_outputs:
 ifeq ($(FRESH),1)

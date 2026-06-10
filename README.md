@@ -16,6 +16,26 @@ make scratch
 make enter
 ```
 
+These default to `ARCH=amd64`, using `ghcr.io/ucsd-cse140-s126/digital-design-amd64:latest`.
+
+### Set up, start, and enter the Docker container on ARM-based PCs (Mac/Windows)
+
+Apple Silicon Macs and ARM-based Windows/WSL2 PCs should use the arm64 image, built natively from source so it runs without emulation:
+
+```bash
+make fresh ARCH=arm64
+make enter
+```
+
+or build it locally from the Dockerfile:
+
+```bash
+make scratch ARCH=arm64
+make enter
+```
+
+This pulls/builds `ghcr.io/ucsd-cse140-s126/digital-design-arm64:latest`.
+
 ### Run simulation and the RTL-to-GDS2 flow with ASAP7
 
 From inside the Docker container:
@@ -50,7 +70,9 @@ Then open `http://localhost:8000` in your browser.
 
 ## To publish the docker container
 
-Publishing is manual. `make publish-docker` builds the image locally as `ghcr.io/ucsd-cse140-s126/digital-design:latest` and pushes it. CI and `make fresh` only pull this image.
+Publishing is manual. `make publish` builds the image locally as `ghcr.io/ucsd-cse140-s126/digital-design-$(ARCH):latest` (default `ARCH=amd64`) and pushes it. CI and `make fresh` only pull this image.
+
+For arm64, push with `ARCH=arm64`, or trigger the `build-docker-arm` workflow from the GitHub Actions tab, which builds and publishes `digital-design-arm64:latest` automatically.
 
 Get your GHCR token as:
 
@@ -67,5 +89,7 @@ Get your GHCR token as:
 * Scroll to the bottom and click Generate token.
 
 ```bash
-GHCR_TOKEN=<github-token> make publish-docker GHCR_USER=<github-username>
+GHCR_TOKEN=<github-token> make publish GHCR_USER=<github-username>
+# or for arm64:
+GHCR_TOKEN=<github-token> make publish ARCH=arm64 GHCR_USER=<github-username>
 ```

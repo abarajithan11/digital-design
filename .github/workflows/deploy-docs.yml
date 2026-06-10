@@ -17,7 +17,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  GHCR_IMAGE: ghcr.io/ucsd-cse140-s126/digital-design
+  GHCR_IMAGE: ghcr.io/ucsd-cse140-s126/digital-design-amd64
   IMAGE_TAG: latest
   LIVE_SITE_URL: https://abapages.com/digital-design
 

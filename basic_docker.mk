@@ -4,7 +4,8 @@ USR      := $(shell id -un)
 UID      := $(shell id -u)
 GID      := $(shell id -g)
 
-IMAGE     ?= ghcr.io/ucsd-cse140-s126/digital-design:latest
+ARCH      ?= amd64
+IMAGE     ?= ghcr.io/ucsd-cse140-s126/digital-design-$(ARCH):latest
 CONTAINER ?= orfs-$(USR)
 
 HOST_REPO     ?= $(CURDIR)
@@ -31,7 +32,7 @@ GL_ENV       := $(if $(wildcard /usr/lib/wsl/lib),\
 
 .PHONY: fresh restart image run start enter kill
 
-fresh: kill start
+fresh: kill image start
 
 restart: kill start
 
