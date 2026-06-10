@@ -1,0 +1,71 @@
+# syntax=docker/dockerfile:1.7-labs
+#
+# Builds an arm64 equivalent of the (amd64-only) openroad/orfs image, by
+# compiling OpenROAD-flow-scripts from source. This avoids running an amd64
+# image under Rosetta on Apple Silicon, where AVX instruction support (and
+# therefore SIGILL behavior) varies across macOS/Rosetta versions and chip
+# generations (M1..M4).
+#
+# Usage: docker buildx build --platform linux/arm64 -f Dockerfile.arm64-base .
+
+ARG ORFS_REF=26Q2
+ARG UBUNTU_VERSION=22.04
+ARG NUM_THREADS=4
+
+# ---------------------------------------------------------------------------
+# orfs-source: clone OpenROAD-flow-scripts + submodules at ORFS_REF
+# ---------------------------------------------------------------------------
+FROM ubuntu:${UBUNTU_VERSION} AS orfs-source
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git ca-certificates \
+ && rm -rf /var/lib/apt/lists/*
+
+ARG ORFS_REF
+WORKDIR /OpenROAD-flow-scripts
+RUN git clone --branch "${ORFS_REF}" --depth 1 \
+        https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts.git . \
+ && git submodule update --init --recursive --depth 1 --jobs 4
+
+# ---------------------------------------------------------------------------
+# orfs-deps: install OpenROAD's build dependencies (mirrors
+# docker/Dockerfile.dev). No prebuilt openroad/flow-ubuntu22.04-dev arm64
+# image exists, so this builds klayout and or-tools from source for aarch64.
+# ---------------------------------------------------------------------------
+FROM orfs-source AS orfs-deps
+ARG NUM_THREADS
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN cp tools/OpenROAD/etc/DependencyInstaller.sh etc/InstallerOpenROAD.sh \
+ && etc/DependencyInstaller.sh -base   -threads="${NUM_THREADS}" -constant-build-dir -save-deps-prefixes=/etc/openroad_deps_prefixes.txt \
+ && etc/DependencyInstaller.sh -common -threads="${NUM_THREADS}" -constant-build-dir -save-deps-prefixes=/etc/openroad_deps_prefixes.txt \
+ && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# ---------------------------------------------------------------------------
+# orfs-builder: compile OpenROAD, Yosys and the rest of the flow tools.
+#
+# kepler-formal is the only tool built with -march=native; on an arm64
+# build runner that can enable CPU extensions (e.g. SVE) that Apple Silicon
+# (M1..M4) doesn't support, causing SIGILL on some chip generations but not
+# others. Pin it to the portable armv8-a baseline instead, so the resulting
+# binaries run identically on every Apple Silicon generation.
+# ---------------------------------------------------------------------------
+FROM orfs-deps AS orfs-builder
+ARG NUM_THREADS
+
+RUN echo "" > tools/yosys/abc/.gitcommit \
+ && sed -i 's/-march=native/-march=armv8-a/g' build_openroad.sh \
+ && ./build_openroad.sh --no_init --local --threads "${NUM_THREADS}"
+
+# ---------------------------------------------------------------------------
+# orfs: orfs-deps + the binaries built above, matching the layout of the
+# published openroad/orfs:<tag> image (flow/Makefile + tools/install/...)
+# ---------------------------------------------------------------------------
+FROM orfs-deps AS orfs
+
+COPY --from=orfs-builder /OpenROAD-flow-scripts/tools/install tools/install
+
+RUN test -f "flow/Makefile" \
+ && test -x "tools/install/yosys/bin/yosys" \
+ && test -x "tools/install/OpenROAD/bin/openroad" \
+ && rm -rf .git tools/*/.git

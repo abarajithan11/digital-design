@@ -1,6 +1,9 @@
 ARG ORFS_IMAGE_TAG=26Q2-100-gae73a7dd2
 # Newer ORFS/OpenROAD images can SIGILL during CTS on GitHub-hosted runners.
-FROM openroad/orfs:${ORFS_IMAGE_TAG}
+# ORFS_BASE_IMAGE can be overridden (e.g. to a from-source arm64 build, see
+# Dockerfile.arm64-base) since openroad/orfs is amd64-only.
+ARG ORFS_BASE_IMAGE=openroad/orfs:${ORFS_IMAGE_TAG}
+FROM ${ORFS_BASE_IMAGE}
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG USERNAME=usr

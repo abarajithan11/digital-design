@@ -1,0 +1,59 @@
+name: arm64 image (from-source)
+
+on:
+  push:
+    branches:
+      - docker-arm64
+
+permissions:
+  contents: read
+
+env:
+  IMAGE: digital-design:arm64
+  USE_GHA_CACHE: "1"
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 360
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Free disk space on runner
+        run: |
+          echo "Before cleanup:"; df -h
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/lib/android /opt/hostedtoolcache/CodeQL || true
+          sudo apt-get clean || true
+          sudo rm -rf /var/lib/apt/lists/* || true
+          docker system prune -af || true
+          echo "After cleanup:"; df -h
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build arm64 image
+        run: IMAGE="${IMAGE}" scripts/build_arm64_image.sh
+
+      - name: Disk usage after build
+        if: always()
+        run: df -h
+
+      - name: Smallest design - simulate (not_gate)
+        run: make sim_output DESIGN=not_gate IMAGE="${IMAGE}"
+
+      - name: Smallest design - RTL-to-GDS (not_gate)
+        run: make gds_output DESIGN=not_gate IMAGE="${IMAGE}"
+
+      - name: 3D assets (n_adder)
+        run: make gds_glb_assets IMAGE="${IMAGE}"
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: arm64-smallest-design
+          path: |
+            out/sim
+            out/sim-assets
+            out/gds-assets
