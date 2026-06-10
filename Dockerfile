@@ -43,6 +43,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     z3 \
  && rm -rf /var/lib/apt/lists/*
 
+# On the from-source arm64 base, OpenROAD's DependencyInstaller places a
+# klayout binary at /usr/local/klayout (not on PATH), which collides with the
+# 'klayout' python package's install directory of the same name below.
+RUN if [ -f /usr/local/klayout ] && [ ! -d /usr/local/klayout ]; then \
+        mv /usr/local/klayout /usr/local/bin/klayout; \
+    fi
+
 RUN python3 -m pip install --no-cache-dir --use-pep517 \
     gds3xtrude \
     klayout \
