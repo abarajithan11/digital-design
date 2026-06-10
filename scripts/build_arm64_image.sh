@@ -35,10 +35,8 @@ GID_NUM="$(id -g)"
 CONT_ROOT="/repo/material"
 
 CACHE_BASE_ARGS=()
-CACHE_FINAL_ARGS=()
 if [[ "${USE_GHA_CACHE:-0}" == "1" ]]; then
     CACHE_BASE_ARGS=(--cache-from "type=gha,scope=arm64-base-${ORFS_REF}" --cache-to "type=gha,mode=max,scope=arm64-base-${ORFS_REF}")
-    CACHE_FINAL_ARGS=(--cache-from "type=gha,scope=arm64-final" --cache-to "type=gha,mode=max,scope=arm64-final")
 fi
 
 echo "==> Stage 1/2: OpenROAD-flow-scripts arm64 base (${BASE_IMAGE})"
@@ -71,17 +69,14 @@ else
 fi
 
 echo "==> Stage 2/2: digital-design arm64 image (${IMAGE})"
-docker buildx build \
-    --platform linux/arm64 \
+docker build \
     -f Dockerfile \
     --build-arg ORFS_BASE_IMAGE="${BASE_IMAGE}" \
     --build-arg UID="${UID_NUM}" \
     --build-arg GID="${GID_NUM}" \
     --build-arg USERNAME="${USR}" \
     --build-arg CONT_ROOT="${CONT_ROOT}" \
-    "${CACHE_FINAL_ARGS[@]}" \
     -t "${IMAGE}" \
-    --load \
     .
 
 echo "==> Built ${IMAGE}"
