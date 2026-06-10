@@ -44,20 +44,21 @@ jobs:
         if: always()
         run: df -h
 
-      - name: Smallest design - simulate (not_gate)
-        run: make sim_output DESIGN=not_gate IMAGE="${IMAGE}"
+      - name: Run all simulations
+        run: make sim_outputs_all IMAGE="${IMAGE}"
 
-      - name: Smallest design - RTL-to-GDS (not_gate)
-        run: make gds_output DESIGN=not_gate IMAGE="${IMAGE}"
+      - name: Run all RTL-to-GDS
+        run: make gds_outputs_all IMAGE="${IMAGE}"
 
-      - name: 3D assets (n_adder)
+      - name: Generate GLB assets
+        if: always()
         run: make gds_glb_assets IMAGE="${IMAGE}"
 
       - name: Upload results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: arm64-smallest-design
+          name: arm64-all-designs
           path: |
             out/sim
             out/sim-assets
