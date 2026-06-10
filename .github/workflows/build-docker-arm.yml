@@ -26,5 +26,14 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build and publish arm64 image
+      - name: Build arm64 image
+        run: make image-scratch ARCH=arm64
+
+      - name: Run simulations (verify arm64 image)
+        run: make sim_outputs_all ARCH=arm64 SIM_MAX_TIME=800ns
+
+      - name: Run RTL-to-GDS2 (verify arm64 image)
+        run: make gds_outputs_all ARCH=arm64
+
+      - name: Publish arm64 image
         run: make publish ARCH=arm64
