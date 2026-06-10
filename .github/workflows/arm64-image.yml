@@ -7,10 +7,12 @@ on:
 
 permissions:
   contents: read
+  packages: write
 
 env:
   IMAGE: digital-design:arm64
-  USE_GHA_CACHE: "1"
+  BASE_IMAGE: ghcr.io/${{ github.repository }}:orfs-arm64-base-26Q2
+  PUSH: "1"
 
 jobs:
   build-and-test:
@@ -32,8 +34,11 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Log in to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
       - name: Build arm64 image
-        run: IMAGE="${IMAGE}" scripts/build_arm64_image.sh
+        run: IMAGE="${IMAGE}" BASE_IMAGE="${BASE_IMAGE}" PUSH="${PUSH}" scripts/build_arm64_image.sh
 
       - name: Disk usage after build
         if: always()

@@ -18,7 +18,6 @@
 #   IMAGE        Tag for the final image (default: digital-design:arm64)
 #   PUSH         If "1", push BASE_IMAGE to its registry when (re)built (default: 0)
 #   NUM_THREADS  Build parallelism (default: nproc)
-#   USE_GHA_CACHE If "1", use the GitHub Actions buildx cache backend
 
 set -euo pipefail
 cd "$(dirname "$(readlink -f "$0")")/.."
@@ -34,11 +33,6 @@ UID_NUM="$(id -u)"
 GID_NUM="$(id -g)"
 CONT_ROOT="/repo/material"
 
-CACHE_BASE_ARGS=()
-if [[ "${USE_GHA_CACHE:-0}" == "1" ]]; then
-    CACHE_BASE_ARGS=(--cache-from "type=gha,scope=arm64-base-${ORFS_REF}" --cache-to "type=gha,mode=max,scope=arm64-base-${ORFS_REF}")
-fi
-
 echo "==> Stage 1/2: OpenROAD-flow-scripts arm64 base (${BASE_IMAGE})"
 if docker manifest inspect "${BASE_IMAGE}" >/dev/null 2>&1; then
     echo "Base image already published, skipping from-source build."
@@ -48,10 +42,10 @@ elif [[ "${PUSH}" == "1" ]]; then
         -f Dockerfile.arm64-base \
         --build-arg ORFS_REF="${ORFS_REF}" \
         --build-arg NUM_THREADS="${NUM_THREADS}" \
-        "${CACHE_BASE_ARGS[@]}" \
         -t "${BASE_IMAGE}" \
         --push \
         .
+    docker pull "${BASE_IMAGE}"
 else
     if ! docker image inspect "${BASE_IMAGE}" >/dev/null 2>&1; then
         docker buildx build \
@@ -59,7 +53,6 @@ else
             -f Dockerfile.arm64-base \
             --build-arg ORFS_REF="${ORFS_REF}" \
             --build-arg NUM_THREADS="${NUM_THREADS}" \
-            "${CACHE_BASE_ARGS[@]}" \
             -t "${BASE_IMAGE}" \
             --load \
             .
