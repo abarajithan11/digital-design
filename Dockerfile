@@ -72,7 +72,11 @@ RUN git clone --depth 1 --single-branch --branch "${VERILATOR_VERSION}" https://
  && make install \
  && rm -rf /tmp/verilator
 
-RUN groupadd -g "${GID}" "${USERNAME}" \
+# Reuse an existing group if GID is already taken (e.g. on macOS the host
+# primary GID is 20, which already exists in Ubuntu as "dialout"); otherwise
+# create it. On Linux/Windows the host GID is normally free, so this behaves
+# exactly like a plain `groupadd`.
+RUN if ! getent group "${GID}" >/dev/null 2>&1; then groupadd -g "${GID}" "${USERNAME}"; fi \
  && useradd --no-log-init -m -u "${UID}" -g "${GID}" -s /bin/bash "${USERNAME}"
 
 USER ${USERNAME}
