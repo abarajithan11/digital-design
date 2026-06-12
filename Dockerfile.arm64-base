@@ -65,69 +65,10 @@ FROM orfs-deps AS orfs
 
 COPY --from=orfs-builder /OpenROAD-flow-scripts/tools/install tools/install
 
-# GUI support for macOS / Apple Silicon. macOS can't display these tools well
-# over X11: XQuartz's only OpenGL path to a container is indirect GLX (OpenGL
-# 1.4), too old for openscad's Qt5 GL widget, and a forwarded X connection can't
-# use modern software GL (that needs client/server shared memory). So instead the
-# container runs its own virtual display + VNC server (see start-vnc.sh, launched
-# by basic_docker.mk on macOS): apps render with llvmpipe (full OpenGL) on a local
-# Xvfb and are viewed over VNC. These packages are only used on macOS; the amd64
-# image (built from openroad/orfs) never installs them.
-#   x11-apps  -> xeyes and friends (sanity-check the display)
-#   xvfb      -> the in-container virtual X server (modern GL via llvmpipe)
-#   x11vnc    -> serve that display over VNC
-#   fluxbox   -> a minimal window manager so windows are movable/decorated
-#   x11-utils -> xdpyinfo (used by start-vnc.sh to wait for Xvfb)
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    x11-apps \
-    xvfb \
-    x11vnc \
-    fluxbox \
-    x11-utils \
- && rm -rf /var/lib/apt/lists/*
-
-# start-vnc.sh: bring up Xvfb + a window manager + x11vnc. GL apps render with
-# llvmpipe (full OpenGL) on the Xvfb display; view them over VNC at
-# vnc://localhost:$VNC_PORT. Idempotent; safe to run more than once.
-RUN cat > /usr/local/bin/start-vnc.sh <<'EOF_VNC' && chmod +x /usr/local/bin/start-vnc.sh
-#!/usr/bin/env bash
-set -u
-VNC_DISPLAY="${VNC_DISPLAY:-:99}"
-VNC_PORT="${VNC_PORT:-5901}"
-VNC_GEOMETRY="${VNC_GEOMETRY:-1920x1080x24}"
-VNC_PASSWORD="${VNC_PASSWORD:-cse140}"
-dnum="${VNC_DISPLAY#:}"
-
-command -v Xvfb >/dev/null 2>&1 || { echo "start-vnc: Xvfb not installed" >&2; exit 0; }
-
-# x11vnc treats any WAYLAND_DISPLAY in the environment (the container is started
-# with an empty one) as a Wayland session and refuses to run; we only serve the
-# X11 Xvfb display, so clear these first.
-unset WAYLAND_DISPLAY XDG_SESSION_TYPE
-
-# Already up? (Xvfb owns the display socket)
-if pgrep -x Xvfb >/dev/null 2>&1 && [ -e "/tmp/.X11-unix/X${dnum}" ]; then
-    echo "start-vnc: already running on ${VNC_DISPLAY} (port ${VNC_PORT})"
-    exit 0
-fi
-
-Xvfb "$VNC_DISPLAY" -screen 0 "$VNC_GEOMETRY" +extension GLX +render -noreset >/tmp/xvfb.log 2>&1 &
-for _ in $(seq 1 100); do
-    DISPLAY="$VNC_DISPLAY" xdpyinfo >/dev/null 2>&1 && break
-    sleep 0.1
-done
-DISPLAY="$VNC_DISPLAY" fluxbox >/tmp/fluxbox.log 2>&1 &
-
-mkdir -p "$HOME/.vnc"
-x11vnc -storepasswd "$VNC_PASSWORD" "$HOME/.vnc/passwd" >/dev/null 2>&1
-x11vnc -display "$VNC_DISPLAY" -rfbauth "$HOME/.vnc/passwd" -rfbport "$VNC_PORT" \
-       -forever -shared -bg -quiet -noxdamage >/tmp/x11vnc.log 2>&1
-
-echo "start-vnc: VNC ready -> vnc://localhost:${VNC_PORT}  (display ${VNC_DISPLAY}, password ${VNC_PASSWORD})"
-EOF_VNC
-
-ENV VNC_DISPLAY=:99 \
-    VNC_PORT=5901
+# NOTE: macOS GUI support (Xvfb + VNC for openscad/klayout) is intentionally NOT
+# here. It is installed in the final image (Dockerfile, gated by INSTALL_GUI=1 for
+# arm64), which is cheap and rebuilt on every `make scratch`/`publish`. Keeping it
+# out of this slow-to-build base means editing the GUI never recompiles OpenROAD.
 
 RUN test -f "flow/Makefile" \
  && test -x "tools/install/yosys/bin/yosys" \

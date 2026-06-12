@@ -12,6 +12,9 @@ ARG UID=1000
 ARG GID=1000
 ARG ORFS_HOME=/OpenROAD-flow-scripts
 ARG VERILATOR_VERSION=v5.046
+# INSTALL_GUI=1 adds the Xvfb+VNC GUI stack (set by the Makefile for arm64/macOS).
+# Defaults to 0 so amd64/Linux images are unaffected.
+ARG INSTALL_GUI=0
 
 USER root
 
@@ -72,6 +75,22 @@ RUN git clone --depth 1 --single-branch --branch "${VERILATOR_VERSION}" https://
  && make install \
  && rm -rf /tmp/verilator
 
+# macOS GUI support (only when INSTALL_GUI=1, i.e. arm64). On macOS the tools
+# can't use XQuartz well (its only OpenGL path to a container is indirect GLX =
+# OpenGL 1.4, too old for openscad), so the container runs its own Xvfb display
+# where llvmpipe gives full OpenGL, served over VNC (see start-vnc.sh, launched by
+# basic_docker.mk on macOS). Living in the final image keeps it cheap to rebuild
+# and never recompiles the OpenROAD base. amd64 builds skip this entirely.
+#   x11-apps=xeyes  xvfb=virtual X (llvmpipe GL)  x11vnc=serve it  fluxbox=WM
+#   x11-utils=xdpyinfo (start-vnc.sh waits for Xvfb)
+COPY scripts/start-vnc.sh /usr/local/bin/start-vnc.sh
+RUN chmod +x /usr/local/bin/start-vnc.sh \
+ && if [ "${INSTALL_GUI}" = "1" ]; then \
+        apt-get update && apt-get install -y --no-install-recommends \
+            x11-apps xvfb x11vnc fluxbox x11-utils \
+         && rm -rf /var/lib/apt/lists/*; \
+    fi
+
 # Reuse an existing group if GID is already taken (e.g. on macOS the host
 # primary GID is 20, which already exists in Ubuntu as "dialout"); otherwise
 # create it. On Linux/Windows the host GID is normally free, so this behaves
@@ -85,7 +104,9 @@ WORKDIR ${CONT_ROOT}
 ENV ORFS_HOME="${ORFS_HOME}" \
     PATH="${ORFS_HOME}/tools/install/yosys/bin:${ORFS_HOME}/tools/install/OpenROAD/bin:${PATH}" \
     LIBGL_ALWAYS_SOFTWARE=1 \
-    QT_X11_NO_MITSHM=1
+    QT_X11_NO_MITSHM=1 \
+    VNC_DISPLAY=:99 \
+    VNC_PORT=5901
 
 RUN cat >> "/home/${USERNAME}/.bashrc" <<'EOF_BASHRC'
 export PS1="\[\e[0;32m\][\u@\h \W]\$ \[\e[m\] "

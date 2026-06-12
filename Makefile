@@ -50,6 +50,7 @@ ifeq ($(ARCH),arm64)
 	docker build \
 		-f Dockerfile \
 		--build-arg ORFS_BASE_IMAGE=$(ARM64_BASE_IMAGE) \
+		--build-arg INSTALL_GUI=1 \
 		--build-arg UID=$(UID) \
 		--build-arg GID=$(GID) \
 		--build-arg USERNAME=$(USR) \
