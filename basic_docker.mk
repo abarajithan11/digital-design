@@ -79,7 +79,9 @@ run:
 		$(IMAGE) bash -lc '$(CMD)'
 
 start:
-	- xhost +Local:docker 2>/dev/null || true
+	# x86 only: let the container reach the host X server. Skipped on arm macOS,
+	# where the GUI goes through the in-container VNC display not the X server
+	$(if $(IS_MAC),,- xhost +Local:docker 2>/dev/null || true)
 	mkdir -p "$(HOST_MATERIAL)/openroad/work"
 	printf 'root:x:0:0:root:/root:/bin/bash\n%s:x:%d:%d::%s:/bin/bash\n' \
 		'$(USR)' '$(UID)' '$(GID)' '$(DOCKER_HOME)' > '$(DOCKER_PASSWD)'
