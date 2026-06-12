@@ -38,6 +38,14 @@ DOCKER_PS1   ?= \[\e[0;32m\][$(USR)@docker \W]\$$\[\e[m\]\040
 HOSTNAME_VAR     := $(shell bash -lc 'echo $${USER:0:3}')
 CONT_XDG_RUNTIME := $(CONT_MATERIAL)/openroad/work/.runtime-$(USR)
 
+# Bind-mount /etc/passwd and /etc/group with entries for the running UID/GID so
+# that tools resolving the user/group (getpwuid/getgrgid: gtkwave segfaults on a
+# NULL passwd entry; the login shell's `groups` warns on a missing group) work
+# when the pre-built image baked a different UID/GID than the local user.
+DOCKER_PASSWD    := $(HOST_MATERIAL)/openroad/work/.docker-passwd
+DOCKER_GROUP     := $(HOST_MATERIAL)/openroad/work/.docker-group
+IDENT_MOUNT      := -v $(DOCKER_PASSWD):/etc/passwd:ro -v $(DOCKER_GROUP):/etc/group:ro
+
 # On macOS the GUI goes through the in-container VNC display, not the host X
 # server, so don't mount the host's X11 socket / Xauthority there (mounting the
 # host socket would also let Xvfb leak its own socket back onto the host).
@@ -73,6 +81,9 @@ run:
 start:
 	- xhost +Local:docker 2>/dev/null || true
 	mkdir -p "$(HOST_MATERIAL)/openroad/work"
+	printf 'root:x:0:0:root:/root:/bin/bash\n%s:x:%d:%d::%s:/bin/bash\n' \
+		'$(USR)' '$(UID)' '$(GID)' '$(DOCKER_HOME)' > '$(DOCKER_PASSWD)'
+	printf 'root:x:0:\n%s:x:%d:\n' '$(USR)' '$(GID)' > '$(DOCKER_GROUP)'
 	docker run -d --name $(CONTAINER) \
 		-h $(HOSTNAME_VAR) \
 		--user $(DOCKER_USER) \
@@ -93,6 +104,7 @@ start:
 		$(WSL_LIB_MOUNT) \
 		$(DRI_DEVICE) \
 		$(DXG_DEVICE) \
+		$(IDENT_MOUNT) \
 		-v "$(HOST_REPO)":"$(CONT_REPO)" \
 		-w "$(CONT_MATERIAL)" \
 		$(IMAGE) /bin/bash -lc \
