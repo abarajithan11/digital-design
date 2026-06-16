@@ -65,6 +65,11 @@ FROM orfs-deps AS orfs
 
 COPY --from=orfs-builder /OpenROAD-flow-scripts/tools/install tools/install
 
+# NOTE: macOS GUI support (Xvfb + VNC for openscad/klayout) is intentionally NOT
+# here. It is installed in the final image (Dockerfile, gated by INSTALL_GUI=1 for
+# arm64), which is cheap and rebuilt on every `make scratch`/`publish`. Keeping it
+# out of this slow-to-build base means editing the GUI never recompiles OpenROAD.
+
 RUN test -f "flow/Makefile" \
  && test -x "tools/install/yosys/bin/yosys" \
  && test -x "tools/install/OpenROAD/bin/openroad" \

@@ -20,6 +20,8 @@ These default to `ARCH=amd64`, using `ghcr.io/ucsd-cse140-s126/digital-design-am
 
 ### Set up, start, and enter the Docker container on ARM-based PCs (Mac/Windows)
 
+Check [here](https://docs.google.com/document/d/1l72L8z40apZd3GiiAejpVXLE-SHvmgHlTK4Icwdl5iI/edit?usp=sharing) before procedding for pre-requisites and tips. 
+
 Apple Silicon Macs and ARM-based Windows/WSL2 PCs should use the arm64 image, built natively from source so it runs without emulation:
 
 ```bash
@@ -68,7 +70,7 @@ make serve
 Then open `http://localhost:8000` in your browser.
 
 
-## To publish the docker container
+## To publish the docker container (for instructors)
 
 Publishing is manual. `make publish` builds the image locally as `ghcr.io/ucsd-cse140-s126/digital-design-$(ARCH):latest` (default `ARCH=amd64`) and pushes it. CI and `make fresh` only pull this image.
 
