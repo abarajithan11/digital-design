@@ -4,8 +4,8 @@ This five-week course introduces digital design by taking circuits from SystemVe
 
 ## Prerequisites
 
-* Binary/hex/decimal conversion
-* Basic logic operations and truth tables
+* Binary/hex/decimal conversion [refresh](https://diveintosystems.org/book/C4-Binary/index.html)
+* Basic logic operations and truth tables [refresh](https://en.wikibooks.org/wiki/Digital_Electronics/Printable_version)
 * Familiarity with any programming language
 
 ## Weekly Outcomes, Topics, and Assignments

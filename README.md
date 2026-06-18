@@ -2,7 +2,7 @@
 
 Visit the site: [abapages.com/digital-design](https://abapages.com/digital-design/)
 
-### Set up, start, and enter the Docker container from Linux or Windows via WSL2
+## Setting up the container and running the examples
 
 To pull our pre-built Docker image (fast), start and use it: 
 
@@ -46,7 +46,9 @@ exit                    # to leave the container
 * The `material/Makefile` handles the in-container design flows.
 * Reports and layout images are stored in `material/openroad/work/reports/asap7/alu/base`
 
-## To locally serve the site
+## For Staff
+
+### To locally serve the site
 
 ```bash
 pip install sphinx furo myst-parser
@@ -58,7 +60,7 @@ make serve
 Then open `http://localhost:8000` in your browser.
 
 
-## To publish the docker container (for instructors)
+### To publish the docker container (for instructors)
 
 Publishing is manual. `make publish` builds the image locally as `ghcr.io/ucsd-cse140-s126/digital-design-$(ARCH):latest` using the auto-detected `ARCH` unless overridden, and pushes it. CI and `make fresh` only pull this image.
 

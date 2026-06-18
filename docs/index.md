@@ -2,8 +2,8 @@
 
 This is a five-week course, with 30 hours of lectures. We expect the following prior knowledge:
 
-* Converting a number between decimal, binary and hexadecimal representations
-* Basic knowledge of logical operations (AND, OR, NAND, XOR) and truth tables
+* Converting a number between decimal, binary and hexadecimal representations [material to refresh](https://diveintosystems.org/book/C4-Binary/index.html)
+* Basic knowledge of logical operations (AND, OR, NAND, XOR) and truth tables [material to refresh](https://en.wikibooks.org/wiki/Digital_Electronics/Printable_version)
 * Familiarity with any programming language (Python, C, etc.)
 
 :::{admonition} Why take this course?
