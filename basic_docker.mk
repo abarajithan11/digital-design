@@ -4,7 +4,12 @@ USR      := $(shell id -un)
 UID      := $(shell id -u)
 GID      := $(shell id -g)
 
-ARCH      ?= amd64
+HOST_ARCH    := $(shell uname -m)
+DEFAULT_ARCH := $(if $(filter x86_64 amd64,$(HOST_ARCH)),amd64,$(if $(filter aarch64 arm64,$(HOST_ARCH)),arm64,unsupported))
+ARCH         ?= $(DEFAULT_ARCH)
+ifneq ($(filter $(ARCH),amd64 arm64),$(ARCH))
+$(error Unsupported ARCH '$(ARCH)' from uname -m='$(HOST_ARCH)'; set ARCH=amd64 or ARCH=arm64)
+endif
 IMAGE     ?= ghcr.io/ucsd-cse140-s126/digital-design-$(ARCH):latest
 CONTAINER ?= orfs-$(USR)
 

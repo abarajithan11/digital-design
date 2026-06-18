@@ -2,45 +2,31 @@
 
 Visit the site: [abapages.com/digital-design](https://abapages.com/digital-design/)
 
-### Set up, start, and enter the Docker container from Ubuntu or WSL2
+### Set up, start, and enter the Docker container from Linux or Windows via WSL2
+
+To pull our pre-built Docker image (fast), start and use it: 
 
 ```bash
 make fresh
 make enter
 ```
 
-`make fresh` pulls the latest course image from GHCR and starts the container. To build that same image tag locally from the Dockerfile and start it instead, use:
+To build that same image locally from the Dockerfile (slow, might take 3 hours on ARM), start and use it:
 
 ```bash
 make scratch
 make enter
 ```
 
-These default to `ARCH=amd64`, using `ghcr.io/ucsd-cse140-s126/digital-design-amd64:latest`.
+The Makefile auto-detects `ARCH` from your machine (`amd64` or `arm64`) and uses the matching `ghcr.io/ucsd-cse140-s126/digital-design-$(ARCH):latest` image. You can still override it explicitly if needed, for example `ARCH=arm64`.
 
-### Set up, start, and enter the Docker container on ARM-based PCs (Mac/Windows)
+### For ARM-based machines (Mac/Windows)
 
-Check [here](https://docs.google.com/document/d/1l72L8z40apZd3GiiAejpVXLE-SHvmgHlTK4Icwdl5iI/edit?usp=sharing) before procedding for pre-requisites and tips. 
-
-Apple Silicon Macs and ARM-based Windows/WSL2 PCs should use the arm64 image, built natively from source so it runs without emulation:
-
-```bash
-make fresh ARCH=arm64
-make enter
-```
-
-or build it locally from the Dockerfile:
-
-```bash
-make scratch ARCH=arm64
-make enter
-```
-
-This pulls/builds `ghcr.io/ucsd-cse140-s126/digital-design-arm64:latest`.
+Check [here](https://docs.google.com/document/d/1l72L8z40apZd3GiiAejpVXLE-SHvmgHlTK4Icwdl5iI/edit?usp=sharing) for prerequisites and tips before proceeding.
 
 ### Run simulation and the RTL-to-GDS2 flow with ASAP7
 
-From inside the Docker container:
+From inside the Docker container (to be run from `material` directory, which is default when doing `make enter`):
 
 ```bash
 make sim                DESIGN=alu
@@ -52,10 +38,12 @@ make show_3d            DESIGN=alu
 make show_3d_cell       CELL=NAND2x1 
 make show_3d_cell       # show all available cells
 make show_layout_cells
-# exit - to leave the container
+
+exit                    # to leave the container
 ```
 
-* The root `Makefile` handles Docker, artifact collection, and site generation. The `material/Makefile` handles the in-container design flows.
+* The root `Makefile` handles Docker, artifact collection, and site generation. 
+* The `material/Makefile` handles the in-container design flows.
 * Reports and layout images are stored in `material/openroad/work/reports/asap7/alu/base`
 
 ## To locally serve the site
@@ -72,7 +60,7 @@ Then open `http://localhost:8000` in your browser.
 
 ## To publish the docker container (for instructors)
 
-Publishing is manual. `make publish` builds the image locally as `ghcr.io/ucsd-cse140-s126/digital-design-$(ARCH):latest` (default `ARCH=amd64`) and pushes it. CI and `make fresh` only pull this image.
+Publishing is manual. `make publish` builds the image locally as `ghcr.io/ucsd-cse140-s126/digital-design-$(ARCH):latest` using the auto-detected `ARCH` unless overridden, and pushes it. CI and `make fresh` only pull this image.
 
 For arm64, push with `ARCH=arm64`, or trigger the `build-docker-arm` workflow from the GitHub Actions tab, which builds and publishes `digital-design-arm64:latest` automatically.
 
