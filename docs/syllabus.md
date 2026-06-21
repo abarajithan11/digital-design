@@ -1,4 +1,4 @@
-# Syllabus - CSE140 Summer Session 1, 2026
+# Syllabus: CSE140 SS1'26
 
 This five-week course introduces digital design by taking circuits from SystemVerilog to simulation, ASIC layout (transistors), and FPGA implementations that talk to your computer. Students build increasingly realistic designs, ending with a neural-network accelerator and an FIR filter for music that communicate via UART.
 
@@ -38,7 +38,7 @@ This five-week course introduces digital design by taking circuits from SystemVe
 * **Required materials:** 
   * Reference books: For Week 1,2: [Digital Design](https://www.zybooks.com/catalog/digital-design/) by Frank Vahid; [SystemVerilog: RTL Modeling, Simulation and Verification](https://systemverilog.dev/) by Keyi Zhang.
   * You'll be using your own machines (not server) for examples and assignments. You need a computer that can run docker (Ubuntu x86/64, Windows x86/64 (via WSL), MacOS arm64).
-  * We highly recommend you to buy this cheap FPGA from either [Amazon](https://www.amazon.com/Tang-Nano-20K-Development-Computer/dp/B0GCVFLFPP/ref=sr_1_1?crid=32SUSOZGEPZC6&dib=eyJ2IjoiMSJ9.Ow-0YEuarWedIbDbBtOwJv4xyhVW5_qqUfOOYW4fjGJ99bRBUHdab_BTUgz_6cyVtW1qZHPo8yTWj7sGpRE0HKkyiMDAd1MSCc4Ea5OlgFsarB_M8y7Nu8sm-REsz0zofY8SMuVfBaJi9QecvRpHNlEv532AEdds7yn9hJ7QXQg.ZnVmNGdJX19GAopy9VviKF0bf9yAC0TmHz8vlWZ4xGQ&dib_tag=se&keywords=speed%2Btang%2Bnano%2B20k&qid=1779923800&sprefix=sipeed%2Btang%2Bnano%2B20k%2B%2Caps%2C286&sr=8-1&th=1), or [AliExpress](https://www.aliexpress.us/item/3256805394833478.html?spm=a2g0o.productlist.main.1.4b04HoNAHoNAIF&algo_pvid=809e9b1f-24a1-4c4b-b135-129d55ab0ff9&algo_exp_id=809e9b1f-24a1-4c4b-b135-129d55ab0ff9-0&pdp_ext_f=%7B%22order%22%3A%22621%22%2C%22eval%22%3A%221%22%2C%22fromPage%22%3A%22search%22%7D&pdp_npi=6%40dis%21USD%2132.39%2131.89%21%21%2132.39%2131.89%21%402103110517799236779054890ef451%2112000033650315249%21sea%21US%210%21ABX%211%210%21n_tag%3A-29910%3Bd%3A4ca8c57d%3Bm03_new_user%3A-29895%3BpisId%3A5000000204886261&curPageLogUid=zXmtXJ517f75&utparam-url=scene%3Asearch%7Cquery_from%3A%7Cx_object_id%3A1005005581148230%7C_p_origin_prod%3A), so you can get the hands-on experience. In AliExpress, carefully choose "Bundle: Nano 20K No header", and triple-check the delivery address before checkout.
+  * **Cheap FPGA:** We highly recommend you to buy this cheap FPGA from either [Amazon](https://www.amazon.com/Tang-Nano-20K-Development-Computer/dp/B0GCVFLFPP/ref=sr_1_1?crid=32SUSOZGEPZC6&dib=eyJ2IjoiMSJ9.Ow-0YEuarWedIbDbBtOwJv4xyhVW5_qqUfOOYW4fjGJ99bRBUHdab_BTUgz_6cyVtW1qZHPo8yTWj7sGpRE0HKkyiMDAd1MSCc4Ea5OlgFsarB_M8y7Nu8sm-REsz0zofY8SMuVfBaJi9QecvRpHNlEv532AEdds7yn9hJ7QXQg.ZnVmNGdJX19GAopy9VviKF0bf9yAC0TmHz8vlWZ4xGQ&dib_tag=se&keywords=speed%2Btang%2Bnano%2B20k&qid=1779923800&sprefix=sipeed%2Btang%2Bnano%2B20k%2B%2Caps%2C286&sr=8-1&th=1), or [AliExpress](https://www.aliexpress.us/item/3256805394833478.html?spm=a2g0o.productlist.main.1.4b04HoNAHoNAIF&algo_pvid=809e9b1f-24a1-4c4b-b135-129d55ab0ff9&algo_exp_id=809e9b1f-24a1-4c4b-b135-129d55ab0ff9-0&pdp_ext_f=%7B%22order%22%3A%22621%22%2C%22eval%22%3A%221%22%2C%22fromPage%22%3A%22search%22%7D&pdp_npi=6%40dis%21USD%2132.39%2131.89%21%21%2132.39%2131.89%21%402103110517799236779054890ef451%2112000033650315249%21sea%21US%210%21ABX%211%210%21n_tag%3A-29910%3Bd%3A4ca8c57d%3Bm03_new_user%3A-29895%3BpisId%3A5000000204886261&curPageLogUid=zXmtXJ517f75&utparam-url=scene%3Asearch%7Cquery_from%3A%7Cx_object_id%3A1005005581148230%7C_p_origin_prod%3A), so you can get the hands-on experience. In AliExpress, carefully choose "Bundle: Nano 20K No header", and triple-check the delivery address before checkout.
 * **Where things live:** starter code will be in [GitHub](https://github.com/ucsd-cse140-s126/); assignments submitted and auto-graded on [Gradescope](https://www.gradescope.com/courses/1324483); grades on Canvas; slides at [TODO] link and recordings at [TODO] link.
 * **Primary communication channel** will be our Discord server, for all announcements and discussions.
 
@@ -60,8 +60,8 @@ Participation means answering all in-class quizzes, discussing designs with clas
 | 25% | Final exam, in person and paper-based |
 | 5% | In-class quiz correctness (zero for the sessions you don't attend, cannot be recovered) |
 | **100%** | **Total** |
-| -2% | <a id="missed_session">__Per each missed session__ (if any in-class quiz was not answered) |
-| +0.5% | <a id="unused_late_day"></a>_Per unused late day_ |
+| -2% | <a id="missed_session">Per each missed session(if any in-class quiz was not answered) |
+| +0.5% | <a id="unused_late_day"></a>Per unused late day |
 | up to +5% | Meaningful participation in Discord with peers |
 | up to +5% | FIR Filter Resource Optimization |
 | up to +10% | Neural Network Resource Optimization |
