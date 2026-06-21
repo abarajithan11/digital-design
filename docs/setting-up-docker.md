@@ -8,4 +8,4 @@ git clone git@github.com:abarajithan11/digital-design.git
 git clone https://github.com/abarajithan11/digital-design.git
 ```
 
-The follow the instructions in the README at (github.com/abarajithan11/digital-design)[https://github.com/abarajithan11/digital-design]
+The follow the instructions in the README at [github.com/abarajithan11/digital-design](https://github.com/abarajithan11/digital-design)
