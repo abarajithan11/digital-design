@@ -31,7 +31,7 @@ module tb_uart_rx;
   );
 
   initial begin
-    $dumpfile(`VCD_PATH); $dumpvars;
+    $dumpfile(`FST_PATH); $dumpvars;
 
     repeat (2) @(posedge clk) #1ps;
     rstn = 1;

@@ -16,7 +16,7 @@ module tb_down_counter;
   down_counter #(.WIDTH(WIDTH)) dut (.*);
 
   initial begin
-    $dumpfile(`VCD_PATH); $dumpvars;
+    $dumpfile(`FST_PATH); $dumpvars;
 
     // hold reset for a couple cycles
     repeat (2) @(posedge clk);

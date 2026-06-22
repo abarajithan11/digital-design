@@ -6,7 +6,7 @@ module tb_not_gate;
   not_gate dut (.*);
 
   initial begin
-    $dumpfile(`VCD_PATH); $dumpvars;
+    $dumpfile(`FST_PATH); $dumpvars;
 
     repeat (10) begin
       #1;

@@ -14,7 +14,7 @@ module tb_reduction_tree_min;
   reduction_tree_min #(.N(N), .W_X(W_X)) dut (.*);
 
   initial begin
-    $dumpfile(`VCD_PATH); $dumpvars;
+    $dumpfile(`FST_PATH); $dumpvars;
 
     @(posedge clk) #1ps rstn = 1;
 

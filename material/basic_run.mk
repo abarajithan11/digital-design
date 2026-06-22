@@ -13,7 +13,7 @@ SIM_MAX_TIME ?= 1s
 CONT_REPO     ?= /repo
 CONT_MATERIAL ?= $(CONT_REPO)
 SIM_WORKDIR   ?= $(CONT_MATERIAL)/sim/$(DESIGN)
-WAVE_VCD      ?= $(SIM_WORKDIR)/$(DESIGN).vcd
+WAVE_FST      ?= $(SIM_WORKDIR)/$(DESIGN).fst
 
 PDK              ?= asap7
 ORFS_HOME        ?= /OpenROAD-flow-scripts
@@ -77,10 +77,10 @@ check_tools:
 compile: check_tools
 	mkdir -p "$(SIM_WORKDIR)"
 	if [ -n "$(SIM_GEN)" ] && [ -f "$(SIM_GEN)" ]; then python3 "$(SIM_GEN)"; fi
-	verilator --binary --trace-vcd --timing --sv \
+	verilator --binary --trace-fst --timing --sv \
 	    --top-module "$(TOP_TB)" \
 	    -Mdir "$(SIM_WORKDIR)/obj_dir" \
-	    "-DVCD_PATH=\"$(WAVE_VCD)\"" \
+	    "-DFST_PATH=\"$(WAVE_FST)\"" \
 	    "-DSIM_MAX_TIME=$(SIM_MAX_TIME)" \
 	    $(_SIM_SOURCES)
 

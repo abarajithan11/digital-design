@@ -7,7 +7,7 @@ module tb_full_adder;
   full_adder dut (.*);
 
   initial begin // simulation starts
-    $dumpfile(`VCD_PATH); $dumpvars;
+    $dumpfile(`FST_PATH); $dumpvars;
 
     #3 a = 0; b = 0; ci = 0;    
     #1 a = 0; b = 0; ci = 1;

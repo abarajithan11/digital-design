@@ -15,7 +15,7 @@ TOP_TB      = tb_$(DESIGN)
 FLIST       = designs/$(DESIGN).f
 SIM_GEN     = py/$(DESIGN)_gen.py
 SIM_WORKDIR = $(CONT_MATERIAL)/sim/$(DESIGN)
-WAVE_VCD    = $(SIM_WORKDIR)/$(DESIGN).vcd
+WAVE_FST    = $(SIM_WORKDIR)/$(DESIGN).fst
 
 WAVE_SVG_SHORT   ?= $(SIM_WORKDIR)/$(DESIGN)_short.svg
 WAVE_SHORT_START ?= 0
@@ -39,13 +39,15 @@ prepare: check_tools
 	mkdir -p "$(WORK_HOME)" "$(CONT_MATERIAL)/sim" "$(CELL_3D_DIR)"
 
 gtkwave: check_tools
-	gtkwave "$(WAVE_VCD)"
+	gtkwave "$(WAVE_FST)"
 
 wave_svg: check_tools
 	mkdir -p "$(SIM_WORKDIR)"
-	test -f "$(WAVE_VCD)"
+	test -f "$(WAVE_FST)"
+	vcd="$(SIM_WORKDIR)/$(DESIGN).vcd"; \
+	fst2vcd "$(WAVE_FST)" -o "$$vcd"; \
 	python3 "$(CONT_REPO)/scripts/vcd_to_svg.py" \
-		--vcd "$(WAVE_VCD)" \
+		--vcd "$$vcd" \
 		--svg "$(WAVE_SVG_SHORT)" \
 		--start "$(WAVE_SHORT_START)" \
 		--end "$(WAVE_SHORT_END)" \

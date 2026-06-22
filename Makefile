@@ -105,9 +105,9 @@ sim_output:
 	test -n "$(DESIGN)"
 	mkdir -p out/sim out/sim-assets/$(DESIGN)
 	if $(MAKE) run CMD="make sim DESIGN=$(DESIGN) SIM_MAX_TIME=$(SIM_MAX_TIME)" IMAGE="$(IMAGE)"; then \
-		vcd="material/sim/$(DESIGN)/$(DESIGN).vcd"; \
+		fst="material/sim/$(DESIGN)/$(DESIGN).fst"; \
 		svg="material/sim/$(DESIGN)/$(DESIGN)_short.svg"; \
-		[ -f "$$vcd" ] && cp "$$vcd" "out/sim-assets/$(DESIGN)/$(DESIGN).vcd" || true; \
+		[ -f "$$fst" ] && cp "$$fst" "out/sim-assets/$(DESIGN)/$(DESIGN).fst" || true; \
 		[ -f "$$svg" ] && cp "$$svg" "out/sim-assets/$(DESIGN)/$(DESIGN)_short.svg" || true; \
 		printf '%s\n' "pass" > "out/sim/$(DESIGN).status"; \
 	else \

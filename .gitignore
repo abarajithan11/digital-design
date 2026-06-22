@@ -8,6 +8,7 @@ out/
 __pycache__
 docs/design_outputs.md
 *.vcd
+*.fst
 *.glb
 *.png
 

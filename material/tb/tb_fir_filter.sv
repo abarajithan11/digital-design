@@ -23,7 +23,7 @@ module tb_fir_filter;
 
   // Drive signals
   initial begin
-    $dumpfile(`VCD_PATH); $dumpvars(0, dut);
+    $dumpfile(`FST_PATH); $dumpvars(0, dut);
 
     @(posedge clk) #1ps rstn = 1;
     

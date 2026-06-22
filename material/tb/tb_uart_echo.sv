@@ -42,7 +42,7 @@ module tb_uart_echo;
   );
 
   initial begin
-    $dumpfile(`VCD_PATH); $dumpvars;
+    $dumpfile(`FST_PATH); $dumpvars;
     assert (W_OUT % BITS_PER_WORD == 0);
 
     repeat (2) @(posedge clk) #1ps;

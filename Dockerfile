@@ -44,6 +44,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     vim \
     xauth \
     z3 \
+    zlib1g-dev \
  && rm -rf /var/lib/apt/lists/*
 
 # On the from-source arm64 base, OpenROAD's DependencyInstaller places a

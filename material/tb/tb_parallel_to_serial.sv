@@ -11,7 +11,7 @@ module tb_parallel_to_serial;
   parallel_to_serial #(.WIDTH(WIDTH)) dut (.*);
 
   initial begin
-    $dumpfile(`VCD_PATH); $dumpvars;
+    $dumpfile(`FST_PATH); $dumpvars;
     
     @(posedge clk)  #1ps  rstn = 1;
     @(posedge clk)  #1ps  par_data  = 8'd7 ; par_valid = 0; ser_ready = 1;

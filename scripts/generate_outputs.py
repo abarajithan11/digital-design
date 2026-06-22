@@ -11,7 +11,7 @@ LAYOUT_IMAGES = [
     "final_worst_path.webp",
 ]
 DOWNLOADABLE_ASSETS = [
-    ("VCD", "{design_name}.vcd"),
+    ("FST", "{design_name}.fst"),
     ("SVG", "{design_name}_short.svg"),
     ("GDS", "{design_name}.gds"),
     ("GDS Logs", "logs.zip"),
@@ -175,7 +175,7 @@ def build_markdown(designs_data: list[dict], assets_root: Path) -> list[str]:
             "",
             "For each design our GitHub Actions flow runs",
             "",
-            "1. Simulation using Verilator, generating VCD, converted to SVG,",
+            "1. Simulation using Verilator, generating FST, converted to SVG,",
             "2. OpenROAD RTL2GDS2 flow using [ASAP7 7nm, a realistic PDK for academic use,](https://www.sciencedirect.com/science/article/pii/S002626921630026X)",
             "",
             "collects their outputs and displays them here.",

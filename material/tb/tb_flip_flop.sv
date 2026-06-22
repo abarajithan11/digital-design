@@ -7,7 +7,7 @@ module tb_flip_flop;
   initial forever #1ns clk = !clk;
 
   initial begin
-    $dumpfile(`VCD_PATH); $dumpvars;
+    $dumpfile(`FST_PATH); $dumpvars;
 
     @(posedge clk);
     #1ps; rstn = 1;

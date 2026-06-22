@@ -10,7 +10,7 @@ module tb_up_counter;
   
 
   initial begin
-    $dumpfile(`VCD_PATH); $dumpvars;
+    $dumpfile(`FST_PATH); $dumpvars;
     
     @(posedge clk);
     #1ps rstn  = 1;
