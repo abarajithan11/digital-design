@@ -12,14 +12,20 @@ SIM_MAX_TIME ?= 1s
 
 CONT_REPO     ?= /repo
 CONT_MATERIAL ?= $(CONT_REPO)
-SIM_WORKDIR   ?= $(CONT_MATERIAL)/sim/$(DESIGN)
+# Build sources/outputs resolve relative to the directory make runs in, so the
+# same logic works whether the material is the repo root (assignment / student
+# template) or a subdir (digital-design/material), and from the staff monorepo
+# you can cd into any of them and run make. CONT_MATERIAL/CONT_REPO above are
+# only the container mount/-w targets used by basic_docker.mk.
+MATERIAL_DIR  ?= $(CURDIR)
+SIM_WORKDIR   ?= $(MATERIAL_DIR)/sim/$(DESIGN)
 WAVE_FST      ?= $(SIM_WORKDIR)/$(DESIGN).fst
 
 PDK              ?= asap7
 ORFS_HOME        ?= /OpenROAD-flow-scripts
 ORFS_FLOW_DIR    := $(ORFS_HOME)/flow
-WORK_HOME        ?= $(CONT_MATERIAL)/openroad/work
-DESIGN_CONFIG    ?= $(CONT_MATERIAL)/openroad/config.mk
+WORK_HOME        ?= $(MATERIAL_DIR)/openroad/work
+DESIGN_CONFIG    ?= $(MATERIAL_DIR)/openroad/config.mk
 RESULTS_DIR      := $(WORK_HOME)/results/$(PDK)/$(DESIGN)/base
 FINAL_GDS        := $(RESULTS_DIR)/6_final.gds
 REPORT_IMAGE_SCALE ?= 4
@@ -30,7 +36,7 @@ KLAYOUT_CMD  ?= klayout
 
 GDS3XTRUDE_EXE       ?= gds3xtrude
 OPENSCAD_EXE         ?= openscad
-GDS3XTRUDE_TECH      ?= $(CONT_MATERIAL)/openroad/gds3xtrude/$(PDK).layerstack
+GDS3XTRUDE_TECH      ?= $(MATERIAL_DIR)/openroad/gds3xtrude/$(PDK).layerstack
 GDS3XTRUDE_TOP       ?= $(DESIGN)
 GDS3XTRUDE_OUT       ?= $(RESULTS_DIR)/6_final.scad
 GDS3XTRUDE_GLB       ?= $(patsubst %.scad,%.glb,$(GDS3XTRUDE_OUT))
@@ -41,7 +47,7 @@ GDS3XTRUDE_FLAGS     ?= --scale $(GDS3XTRUDE_XY_SCALE)
 GDS3XTRUDE_EXTRA_FLAGS ?=
 
 PLATFORM_LYP := $(firstword \
-	$(wildcard $(CONT_MATERIAL)/openroad/$(PDK).lyp) \
+	$(wildcard $(MATERIAL_DIR)/openroad/$(PDK).lyp) \
 	$(wildcard $(ORFS_HOME)/flow/platforms/$(PDK)/KLayout/*.lyp) \
 	$(wildcard $(ORFS_HOME)/flow/platforms/$(PDK)/*.lyp))
 
@@ -50,7 +56,7 @@ PLATFORM_LYP := $(firstword \
 VERILOG_FILES ?=
 
 ifeq ($(FLIST),)
-_SIM_SOURCES ?= "$(CONT_MATERIAL)/$(RTL)/$(DESIGN).sv" "$(CONT_MATERIAL)/tb/$(TOP_TB).sv"
+_SIM_SOURCES ?= "$(MATERIAL_DIR)/$(RTL)/$(DESIGN).sv" "$(MATERIAL_DIR)/tb/$(TOP_TB).sv"
 else
 _SIM_SOURCES ?= -f "$(FLIST)"
 endif
@@ -89,7 +95,7 @@ sim: compile
 
 gds: check_tools
 	if [ -n "$(SIM_GEN)" ] && [ -f "$(SIM_GEN)" ]; then \
-	    ( cd "$(CONT_MATERIAL)/rtl" && python3 "$(abspath $(SIM_GEN))" ); \
+	    ( cd "$(MATERIAL_DIR)/rtl" && python3 "$(abspath $(SIM_GEN))" ); \
 	fi
 	mkdir -p "$(WORK_HOME)"
 	rm -rf \
