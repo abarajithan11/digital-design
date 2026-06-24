@@ -31,6 +31,11 @@ From inside the Docker container (to be run from `material` directory, which is 
 ```bash
 make sim                DESIGN=alu
 make gds                DESIGN=alu
+
+make gds                DESIGN=auto_light USE_BASIC_GATES=1
+make show_syn_netlist   DESIGN=auto_light
+make show_final_nestlist DESIGN=auto_light
+
 make sim_all
 make gds_all
 make show_layout        DESIGN=alu

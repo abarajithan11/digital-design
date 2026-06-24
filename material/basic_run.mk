@@ -28,7 +28,12 @@ WORK_HOME        ?= $(MATERIAL_DIR)/openroad/work
 DESIGN_CONFIG    ?= $(MATERIAL_DIR)/openroad/config.mk
 RESULTS_DIR      := $(WORK_HOME)/results/$(PDK)/$(DESIGN)/base
 FINAL_GDS        := $(RESULTS_DIR)/6_final.gds
+SYNTH_NETLIST    := $(RESULTS_DIR)/1_2_yosys.v
+FINAL_NETLIST    := $(RESULTS_DIR)/6_final.v
 REPORT_IMAGE_SCALE ?= 4
+USE_BASIC_GATES    ?= 0
+BASIC_GATES_DONT_USE_CELLS ?= *x1p*_ASAP7* *xp*_ASAP7* SDF* ICG* OA21* OAI21*
+NETLIST_VIEWER ?= pygmentize -l systemverilog -f terminal256
 
 YOSYS_EXE    ?= yosys
 OPENROAD_EXE ?= openroad
@@ -62,11 +67,13 @@ _SIM_SOURCES ?= -f "$(FLIST)"
 endif
 
 _GDS_VERILOG_ARG = $(if $(VERILOG_FILES),VERILOG_FILES="$(VERILOG_FILES)")
+_GDS_BASIC_GATES_ARG = $(if $(filter 1,$(USE_BASIC_GATES)),DONT_USE_CELLS="$(BASIC_GATES_DONT_USE_CELLS)")
 
 SIM_TOOLS ?= verilator python3
 GDS_TOOLS ?= yosys openroad klayout
 
-.PHONY: check_tools compile sim gds show_layout show_3d sim_all gds_all
+.PHONY: check_tools compile sim gds show_syn_netlist show_final_nestlist \
+        show_layout show_3d sim_all gds_all
 
 check_tools:
 	@missing=""; \
@@ -106,6 +113,7 @@ gds: check_tools
 	REPORT_IMAGE_SCALE="$(REPORT_IMAGE_SCALE)" \
 	$(MAKE) -C "$(ORFS_FLOW_DIR)" \
 	    $(_GDS_VERILOG_ARG) \
+	    $(_GDS_BASIC_GATES_ARG) \
 	    DESIGN_NAME="$(DESIGN)" \
 	    DESIGN_CONFIG="$(DESIGN_CONFIG)" \
 	    WORK_HOME="$(WORK_HOME)" \
@@ -113,6 +121,18 @@ gds: check_tools
 	    OPENROAD_EXE="$(OPENROAD_EXE)" \
 	    KLAYOUT_CMD="$(KLAYOUT_CMD)" \
 	    gds
+	printf '\n\nSynthesis netlist: %s\nFinal netlist:     %s\n' \
+	    "$(SYNTH_NETLIST)" "$(FINAL_NETLIST)"
+
+show_syn_netlist:
+	test -n "$(DESIGN)"
+	test -f "$(SYNTH_NETLIST)"
+	$(NETLIST_VIEWER) "$(SYNTH_NETLIST)"
+
+show_final_nestlist:
+	test -n "$(DESIGN)"
+	test -f "$(FINAL_NETLIST)"
+	$(NETLIST_VIEWER) "$(FINAL_NETLIST)"
 
 show_layout: check_tools
 	$(KLAYOUT_CMD) -l "$(PLATFORM_LYP)" "$(FINAL_GDS)"
