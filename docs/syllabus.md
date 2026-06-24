@@ -74,13 +74,19 @@ Programming assignments are auto-graded with released and hidden testbenches. St
 - **Letter grades:** `A+ >=97, A >=93, A- >=90, B+ >=87, B >=83, B- >=80, C+ >=77, C >=73, C- >=70, D >=60, F otherwise`; Ranges may only move in students' favor.
 - **Late work:** A total of 4 late days (24 hours) for the entire course with **no exceptions**; we recommend you to save them, in case you encounter a true emergency, and also because [you get credit for unused late days](#unused_late_day). -10% penalty on assignment grade per late day after you exhaust late days.
 - **Exam logistics:** the mid & final are in-person, paper-based, and closed-book; [TODO] We are currently deciding a makeup exam policy. We are inclined to not offer them.
-- **Assignments:** released Monday on that week's material, due the following Tuesday at 10 am.
+- **Assignments:** released Tuesday on that week's material, due the following Tuesday at 10 am.
 - **Collaboration:** you may discuss concepts and approaches with classmates, but each student must write and submit their own code. Do not copy or share solutions.
-- **Academic integrity:** plagiarism from any source (classmates, past students, online code, or AI tools) is not tolerated and results in a zero on the assignment and an academic-integrity referral. Check [UCSD Policy](https://senate.ucsd.edu/Operating-Procedures/Senate-Manual/Appendices/2). If you're unsure whether something is allowed, ask first.
+- **Plagiarism:** Studying in groups and discussing concept and examples with peers are highly encouraged.
+But sharing your solution with anyone and plagiarism (classmates, past students, online code, or AI tools) is not tolerated. We check for plagiarism across all your assignments **at the end of the course**. Any case of plagiarism where we have high confidence, results in a zero on the assignment for all parties involved and academic-integrity referrals. Check [UCSD Policy](https://senate.ucsd.edu/Operating-Procedures/Senate-Manual/Appendices/2). If you're unsure whether something is allowed, ask first.
 - **Regrades:** raise requests through Gradescope with detailed explanation within the days allowed on the assignment. No regrades allowed on the final & mid exams.
 
-## AI Use, Accessibility and Inclusivity
+## AI Use, Academic Integrity, Accessibility and Inclusivity
 
-Because the mid & final are paper-based, do not use AI to write or debug your code, and avoid IDE-based AI tools entirely. If you do the assignments yourself, you can easily score 100% on the exam. Chat-based AI may be used only for search. Misuse may result in zero credit and an academic integrity referral. *Why:* As beginners, you need to do the basic designs manually to rewire your brain, so you can use AI more effectively in your jobs later. 
+The mid & final exams are paper-based and will test your design skills and knowledge. 
+Therefore, do not use AI to write or debug your code, and avoid IDE-based AI tools entirely. 
+The exams should be easy if you do the assignments yourself. 
+Chat-based AI may be used only to explain stuff. 
+AI misuse will result in zero credit and an academic integrity referral. 
+*Why:* As beginners, you need to do the basic designs manually to rewire your brain, so you can use AI more effectively in your jobs later. 
 
-Contact the instructor or the [campus accessibility office](https://osd.ucsd.edu/) early to request disability, religious, or other accommodations. Your health and well-being come first. If you're struggling, reach out, and see campus [basic needs](https://basicneeds.ucsd.edu/), [counseling (CAPS)](https://caps.ucsd.edu/), and other support resources. Everyone is welcome here!
+Contact the instructor or the [campus accessibility office](https://osd.ucsd.edu/) early to request disability, religious, or other accommodations. Your health and well-being come first. If you're struggling, reach out, and see campus [basic needs](https://basicneeds.ucsd.edu/), [counseling (CAPS)](https://caps.ucsd.edu/), and other support resources. Our primary goal is to create an inclusive environment to all students!
