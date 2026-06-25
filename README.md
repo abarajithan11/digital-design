@@ -90,7 +90,8 @@ You need a machine with either Ubuntu, Windows 11 or macOS and about 3–4 GB of
     
     1. Visit `vnc://localhost:5901` in a web browser. 
     2. Allow the website to open **Screen Sharing**. 
-    3. You will see a black window. This is where any GUI from the Docker container will appear. 
+    3. You will see a black window. This is where any GUI from the Docker container will appear.
+    4. Go back to the terminal to run other commands. The VNC window is for displaying GUI apps only.
     
     </details>
 
