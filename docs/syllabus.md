@@ -14,6 +14,7 @@ This five-week course introduces digital design by taking circuits from SystemVe
 
 ## Where things live:
 
+* Non-public information (Zoom/Discord links, Gradecope/Zybooks codes): [Canvas→ Home→ Non-public Information](https://canvas.ucsd.edu/courses/76952/pages/non-public-information)
 * Syllabus: [This page](https://abapages.com/digital-design/syllabus.html).
 * Announcements: [Discord→ #announcements](https://discord.com/channels/1519434395822461069/1519434904889327826)
 * Q&A + Discussion Forum: [Discord→ Various channels](https://discord.com/channels/1519434395822461069/1519434904889327826)
@@ -48,7 +49,7 @@ This five-week course introduces digital design by taking circuits from SystemVe
 * Online logic simulation: [https://digitaljs.tilk.eu/](https://digitaljs.tilk.eu/)
 * Docker design flow, [3D chip/cell visualizations](https://abapages.com/digital-design/3d-cells.html), FeedbackFruits, Discord, and the [course contact form](https://abapages.com/digital-design/contact-us.html). 
 * **Required materials:** 
-  * **Required:** You'll be using your own machines (not server) for examples and assignments. You need a computer with about 3-4 GB space, that can run Docker (Ubuntu x86/64, Windows x86/64 (via WSL), macOS arm64).
+  * **Required:** You'll be using your own machines (not server) for examples and assignments. You need a computer with about 3-4 GB space, that can run Docker (Ubuntu x86/64, Windows x86/64 (via WSL), macOS arm64). If you don't have a machine, reach out to us and to [UCSD Laptop Lending](https://basicneeds.ucsd.edu/financial-security/laptop-lending-program.html).
   * Reference books, optional: For Week 1,2: [Digital Design](https://www.zybooks.com/catalog/digital-design/) by Frank Vahid; [SystemVerilog: RTL Modeling, Simulation and Verification](https://systemverilog.dev/) by Keyi Zhang.
   * **Cheap FPGA, optional:** We highly recommend buying this cheap FPGA from either [Amazon](https://www.amazon.com/Tang-Nano-20K-Development-Computer/dp/B0GCVFLFPP/ref=sr_1_1?crid=32SUSOZGEPZC6&dib=eyJ2IjoiMSJ9.Ow-0YEuarWedIbDbBtOwJv4xyhVW5_qqUfOOYW4fjGJ99bRBUHdab_BTUgz_6cyVtW1qZHPo8yTWj7sGpRE0HKkyiMDAd1MSCc4Ea5OlgFsarB_M8y7Nu8sm-REsz0zofY8SMuVfBaJi9QecvRpHNlEv532AEdds7yn9hJ7QXQg.ZnVmNGdJX19GAopy9VviKF0bf9yAC0TmHz8vlWZ4xGQ&dib_tag=se&keywords=speed%2Btang%2Bnano%2B20k&qid=1779923800&sprefix=sipeed%2Btang%2Bnano%2B20k%2B%2Caps%2C286&sr=8-1&th=1), or [AliExpress](https://www.aliexpress.us/item/3256805394833478.html?spm=a2g0o.productlist.main.1.4b04HoNAHoNAIF&algo_pvid=809e9b1f-24a1-4c4b-b135-129d55ab0ff9&algo_exp_id=809e9b1f-24a1-4c4b-b135-129d55ab0ff9-0&pdp_ext_f=%7B%22order%22%3A%22621%22%2C%22eval%22%3A%221%22%2C%22fromPage%22%3A%22search%22%7D&pdp_npi=6%40dis%21USD%2132.39%2131.89%21%21%2132.39%2131.89%21%402103110517799236779054890ef451%2112000033650315249%21sea%21US%210%21ABX%211%210%21n_tag%3A-29910%3Bd%3A4ca8c57d%3Bm03_new_user%3A-29895%3BpisId%3A5000000204886261&curPageLogUid=zXmtXJ517f75&utparam-url=scene%3Asearch%7Cquery_from%3A%7Cx_object_id%3A1005005581148230%7C_p_origin_prod%3A), so you can get the hands-on experience. In AliExpress, carefully choose "Bundle: Nano 20K No header", and triple-check the delivery address before checkout.
 
@@ -63,19 +64,23 @@ Participation means answering all in-class quizzes, discussing designs with clas
 
 | Weight | Component |
 | ---: | --- |
-| 15% each | Assignments (4)|
-| 10% | Midterm exam, in person and paper-based |
-| 25% | Final exam, in person and paper-based |
+| 10% each | Assignments (4)|
+| 15% | Midterm exam, in person and paper-based |
+| 40% | Final exam, in person and paper-based |
 | 5% | In-class quiz correctness (zero for the sessions you don't attend, cannot be recovered) |
 | **100%** | **Total** |
 | -2% | <a id="missed_session">For each missed session </a>(if any in-class quiz was not answered) |
 | +0.5% | <a id="unused_late_day"></a>Per unused late day |
-| up to +5% | Meaningful participation in Discord with peers |
+| up to +5% | Meaningful participation in Discord & FeedbackFruits with peers |
 | up to +5% | FIR Filter Resource Optimization |
 | up to +10% | Neural Network Resource Optimization |
 
 
-Programming assignments are auto-graded with released and hidden testbenches. Strong work is correct, readable, tested, parameterized where appropriate, and written in the SystemVerilog style taught in class. The paper-based exam will include code closely related to the assignments. Bonus points and missed session penalties are added/subtracted as percentage points to your final score percentage.
+Programming assignments are auto-graded with released and hidden testbenches. 
+Strong work is correct, readable, tested, parameterized where appropriate, and written in the SystemVerilog style taught in class. 
+The paper-based exam will include code closely related to the assignments. 
+Bonus points and missed session penalties are added/subtracted as percentage points to your final score percentage. 
+What counts as "meaningful participation" is up to the subjective discretion of the instructor alone.
 
 ## Key Policies:
 
