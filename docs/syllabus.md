@@ -100,8 +100,7 @@ Programming assignments are auto-graded with released and hidden testbenches. St
   * We check for plagiarism across all your assignments **at the end of the course**. Any such case where we have high confidence results in a zero on the assignment for all parties involved and academic-integrity referrals. Check [UCSD Policy](https://senate.ucsd.edu/Operating-Procedures/Senate-Manual/Appendices/2). 
   * If you're unsure whether something is allowed, ask first in the [policy channel @Discord](https://discord.com/channels/1519434395822461069/1519435115850371252).
 - **Regrades:** raise requests through Gradescope with detailed explanation within the days allowed on the assignment. No regrades allowed on the final & midterm exams.
-- Any syllabus or schedule changes will be announced on Discord. This online syllabus is the current version.
-- Approved UCSD accommodations may modify these policies where required.
+- **Policy Changes:** Any policy or schedule changes will be announced on Discord. This online syllabus is the current version. Approved UCSD accommodations may modify these policies where required.
 
 ## AI Use & Academic Integrity
 
