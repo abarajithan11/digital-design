@@ -2,49 +2,124 @@
 
 Visit the site: [abapages.com/digital-design](https://abapages.com/digital-design/)
 
-## Setting up the container and running the examples
+## Quickstart on Examples
 
-To pull our pre-built Docker image (fast), start and use it: 
+You need a machine capable of running Docker (Linux / Windows 11 / macOS) and about 3–4 GB of space.
 
-```bash
-make fresh
-make enter
-```
+1. Install Docker on your system.
 
-To build that same image locally from the Dockerfile (slow, might take 3 hours on ARM), start and use it:
+   <details>
+   <summary><strong>Linux</strong> — <a href="https://docs.docker.com/engine/install/ubuntu/">Full instructions here</a></summary>
 
-```bash
-make scratch
-make enter
-```
+   1. Install Docker if you have not already:
 
-The Makefile auto-detects `ARCH` from your machine (`amd64` or `arm64`) and uses the matching `ghcr.io/ucsd-cse140-s126/digital-design-$(ARCH):latest` image. You can still override it explicitly if needed, for example `ARCH=arm64`.
+      ```bash
+      curl -fsSL https://get.docker.com -o get-docker.sh
+      sudo sh get-docker.sh
+      sudo usermod -aG docker "$USER"
+      ```
 
-### For ARM-based machines (Mac/Windows)
+   2. Test Docker:
 
-Check [here](https://docs.google.com/document/d/1l72L8z40apZd3GiiAejpVXLE-SHvmgHlTK4Icwdl5iI/edit?usp=sharing) for prerequisites and tips before proceeding.
+      ```bash
+      docker run --rm hello-world
+      ```
 
-### Run simulation and the RTL-to-GDS2 flow with ASAP7
+   </details>
+
+   <details>
+   <summary><strong>macOS</strong> — <a href="https://docs.docker.com/desktop/setup/install/mac-install/">Full instructions here</a></summary>
+
+   1. Download Docker Desktop for Mac.
+   2. Choose the appropriate Apple Silicon or Intel version.
+   3. Open the `.dmg` file.
+   4. Drag Docker into **Applications**.
+   5. Start Docker Desktop.
+   6. Test Docker:
+
+      ```bash
+      docker run --rm hello-world
+      ```
+
+   </details>
+
+   <details>
+   <summary><strong>Windows 11</strong> — <a href="https://docs.docker.com/desktop/setup/install/windows-install/">Full instructions here</a></summary>
+
+   1. Open PowerShell as Administrator.
+
+   2. Install WSL if you have not already:
+
+      ```powershell
+      # Replace D:\WSL\Ubuntu with the desired location
+      wsl --install -d Ubuntu --location D:\WSL\Ubuntu
+      ```
+
+   3. Install Docker Desktop on Windows, not from WSL:
+
+      - Download and install [Docker Desktop for Windows](https://docs.docker.com/desktop/setup/install/windows-install/).
+      - Open Docker Desktop once and accept the license.
+      - Ensure **Use the WSL 2 based engine** is enabled; it is normally enabled automatically:
+        1. Click the gear icon in the upper-right.
+        2. Go to **General**.
+        3. Check **Use the WSL 2 based engine**.
+        4. Click **Apply & restart**.
+
+   4. Test whether Docker works correctly from PowerShell:
+
+      ```powershell
+      wsl  # Enter WSL Ubuntu
+      docker run --rm hello-world
+      ```
+
+   </details>
+
+2. Set up our Docker container:
+
+   - Pull and start the container:
+
+     ```bash
+     git clone https://github.com/abarajithan11/digital-design
+     cd digital-design
+     make fresh         # This pulls the image and starts the container
+     ```
+
+   - Getting GUI on macOS ([detailed instructions here](https://docs.google.com/document/d/1l72L8z40apZd3GiiAejpVXLE-SHvmgHlTK4Icwdl5iI/edit?usp=sharing)), after `make fresh`:
+
+     1. Visit `vnc://localhost:5901` in a web browser.
+     2. Allow the website to open **Screen Sharing**.
+     3. You will see a black window. This is where any GUI from the Docker container will appear.
+
+3. Test our Docker container:
+
+   ```bash
+   make enter                            # Enter the container from the terminal while Docker is running
+   make sim gds show_layout DESIGN=alu   # This should run for a minute or two and show the KLayout GUI
+   exit                                  # Exit the container; you can run make enter again later
+   ```
+
+
+## Run Examples
 
 From inside the Docker container (to be run from `material` directory, which is default when doing `make enter`):
 
 ```bash
-make sim                DESIGN=alu
-make gds                DESIGN=alu
+make sim                 DESIGN=alu
+make gds                 DESIGN=alu
 
-make gds                DESIGN=auto_light USE_BASIC_GATES=1
-make show_syn_netlist   DESIGN=auto_light
+make gds                 DESIGN=auto_light USE_BASIC_GATES=1
+make show_syn_netlist    DESIGN=auto_light
 make show_final_nestlist DESIGN=auto_light
 
 make sim_all
 make gds_all
-make show_layout        DESIGN=alu
-make show_3d            DESIGN=alu
-make show_3d_cell       CELL=NAND2x1 
-make show_3d_cell       # show all available cells
-make show_layout_cells
+make show_layout         DESIGN=alu
+make show_3d             DESIGN=alu
+make show_3d_cell        CELL=NAND2x1 
+make show_3d_cell        # show all available cells
+make show_layout_cells   
 
-exit                    # to leave the container
+exit                     # to leave the container
 ```
 
 * The root `Makefile` handles Docker, artifact collection, and site generation. 
@@ -53,7 +128,8 @@ exit                    # to leave the container
 
 ## For Staff
 
-### To locally serve the site
+<details>
+   <summary><strong>To locally serve the site</strong></summary>
 
 ```bash
 pip install sphinx furo myst-parser
@@ -64,8 +140,19 @@ make serve
 
 Then open `http://localhost:8000` in your browser.
 
+</details>
 
-### To publish the docker container (for instructors)
+<details>
+   <summary><strong>To build and publish the docker container (for instructors)</strong></summary>
+
+To build that same image locally from the Dockerfile (slow, might take 3 hours on ARM), start and use it:
+
+```bash
+make scratch
+make enter
+```
+
+The Makefile auto-detects `ARCH` from your machine (`amd64` or `arm64`) and uses the matching `ghcr.io/ucsd-cse140-s126/digital-design-$(ARCH):latest` image. You can still override it explicitly if needed, for example `ARCH=arm64`.
 
 Publishing is manual. `make publish` builds the image locally as `ghcr.io/ucsd-cse140-s126/digital-design-$(ARCH):latest` using the auto-detected `ARCH` unless overridden, and pushes it. CI and `make fresh` only pull this image.
 
@@ -87,6 +174,7 @@ Get your GHCR token as:
 
 ```bash
 GHCR_TOKEN=<github-token> make publish GHCR_USER=<github-username>
-# or for arm64:
-GHCR_TOKEN=<github-token> make publish ARCH=arm64 GHCR_USER=<github-username>
 ```
+
+</details>
+
