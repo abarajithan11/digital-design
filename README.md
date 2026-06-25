@@ -4,7 +4,7 @@ Visit the site: [abapages.com/digital-design](https://abapages.com/digital-desig
 
 ## Quickstart on Examples
 
-You need a machine capable of running Docker (Ubuntu / Windows 11 / macOS) and about 3–4 GB of space.
+You need a machine with either Ubuntu, Windows 11 or macOS and about 3–4 GB of space.
 
 1. Install Docker on your system.
 
