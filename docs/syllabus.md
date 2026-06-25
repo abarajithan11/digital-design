@@ -5,12 +5,12 @@ This five-week course introduces digital design by taking circuits from SystemVe
 ## Course Logistics
 
 * **Instructional Team:** Abarajithan G (Instructor), Zhenghua Ma (TA), Sriharsha Kavuri (Tutor) & Aarav Vidhawan (Tutor).
-* **Lectures:** Tuesdays & Thursdays, 11:00 a.m. - 01:50 p.m., [COA - Coalition Building](https://maps.app.goo.gl/bmoSkuejwRAZGHEy9), Room B26.
+* **Lectures:** Tuesdays & Thursdays, 11:00 a.m. - 1:50 p.m., [COA - Coalition Building](https://maps.app.goo.gl/bmoSkuejwRAZGHEy9), Room B26.
 * **Discussion:** Fridays, 3:00 p.m. - 4:50 p.m., [EBU3B - CSE Building](https://maps.app.goo.gl/WAJxtXZA5ZWAzSDS7), Room 4140.
 * **Expected workload** [16 hours outside class](https://senate.ucsd.edu/media/276096/epc-credit-hour-policy-and-supplement.pdf) per week. That is 3.2 extra hours per weekday on your own.
 * **Office hours:** [TODO: to be scheduled][days/times, location/link].
-* **Midterm exam:** Friday, July 17, 4:00 p.m. - 4:45 p.m., [EBU3B - CSE Building](https://maps.app.goo.gl/WAJxtXZA5ZWAzSDS7), Room 4140.
-* **Final exam:** Saturday, August 1, 11:30 a.m. - 2:26 p.m. [COA - Coalition Building](https://maps.app.goo.gl/bmoSkuejwRAZGHEy9), Room B26.
+* **Midterm exam:** Friday, July 17, 4:00 p.m. - 4:45 p.m., [EBU3B - CSE Building](https://maps.app.goo.gl/WAJxtXZA5ZWAzSDS7), Room 4140. Conducted during discussion session.
+* **Final exam:** Saturday, August 1, 11:30 a.m. - 2:26 p.m., [COA - Coalition Building](https://maps.app.goo.gl/bmoSkuejwRAZGHEy9), Room B26.
 
 ## Where things live:
 
