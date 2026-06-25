@@ -11,7 +11,7 @@ You need a machine capable of running Docker (Linux / Windows 11 / macOS) and ab
    <details>
    <summary><strong>Linux</strong> — <a href="https://docs.docker.com/engine/install/ubuntu/">Full instructions here</a></summary>
 
-   1. Install Docker if you have not already:
+   1. Install Docker:
 
       ```bash
       curl -fsSL https://get.docker.com -o get-docker.sh
@@ -30,12 +30,11 @@ You need a machine capable of running Docker (Linux / Windows 11 / macOS) and ab
    <details>
    <summary><strong>macOS</strong> — <a href="https://docs.docker.com/desktop/setup/install/mac-install/">Full instructions here</a></summary>
 
-   1. Download Docker Desktop for Mac.
-   2. Choose the appropriate Apple Silicon or Intel version.
-   3. Open the `.dmg` file.
-   4. Drag Docker into **Applications**.
-   5. Start Docker Desktop.
-   6. Test Docker:
+   1. Download Docker Desktop for Mac [from here](https://docs.docker.com/desktop/setup/install/mac-install/) for your right architecture (Apple Silicon vs Intel).
+   1. Open the `.dmg` file.
+   1. Drag Docker into **Applications**.
+   1. Start Docker Desktop.
+   1. Test Docker:
 
       ```bash
       docker run --rm hello-world
@@ -57,13 +56,13 @@ You need a machine capable of running Docker (Linux / Windows 11 / macOS) and ab
 
    3. Install Docker Desktop on Windows, not from WSL:
 
-      - Download and install [Docker Desktop for Windows](https://docs.docker.com/desktop/setup/install/windows-install/).
-      - Open Docker Desktop once and accept the license.
-      - Ensure **Use the WSL 2 based engine** is enabled; it is normally enabled automatically:
-        1. Click the gear icon in the upper-right.
-        2. Go to **General**.
-        3. Check **Use the WSL 2 based engine**.
-        4. Click **Apply & restart**.
+      1. Download and install [Docker Desktop for Windows](https://docs.docker.com/desktop/setup/install/windows-install/).
+      1. Open Docker Desktop once and accept the license.
+      1. Ensure **Use the WSL 2 based engine** is enabled; it is normally enabled automatically:
+          1. Click the gear icon in the upper-right.
+          1. Go to **General**.
+          1. Check **Use the WSL 2 based engine**.
+          1. Click **Apply & restart**.
 
    4. Test whether Docker works correctly from PowerShell:
 
@@ -84,7 +83,7 @@ You need a machine capable of running Docker (Linux / Windows 11 / macOS) and ab
      make fresh         # This pulls the image and starts the container
      ```
 
-   - Getting GUI on macOS ([detailed instructions here](https://docs.google.com/document/d/1l72L8z40apZd3GiiAejpVXLE-SHvmgHlTK4Icwdl5iI/edit?usp=sharing)), after `make fresh`:
+   - For macOS: getting GUI from our container ([detailed instructions here](https://docs.google.com/document/d/1l72L8z40apZd3GiiAejpVXLE-SHvmgHlTK4Icwdl5iI/edit?usp=sharing)), after `make fresh`:
 
      1. Visit `vnc://localhost:5901` in a web browser.
      2. Allow the website to open **Screen Sharing**.
