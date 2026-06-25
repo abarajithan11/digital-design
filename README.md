@@ -4,12 +4,15 @@ Visit the site: [abapages.com/digital-design](https://abapages.com/digital-desig
 
 ## Quickstart on Examples
 
-You need a machine with either Ubuntu, Windows 11 or macOS and about 3–4 GB of space.
+* Please do these three steps before the first lecture. If you need any support, we will help you during the office hours on Wednesday.
+* You need a machine with either Ubuntu, Windows 11 or macOS and about 3–4 GB of space.
 
-1. Install Docker on your system.
+### 1. Install Docker on your system.
 
    <details>
-   <summary><strong>Ubuntu</strong> — <a href="https://docs.docker.com/engine/install/ubuntu/">Full instructions here</a></summary>
+   <summary><strong>Ubuntu</strong></summary>
+
+   * If you prefer detailed instructions, or if anything goes wrong, [follow this instead.](https://docs.docker.com/engine/install/ubuntu/).
 
    1. Install Docker:
 
@@ -28,9 +31,10 @@ You need a machine with either Ubuntu, Windows 11 or macOS and about 3–4 GB of
    </details>
 
    <details>
-   <summary><strong>macOS</strong> — <a href="https://docs.docker.com/desktop/setup/install/mac-install/">Full instructions here</a></summary>
+   <summary><strong>macOS</strong></summary>
 
-   1. Download Docker Desktop for Mac [from here](https://docs.docker.com/desktop/setup/install/mac-install/) for your right architecture (Apple Silicon vs Intel).
+   - If you prefer detailed instructions, or if anything goes wrong, [follow this instead.](https://docs.docker.com/desktop/setup/install/mac-install/)
+   1. Download Docker Desktop for Mac [from here](https://docs.docker.com/desktop/setup/install/mac-install/) for your CPU architecture: Apple Silicon vs Intel.
    1. Open the `.dmg` file.
    1. Drag Docker into **Applications**.
    1. Start Docker Desktop.
@@ -43,7 +47,9 @@ You need a machine with either Ubuntu, Windows 11 or macOS and about 3–4 GB of
    </details>
 
    <details>
-   <summary><strong>Windows 11</strong> — <a href="https://docs.docker.com/desktop/setup/install/windows-install/">Full instructions here</a></summary>
+   <summary><strong>Windows 11</strong></summary>
+
+   - If you prefer detailed instructions, or if anything goes wrong, [follow this instead.](https://docs.docker.com/desktop/setup/install/windows-install/)
 
    1. Open PowerShell as Administrator.
 
@@ -73,29 +79,31 @@ You need a machine with either Ubuntu, Windows 11 or macOS and about 3–4 GB of
 
    </details>
 
-2. Set up our Docker container:
+### 2. Set up our Docker container:
 
-   - Pull and start the container:
+Clone the repo, pull the docker image & start the container, and if you use macOS, do the extra step of setting up GUI.
 
-     ```bash
-     git clone https://github.com/abarajithan11/digital-design
-     cd digital-design
-     make fresh         # This pulls the image and starts the container
-     ```
+```bash
+git clone https://github.com/abarajithan11/digital-design
+cd digital-design
+make fresh         # This pulls the image and starts the container
+```
 
-    <details>
-    <summary><strong>macOS GUI setup</strong> — <a href="https://docs.google.com/document/d/1l72L8z40apZd3GiiAejpVXLE-SHvmgHlTK4Icwdl5iI/edit?usp=sharing">Detailed instructions here</a></summary> 
-    
-    After running `make fresh`: 
-    
-    1. Visit `vnc://localhost:5901` in a web browser. 
-    2. Allow the website to open **Screen Sharing**. 
-    3. You will see a black window. This is where any GUI from the Docker container will appear.
-    4. Go back to the terminal to run other commands. The VNC window is for displaying GUI apps only.
-    
-    </details>
+<details>
+<summary><strong>For macOS, set up GUI forwarding</strong></summary> 
 
-3. Test our Docker container and GUI:
+
+* If you prefer detailed instructions, or if anything goes wrong, [follow this instead.](https://docs.google.com/document/d/1l72L8z40apZd3GiiAejpVXLE-SHvmgHlTK4Icwdl5iI/)
+* After running `make fresh`: 
+
+   1. Visit `vnc://localhost:5901` in a web browser. 
+   1. Allow the website to open **Screen Sharing**. 
+   1. You will see a black window. This is where any GUI from the Docker container will appear.
+   1. Go back to the terminal to run other commands. The VNC window is for displaying GUI apps only.
+
+</details>
+
+### 3. Test one example with GUI:
 
    ```bash
    make enter                            # Enter the container from the terminal while Docker is running
@@ -153,15 +161,16 @@ Then open `http://localhost:8000` in your browser.
 To build that same image locally from the Dockerfile (slow, might take 3 hours on ARM), start and use it:
 
 ```bash
-make scratch
-make enter
+make scratch   # build from Dockerfile for your $ARCH & start
+make enter     # Enter the container
+# -------------- do the testing
+exit           # Leave the container
+
+# Publish the image your build & tested to ghcr.io/ucsd-cse140-s126/digital-design-$(ARCH):latest
+GHCR_TOKEN=<github-token> GHCR_USER=<github-username> make publish   
 ```
 
-The Makefile auto-detects `ARCH` from your machine (`amd64` or `arm64`) and uses the matching `ghcr.io/ucsd-cse140-s126/digital-design-$(ARCH):latest` image. You can still override it explicitly if needed, for example `ARCH=arm64`.
-
-Publishing is manual. `make publish` builds the image locally as `ghcr.io/ucsd-cse140-s126/digital-design-$(ARCH):latest` using the auto-detected `ARCH` unless overridden, and pushes it. CI and `make fresh` only pull this image.
-
-For arm64, push with `ARCH=arm64`, or trigger the `build-docker-arm` workflow from the GitHub Actions tab, which builds and publishes `digital-design-arm64:latest` automatically.
+The Makefile auto-detects `ARCH` from your machine (`amd64` or `arm64`). You can still override it explicitly if needed, for example `ARCH=arm64`.
 
 Get your GHCR token as:
 
@@ -176,10 +185,6 @@ Get your GHCR token as:
   * write:packages: Required to upload/push container images. (Note: Checking this usually auto-selects the full repo scope. If you want to strictly limit the token to just packages for security, you can bypass the auto-select by clicking this specific link to create your token).
   * delete:packages: Required if you need the ability to delete images.  
 * Scroll to the bottom and click Generate token.
-
-```bash
-GHCR_TOKEN=<github-token> make publish GHCR_USER=<github-username>
-```
 
 </details>
 

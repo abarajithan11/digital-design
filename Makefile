@@ -71,7 +71,7 @@ else
 		-t $(IMAGE) .
 endif
 
-publish: image-scratch
+publish:
 	if [ -n "$${GHCR_TOKEN:-}" ]; then \
 		test -n "$(GHCR_USER)" || { echo "Set GHCR_USER=<github-user> when GHCR_TOKEN is set"; exit 1; }; \
 		printf '%s' "$$GHCR_TOKEN" | docker login ghcr.io -u "$(GHCR_USER)" --password-stdin; \
