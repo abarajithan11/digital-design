@@ -67,7 +67,7 @@ Participation means answering all in-class quizzes, discussing designs with clas
 | 10% each | Assignments (4)|
 | 15% | Midterm exam, in person and paper-based |
 | 40% | Final exam, in person and paper-based |
-| 5% | In-class quiz correctness (zero for the sessions you don't attend, cannot be recovered) |
+| 5% | In-class quiz correctness |
 | **100%** | **Total** |
 | -2% | <a id="missed_session">For each missed session </a>(if any in-class quiz was not answered) |
 | +0.5% | <a id="unused_late_day"></a>Per unused late day |
@@ -88,7 +88,7 @@ What counts as "meaningful participation" is up to the subjective discretion of 
   * Summer courses are fast-paced, and I don't want you to fall behind. 
   * Each session has 2–3 easy multiple-choice quizzes; to be counted present, you must answer all of them, regardless of correctness. 
   * Each missed session has a [penalty](#missed_session). You may recover the penalty for at most two missed sessions by submitting printed slides from the missed session with sufficient handwritten annotations on every slide, based on the recording, within four days. 
-  * But you may not receive credit for the correctness of the in-class quiz on the missed day.
+  * We may offer a quiz at the end of the course to help you make up for the correctness (not attendance) of the in-class quiz on the missed days.
 - **Letter grades:** `A+ (top 5% of students ranked by the total including bonus points), A >=93, A- >=90, B+ >=87, B >=83, B- >=80, C+ >=77, C >=73, C- >=70, D >=60, F otherwise`; Ranges may only move in students' favor.
 - **Late work:** 
   * A total of four 24-hour late days for the entire course with **no exceptions**. Any fraction of 24 hours counts as one late day.
