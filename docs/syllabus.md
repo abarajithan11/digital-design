@@ -106,7 +106,7 @@ Programming assignments are auto-graded with released and hidden testbenches. St
 ## AI Use & Academic Integrity
 
 * The midterm and final exams are paper-based and will test your design skills and knowledge. Therefore, do not use AI to write or debug your code.
-* Avoid IDE-based AI tools entirely. AI may explain general course concepts. It may not generate, complete, transform, or debug assignment code; analyze assignment-specific solutions; or produce material submitted for credit. 
+* Avoid IDE-based AI tools entirely. AI may explain general course concepts. It may not generate, complete or debug assignment code; analyze assignment-specific solutions; or produce material submitted for credit. Doing so would result in zero credit and academic-integrity referrals.
 * Disable AI code completion while working on assignments.
 * *Why:* As beginners, you need to do the basic designs manually to rewire your brain, so you can use AI more effectively in your jobs later. 
 
