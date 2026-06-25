@@ -4,12 +4,12 @@ Visit the site: [abapages.com/digital-design](https://abapages.com/digital-desig
 
 ## Quickstart on Examples
 
-You need a machine capable of running Docker (Linux / Windows 11 / macOS) and about 3–4 GB of space.
+You need a machine capable of running Docker (Ubuntu / Windows 11 / macOS) and about 3–4 GB of space.
 
 1. Install Docker on your system.
 
    <details>
-   <summary><strong>Linux</strong> — <a href="https://docs.docker.com/engine/install/ubuntu/">Full instructions here</a></summary>
+   <summary><strong>Ubuntu</strong> — <a href="https://docs.docker.com/engine/install/ubuntu/">Full instructions here</a></summary>
 
    1. Install Docker:
 
@@ -83,13 +83,18 @@ You need a machine capable of running Docker (Linux / Windows 11 / macOS) and ab
      make fresh         # This pulls the image and starts the container
      ```
 
-   - For macOS: getting GUI from our container ([detailed instructions here](https://docs.google.com/document/d/1l72L8z40apZd3GiiAejpVXLE-SHvmgHlTK4Icwdl5iI/edit?usp=sharing)), after `make fresh`:
+    <details>
+    <summary><strong>macOS GUI setup</strong> — <a href="https://docs.google.com/document/d/1l72L8z40apZd3GiiAejpVXLE-SHvmgHlTK4Icwdl5iI/edit?usp=sharing">Detailed instructions here</a></summary> 
+    
+    After running `make fresh`: 
+    
+    1. Visit `vnc://localhost:5901` in a web browser. 
+    2. Allow the website to open **Screen Sharing**. 
+    3. You will see a black window. This is where any GUI from the Docker container will appear. 
+    
+    </details>
 
-     1. Visit `vnc://localhost:5901` in a web browser.
-     2. Allow the website to open **Screen Sharing**.
-     3. You will see a black window. This is where any GUI from the Docker container will appear.
-
-3. Test our Docker container:
+3. Test our Docker container and GUI:
 
    ```bash
    make enter                            # Enter the container from the terminal while Docker is running
