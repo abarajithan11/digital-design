@@ -83,7 +83,7 @@ Programming assignments are auto-graded with released and hidden testbenches.
 Strong work is correct, readable, tested, parameterized where appropriate, and written in the SystemVerilog style taught in class. 
 The paper-based exam will include code closely related to the assignments. 
 Bonus points and missed session penalties are added/subtracted as percentage points to your final score percentage. 
-What counts as "meaningful participation" is up to the subjective discretion of the instructor alone.
+What counts as "meaningful participation" is up to the discretion of the instructor alone.
 
 ## Key Policies:
 
