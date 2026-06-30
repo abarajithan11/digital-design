@@ -8,6 +8,11 @@
 - Decoder
 - Verilog functions
 - LUT
+- FPGA Design:
+  - Meta-chip: a flexible chip that lets you realize your own digital circuit within it.
+  - ASIC vs FPGA: speed, power, cost, time-to-market
+  - Real-world applications
+  - FPGA flow
 
 ## Assignment
 

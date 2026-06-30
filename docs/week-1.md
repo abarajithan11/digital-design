@@ -2,50 +2,53 @@
 
 ## Lecture 1
 
-- Electronic Chip - Demystified
-  - Programming: program → assembly → machine code → Arduino's microprocessor
-  - IC package, die, layers of transistors, metal wires
+- First day info sheet
+- Course logistics
+- Inside a Chip 
+  - Programming an M1 MacBook
+  - Taking a MacBook apart
+  - Taking an M1 chip apart (decapping)
   - Visual 6502: [simulation of a CPU's layout](http://www.visual6502.org/JSSim/expert.html)
-  - Today: megacities on a chip
-- ASIC Design: Story of the first processor (Intel 4004)
-  - Computer architecture, layout, Ruby cutting - all by hand
-  - Today's chips are much more complex and performant, requiring expensive software to help with the flow
-    - Logic design
-    - Physical design
-    - Standard cells
-    - Manufacturing: ASML machines, clean rooms, lithography
-- FPGA Design:
-  - Meta-chip: a flexible chip that lets you realize your own digital circuit within it.
-  - ASIC vs FPGA: speed, power, cost, time-to-market
-  - Real-world applications
-  - FPGA flow
+- Making a chip 
+  - How Intel 4004 was designed. Computer architecture, schematic & layout done by hand.
+  - The YouTube guy who makes chips in his garage, doing layout with Photoshop.
+- Modern ASIC flow
+  - Computer Arch, Logic Design, Physical Design, Verification, Tapeout, Packaging
+  - Job opportunities
+  - Where CSE140 fits in the curriculum
+- **Activity** - Run ASIC flow for a simple circuit, and inspect netlist & chip layout 
+- Transistors to Gates
+  - Switches, MOSFETs, Gates
+  - NOT, NAND, NOR
+  - AND, OR
 
-## Lecture 2
 
-- Take an example Boolean function (e.g.: adder)
-  - Logic to gates
-    - K-maps
-    - Sum of products / Product of sums
-    - Write a SystemVerilog module made of the gates
-  - Run our script to generate 7 nm (ASAP7) layout, observe the transistors
-  - Write a simple testbench, simulate the design, observe values over time.
-  - Do the same by directly writing the function in SystemVerilog
-- A map of career paths
-  - Computer Architecture
-  - Logic design - This course
-  - Physical design
-  - Verification
-  - Analog design
+## Lecture 2: Logic Simplification
+
+- Circuit of gates to Truth Table
+- Boolean Algebra
+- Minterms and Maxterms - Truth table to circuit
+- Minimizing with algebra
+- K-maps
+  - 2, 3, 4 variables
+  - Don't cares
+  - Algorithm:
+    - Find essential prime implicants
+    - Find minters not covered by ESPs
+    - Include them using non-essential prime implicants
+  - Limitations of K-maps
+- Hello SystemVerilog
+  - Print hello world
+  - Simulate a design, observe waveform
 
 ## Discussion
 
 - Setting up our Docker container on your machine
-- Setting up FPGA boards
 
 ## Assignment
 
-- For a given list of boolean functions
-  - Decompose into Sum of Products and Product of Sums
-  - Write it as an SV file, get layout and observe transistors
-  - Simulate
-  - Write the function directly in SystemVerilog and do the same
+- For the given problems
+  - Write truth tables
+  - Write minterms and maxterms
+  - Simplify algebraically
+  - Use K-maps to find the minimal solution
