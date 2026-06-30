@@ -105,7 +105,7 @@ What counts as "meaningful participation" is up to the discretion of the instruc
 - **Collaboration & Plagiarism:** 
   * Studying in groups and discussing concepts & examples with peers are highly encouraged.
   * We have a zero-tolerance policy for sharing your solution with anyone but the staff and copying from classmates, past students, online code, or AI tools. 
-  * We check for plagiarism across all your assignments **at the end of the course**. Any such case where we have high confidence results in a zero on the assignment for all parties involved and academic-integrity referrals. Check [UCSD Policy](https://senate.ucsd.edu/Operating-Procedures/Senate-Manual/Appendices/2). 
+  * We check for plagiarism across all your assignments **at the end of the course**. Any such case where we have high-confidence results will result in **an F for the course** for all parties involved and academic-integrity referrals. Check [UCSD Policy](https://senate.ucsd.edu/Operating-Procedures/Senate-Manual/Appendices/2). 
   * If you're unsure whether something is allowed, ask first in the [policy channel @Discord](https://discord.com/channels/1519434395822461069/1519435115850371252).
 - **Regrades:** raise requests through Gradescope with detailed explanation within the days allowed on the assignment. No regrades allowed on the final & midterm exams.
 - **Policy Changes:** Any policy or schedule changes will be announced on Discord. This online syllabus is the current version. Approved UCSD accommodations may modify these policies where required.
@@ -113,7 +113,7 @@ What counts as "meaningful participation" is up to the discretion of the instruc
 ## AI Use & Academic Integrity
 
 * The midterm and final exams are paper-based and will test your design skills and knowledge. Therefore, do not use AI to write or debug your code.
-* Avoid IDE-based AI tools entirely. AI may explain general course concepts. It may not generate, complete or debug assignment code; analyze assignment-specific solutions; or produce material submitted for credit. Doing so would result in zero credit and academic-integrity referrals.
+* Avoid IDE-based AI tools entirely. AI may explain general course concepts. It may not generate, complete or debug assignment code; analyze assignment-specific solutions; or produce material submitted for credit. Doing so would result in an **F for the course** and academic-integrity referrals.
 * Disable AI code completion while working on assignments.
 * *Why:* As beginners, you need to do the basic designs manually to rewire your brain, so you can use AI more effectively in your jobs later. 
 
