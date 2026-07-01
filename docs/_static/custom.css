@@ -155,3 +155,18 @@ main img {
 .waveform-svg a {
   color: inherit;
 }
+
+.pptx-embed {
+  width: min(900px, calc(100vw - 2rem));
+  height: min(534px, calc((100vw - 2rem) * 0.593333));
+  overflow: hidden;
+}
+
+.pptx-embed iframe {
+  display: block;
+  width: 200%;
+  height: 200%;
+  border: 0;
+  transform: scale(0.5);
+  transform-origin: top left;
+}
