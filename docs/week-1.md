@@ -22,9 +22,10 @@
   - NOT, NAND, NOR
   - AND, OR
 
+### Slides:
 
 <div class="pptx-embed">
-  <iframe src="https://1drv.ms/p/c/154152893557b712/IQQuacDuRzxWSLLzl9BVGtCuAc6n1SBptYIgBpoGn_IuJJE?em=2&amp;wdAr=1.7777777777777777" width="1800" height="1068" frameborder="0" title="PowerPoint Viewer">This is an embedded <a target="_blank" href="https://office.com">Microsoft Office</a> presentation, powered by <a target="_blank" href="https://office.com/webapps">Office</a>.</iframe>
+  <iframe src="https://1drv.ms/p/c/154152893557b712/IQQuacDuRzxWSLLzl9BVGtCuAc6n1SBptYIgBpoGn_IuJJE?em=2&amp;wdAr=1.6853932584269662" width="900" height="534" frameborder="0" title="PowerPoint Viewer">This is an embedded <a target="_blank" href="https://office.com">Microsoft Office</a> presentation, powered by <a target="_blank" href="https://office.com/webapps">Office</a>.</iframe>
 </div>
 
 
