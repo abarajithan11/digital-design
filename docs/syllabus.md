@@ -6,7 +6,7 @@ This five-week course introduces digital design by taking circuits from SystemVe
 
 * **Instructional Team:** Abarajithan G (Instructor), Zhenghua Ma (TA), Sriharsha Kavuri (Tutor) & Aarav Vidhawan (Tutor).
 * **Lectures:** Tuesdays & Thursdays, 11:00 a.m. - 1:50 p.m., [COA - Coalition Building](https://maps.app.goo.gl/bmoSkuejwRAZGHEy9), Room B26.
-* **Discussion:** Fridays, 3:00 p.m. - 4:50 p.m., [EBU3B - CSE Building](https://maps.app.goo.gl/WAJxtXZA5ZWAzSDS7), Room 4140.
+* **Discussion:** Fridays, 3:00 p.m. - 4:50 p.m., [COA - Coalition Building](https://maps.app.goo.gl/bmoSkuejwRAZGHEy9), Room 213.
 * **Expected workload** [16 hours outside class](https://senate.ucsd.edu/media/276096/epc-credit-hour-policy-and-supplement.pdf) per week. That is 3.2 extra hours per weekday on your own.
 * **Office hours:**
   * **Zhenghua:** 2:00 p.m. to 3:00 p.m on Wednesdays & Fridays [Zoom link](https://ucsd.zoom.us/j/99670531654). Since the Friday, 3rd of July is a holiday, that session is moved to Thursday, 2nd of July 07:00 p.m. to 08:00 p.m.
