@@ -24,11 +24,11 @@
 
 ### Slides:
 
-<div class="pptx-embed">
-  <iframe src="https://view.officeapps.live.com/op/embed.aspx?src=https%3A%2F%2F1drv.ms%2Fp%2Fc%2F154152893557b712%2FIQQuacDuRzxWSLLzl9BVGtCuAc6n1SBptYIgBpoGn_IuJJE" width="900" height="534" frameborder="0" allowfullscreen title="Week 1 PowerPoint slides">This is an embedded <a target="_blank" href="https://office.com">Microsoft Office</a> presentation, powered by <a target="_blank" href="https://office.com/webapps">Office</a>.</iframe>
-</div>
+[Open slides in new tab](https://1drv.ms/p/c/154152893557b712/IQQuacDuRzxWSLLzl9BVGtCuAc6n1SBptYIgBpoGn_IuJJE)
 
-<p class="pptx-actions"><a href="https://1drv.ms/p/c/154152893557b712/IQQuacDuRzxWSLLzl9BVGtCuAc6n1SBptYIgBpoGn_IuJJE" target="_blank" rel="noopener">Open slides in a new tab</a></p>
+<div class="pptx-embed">
+  <iframe src="https://1drv.ms/p/c/154152893557b712/IQQuacDuRzxWSLLzl9BVGtCuAc6n1SBptYIgBpoGn_IuJJE?em=2&amp;wdAr=1.7777777777777777" width="900px" height="534px" frameborder="0" title="PowerPoint Viewer">This is an embedded <a target="_blank" href="https://office.com">Microsoft Office</a> presentation, powered by <a target="_blank" href="https://office.com/webapps">Office</a>.</iframe>
+</div>
 
 
 ## Lecture 2: Logic Simplification
