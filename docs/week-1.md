@@ -26,9 +26,7 @@
 
 [Open slides in new tab](https://1drv.ms/p/c/154152893557b712/IQQuacDuRzxWSLLzl9BVGtCuAc6n1SBptYIgBpoGn_IuJJE)
 
-<div class="pptx-embed">
-  <iframe src="https://1drv.ms/p/c/154152893557b712/IQQuacDuRzxWSLLzl9BVGtCuAc6n1SBptYIgBpoGn_IuJJE?em=2&amp;wdAr=1.7777777777777777" width="900px" height="534px" frameborder="0" title="PowerPoint Viewer">This is an embedded <a target="_blank" href="https://office.com">Microsoft Office</a> presentation, powered by <a target="_blank" href="https://office.com/webapps">Office</a>.</iframe>
-</div>
+<iframe src="https://1drv.ms/p/c/154152893557b712/IQQuacDuRzxWSLLzl9BVGtCuAc6n1SBptYIgBpoGn_IuJJE?em=2&amp;wdAr=1.7777777777777777" width="900px" height="534px" frameborder="0" title="PowerPoint Viewer">This is an embedded <a target="_blank" href="https://office.com">Microsoft Office</a> presentation, powered by <a target="_blank" href="https://office.com/webapps">Office</a>.</iframe>
 
 
 ## Lecture 2: Logic Simplification
@@ -40,14 +38,16 @@
 - K-maps
   - 2, 3, 4 variables
   - Don't cares
-  - Algorithm:
-    - Find essential prime implicants
-    - Find minters not covered by ESPs
-    - Include them using non-essential prime implicants
   - Limitations of K-maps
 - Hello SystemVerilog
   - Print hello world
   - Simulate a design, observe waveform
+
+### Slides:
+
+[Open slides in new tab](https://1drv.ms/p/c/154152893557b712/IQB0Bv1uTlPKQI_7FimzVf06AVy9lwVBkxRThs-X5KAyE5s?e=gZb6cb)
+
+<iframe src="https://1drv.ms/p/c/154152893557b712/IQR0Bv1uTlPKQI_7FimzVf06AUgFBqAR0XmiipwJyGH7uBE?em=2&amp;wdAr=1.7777777777777777" width="900px" height="534px" frameborder="0" title="PowerPoint Viewer">This is an embedded <a target="_blank" href="https://office.com">Microsoft Office</a> presentation, powered by <a target="_blank" href="https://office.com/webapps">Office</a>.</iframe>
 
 ## Discussion
 

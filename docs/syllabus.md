@@ -11,7 +11,7 @@ This five-week course introduces digital design by taking circuits from SystemVe
 * **Office hours:**
   * **Zhenghua:** 2:00 p.m. to 3:00 p.m on Wednesdays & Fridays [Zoom link](https://ucsd.zoom.us/j/99670531654). Since the Friday, 3rd of July is a holiday, that session is moved to Thursday, 2nd of July 07:00 p.m. to 08:00 p.m.
   * **Aarav, Harsha:** 2:00 p.m. - 3:00 p.m. on Mondays starting on July 6th. [Zoom link](https://ucsd.zoom.us/j/94923591908)
-  * **Abarajithan:** 2:00 p.m. - 2:30 p.m. on Tuesdays & Wednesdays (after the lecture).
+  * **Abarajithan:** 2:00 p.m. - 2:30 p.m. on Tuesdays & Thursdays (after the lecture).
 * **Midterm exam:** Friday, July 17, 4:00 p.m. - 4:45 p.m., [EBU3B - CSE Building](https://maps.app.goo.gl/WAJxtXZA5ZWAzSDS7), Room 4140. Conducted during discussion session.
 * **Final exam:** Saturday, August 1, 11:30 a.m. - 2:26 p.m., [COA - Coalition Building](https://maps.app.goo.gl/bmoSkuejwRAZGHEy9), Room B26.
 
