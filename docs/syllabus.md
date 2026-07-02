@@ -27,6 +27,7 @@ This five-week course introduces digital design by taking circuits from SystemVe
 * Grades: [Canvas→ Grades](https://canvas.ucsd.edu/courses/76952/gradebook)
 * Slides: [Canvas→ Assignments→ Slides](https://canvas.ucsd.edu/courses/76952/assignments)
 * Recordings: [UCSD Podcasts](https://podcast.ucsd.edu/watch/s126/cse140_a00)
+* Open source books: [Canvas→ Files→ Books](https://canvas.ucsd.edu/courses/76952/files/folder/Books)
 
 ## Prerequisites: CSE 30 or ECE 30
 
