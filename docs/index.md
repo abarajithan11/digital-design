@@ -138,6 +138,10 @@ syllabus
 design_outputs
 3d-cells
 week-1
+week-2
+week-3
+week-4
+week-5
 acronyms.md
 setting-up-docker
 contact-us

@@ -31,17 +31,20 @@
 
 ## Lecture 2: Logic Simplification
 
-- Circuit of gates to Truth Table
-- Boolean Algebra
-- Minterms and Maxterms - Truth table to circuit
-- Minimizing with algebra
-- K-maps
-  - 2, 3, 4 variables
-  - Don't cares
-  - Limitations of K-maps
-- Hello SystemVerilog
-  - Print hello world
-  - Simulate a design, observe waveform
+- Basics of Boolean Algebra
+  - Constructing Truth Tables
+  - AND, OR, NOT, XOR, XNOR
+  - Logic circuit to Truth Tables - trace 1s and 0s
+  - Count the number of transistors
+  - Logic circuit to Algebraic expression - trace the variables
+  - Three forms of boolean functions: Logic circuit, Expression and Truth Table (unique)
+- Truth Tables to Expressions
+  - Sum of Minterms
+  - Product of Maxterms
+- Logic Minimization
+  - Boolean Identities
+  - K-Maps
+- Universal Gates: NAD/NOR
 
 ### Slides:
 
