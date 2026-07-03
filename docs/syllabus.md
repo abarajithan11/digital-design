@@ -91,7 +91,7 @@ What counts as "meaningful participation" is up to the discretion of the instruc
 - **Attendance is mandatory for all lectures and discussions:** 
   * Summer courses are fast-paced, and I don't want you to fall behind. 
   * Each session has 2–3 easy multiple-choice quizzes; to be counted present, you must answer all of them, regardless of correctness. 
-  * Each missed session has a [penalty](#missed_session). You may recover the penalty for at most two missed sessions by submitting printed slides from the missed session with sufficient handwritten annotations on every slide, based on the recording, within four days. 
+  * Each missed session has a [penalty](#missed_session). You may recover the penalty for at most two missed sessions by printing the slides from the missed session, **annotating the printed slides by hand** sufficiently based on the recording, and submitting to us before the following lecture. 
   * We may offer a quiz at the end of the course to help you make up for the correctness (not attendance) of the in-class quiz on the missed days.
 - **Letter grades:** `A+ (top 5% of students ranked by the total including bonus points), A >=93, A- >=90, B+ >=87, B >=83, B- >=80, C+ >=77, C >=73, C- >=70, D >=60, F otherwise`; Ranges may only move in students' favor.
 - **Late work:** 
