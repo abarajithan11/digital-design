@@ -5,8 +5,6 @@ module tb_n_adder;
 
   logic [N-1:0] A, B, S;
   logic ci, co;
-  
-  bit [N-1:0] m;
   int status;
 
   n_adder #(.N(N)) dut (.*);

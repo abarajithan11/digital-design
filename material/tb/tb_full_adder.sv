@@ -2,25 +2,26 @@
 
 module tb_full_adder;
 
-  logic a=0, ci=0, b, sum, co; // b != 0, intentional
+  logic a=0, ci=0, b=0, sum, co;
 
   full_adder dut (.*);
 
   initial begin // simulation starts
     $dumpfile(`FST_PATH); $dumpvars;
 
-    #3 a = 0; b = 0; ci = 0;    
+    #3 a = 1; b = 0; ci = 0;    
     #1 a = 0; b = 0; ci = 1;
     
     #2 a = 1; b = 1; ci = 0;
-    #1  assert ({co,sum} == a+b+ci) 
+
+    #1ps assert ({co,sum} == a+b+ci) 
           $display ("OK"); 
           else $error("Not OK");
     
     #1 a = 1; b = 1; ci = 1;
-    #1  assert (dut.wire_1 == 0) // 1 (xor) 1 = 0 
+
+    #1ps assert (dut.wire_1 == 0) // 1 (xor) 1 = 0 
           else $error("False. wire_1:%d", dut.wire_1);
-    
-    $finish(); // simulation ends
+    #1 $finish(); // simulation ends
   end
 endmodule
