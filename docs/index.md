@@ -150,7 +150,7 @@ contact-us
 :maxdepth: 1
 :caption: External Links
 
-Setting up our Docker Container <https://github.com/abarajithan11/digital-design/>
+Set up our Docker Container <https://github.com/abarajithan11/digital-design/>
 Lecture Recordings <https://podcast.ucsd.edu/watch/s126/cse140_a00>
 Visualize & Animate SystemVerilog <https://digitaljs.tilk.eu/>
 ```

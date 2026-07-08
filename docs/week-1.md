@@ -21,6 +21,7 @@
   - Switches, MOSFETs, Gates
   - NOT, NAND, NOR
   - AND, OR
+  - **Activity** - Trace the logic through transistors, then extend the gates from 2-input to 3-input
 
 ### Slides:
 
@@ -44,17 +45,13 @@
 - Logic Minimization
   - Boolean Identities
   - K-Maps
-- Universal Gates: NAD/NOR
+- Universal Gates: NAND/NOR
 
 ### Slides:
 
 [Open slides in new tab](https://1drv.ms/p/c/154152893557b712/IQB0Bv1uTlPKQI_7FimzVf06AVy9lwVBkxRThs-X5KAyE5s?e=gZb6cb)
 
 <iframe src="https://1drv.ms/p/c/154152893557b712/IQR0Bv1uTlPKQI_7FimzVf06AUgFBqAR0XmiipwJyGH7uBE?em=2&amp;wdAr=1.7777777777777777" width="900px" height="534px" frameborder="0" title="PowerPoint Viewer">This is an embedded <a target="_blank" href="https://office.com">Microsoft Office</a> presentation, powered by <a target="_blank" href="https://office.com/webapps">Office</a>.</iframe>
-
-## Discussion
-
-- Setting up our Docker container on your machine
 
 ## Assignment
 

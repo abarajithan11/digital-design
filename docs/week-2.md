@@ -10,7 +10,7 @@
 - Hello SystemVerilog!
   - Programming language vs HDL
   - Two roles: design (hardware) & verification (software)
-  - Run hello world examples, view waveforms
+  - **Activity:** Run hello world examples, view waveforms
 - Number representation
   - Unsigned Integer: Binary ↔ Decimal
   - Addition, bit growth
