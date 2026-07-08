@@ -67,13 +67,13 @@ Visit the site: [abapages.com/digital-design](https://abapages.com/digital-desig
       1. Ensure **Use the WSL 2 based engine** is enabled; it is normally enabled automatically:
           1. Click the gear icon in the upper-right.
           1. Go to **General**.
-          1. Check **Use the WSL 2 based engine**.
+          1. Under **Choose how to Run Docker Containers**, select **WSL2**
           1. Click **Apply & restart**.
 
-   4. Test whether Docker works correctly from PowerShell:
+   4. Test whether Docker works correctly from PowerShell (use a regular terminal without administrator for everything now):
 
       ```powershell
-      wsl  # Enter WSL Ubuntu
+      wsl  # Enter WSL Ubuntu from a non-administrator powershell
       docker run --rm hello-world
       ```
 
@@ -108,6 +108,7 @@ make fresh         # This pulls the image and starts the container
    ```bash
    make enter                            # Enter the container from the terminal while Docker is running
    make sim gds show_layout DESIGN=alu   # This should run for a minute or two and show the KLayout GUI
+   # Ctrl+C                              # To exit KLayout
    exit                                  # Exit the container; you can run make enter again later
    ```
 
