@@ -17,10 +17,9 @@
 - Put UART RX + TX back-to-back on an FPGA
 - Write a Python script to send a series of numbers to the FPGA via a serial port, get the numbers back, and display them
 
-## Assignment
+## Assignment 4: AXI Stream NN Accelerator System
 
-- Put multiple `rq_cvmac` (ReLU-quantized constant-vector multiply-accumulate) blocks together to create a fully parallel dense layer, and test it with our testbench
-- Convert the dense layer into an AXI-Stream module
-- Chain multiple dense layers into a dense NN
-- Integrate into the UART FPGA system, and test with our testbench
-- Send MNIST inputs and get outputs
+1. Convert your `dense_relu` layer into an AXI-Stream module
+1. Chain multiple dense layers into a dense NN accelerator (AXI stream)
+1. Integrate into the UART system, and test with our testbench
+1. [Optional] Implement on your FPGA, send MNIST inputs and get outputs

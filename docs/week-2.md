@@ -26,9 +26,7 @@
   - Fixed-point arithmatic, measure error
   SystemVerilog Literals
 - Combinational Circuits 1
-  - Half adder
-  - Full adder + Testbench
-  - Ripple carry adder + Testbench
+  - Half adder, Full adder, Ripple carry adder + Testbench
   - Adder-Subtractor
   - Comparator
   - Shifter: Logical, Arthmetic, Circular
@@ -48,6 +46,12 @@
   - Logic using decoders
   - Register file example
 
+### Slides
+
+[Open slides in new tab](https://1drv.ms/p/c/154152893557b712/IQT7kM59SgRASaNRjaLbfVYhAYRXbM7EKvznsySSP964jGE)
+
+<iframe src="https://1drv.ms/p/c/154152893557b712/IQT7kM59SgRASaNRjaLbfVYhAYRXbM7EKvznsySSP964jGE?em=2&amp;wdAr=1.7777777777777777" width="900px" height="534px" frameborder="0" title="PowerPoint Viewer">This is an embedded <a target="_blank" href="https://office.com">Microsoft Office</a> presentation, powered by <a target="_blank" href="https://office.com/webapps">Office</a>.</iframe>
+
 ## Discussion
 
 - FPGA Design:
@@ -59,7 +63,9 @@
 
 ## Assignment 2
 
-- Theory: Number representation, K-maps of muxes, multipliers...etc.
+- Theory
+  - Number representation, 
+  - K-maps of muxes, multipliers...etc.
 - Programming Assignments:
   - `quant_relu` module to perform:
     - Divide an input by `2^SHIFT`
