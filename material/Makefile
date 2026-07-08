@@ -14,6 +14,11 @@ PDK    ?= asap7
 # digital-design repo root, used for its scripts/ and out/.
 MATERIAL_DIR  := $(CURDIR)
 DD_ROOT       := $(patsubst %/,%,$(dir $(CURDIR)))
+HOST_REPO ?= $(DD_ROOT)
+HOST_MATERIAL ?= $(CURDIR)
+CONT_REPO ?= /repo
+_CONT_MATERIAL_REL := $(shell realpath --relative-to="$(HOST_REPO)" "$(HOST_MATERIAL)" 2>/dev/null || echo .)
+CONT_MATERIAL := $(if $(filter .,$(_CONT_MATERIAL_REL)),$(CONT_REPO),$(CONT_REPO)/$(_CONT_MATERIAL_REL))
 
 TOP_TB      = tb_$(DESIGN)
 FLIST       = designs/$(DESIGN).f
@@ -136,3 +141,5 @@ cell_glbs: check_tools
 clean: check_tools
 	rm -rf $(MATERIAL_DIR)/sim $(MATERIAL_DIR)/openroad/work
 	rm -rf data/*.wav data/coef.svh data/y.txt data/x_music.txt data/y_exp.txt data/filter.png
+
+include ../basic_docker.mk

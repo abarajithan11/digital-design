@@ -32,9 +32,10 @@ VNC_START    := $(if $(IS_MAC), && { command -v start-vnc.sh >/dev/null 2>&1 && 
 DISPLAY_ENV  := $(if $(IS_MAC),$(VNC_DISPLAY),$(DISPLAY))
 
 HOST_REPO     ?= $(CURDIR)
-HOST_MATERIAL ?= $(HOST_REPO)
+HOST_MATERIAL ?= $(CURDIR)
 CONT_REPO     ?= /repo
-CONT_MATERIAL ?= $(CONT_REPO)
+_CONT_MATERIAL_REL := $(shell realpath --relative-to="$(HOST_REPO)" "$(HOST_MATERIAL)" 2>/dev/null || echo .)
+CONT_MATERIAL ?= $(if $(filter .,$(_CONT_MATERIAL_REL)),$(CONT_REPO),$(CONT_REPO)/$(_CONT_MATERIAL_REL))
 
 DOCKER_USER  ?= $(UID):$(GID)
 DOCKER_HOME  ?= /tmp
