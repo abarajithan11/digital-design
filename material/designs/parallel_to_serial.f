@@ -1,2 +1,0 @@
-rtl/parallel_to_serial.sv
-tb/tb_parallel_to_serial.sv

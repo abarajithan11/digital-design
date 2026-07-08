@@ -2,7 +2,13 @@
 
 DESIGN ?= $(DESIGN_NAME)
 COURSE_MATERIAL_DIR := $(abspath $(COURSE_CONFIG_DIR)/..)
-design_flist := $(COURSE_MATERIAL_DIR)/designs/$(DESIGN).f
+design_flists := $(wildcard \
+  $(COURSE_MATERIAL_DIR)/designs/$(DESIGN).f \
+  $(COURSE_MATERIAL_DIR)/designs/*/$(DESIGN).f)
+ifneq ($(words $(design_flists)),1)
+$(error DESIGN='$(DESIGN)' must match exactly one file in designs/ or designs/*/; found: $(design_flists))
+endif
+design_flist := $(firstword $(design_flists))
 
 design_files_raw := $(strip $(shell awk '{sub(/#.*/, ""); gsub(/^[ \t]+|[ \t]+$$/, ""); if (length) print $$0}' $(design_flist) 2>/dev/null))
 export DESIGN_FILES ?= $(foreach f,$(design_files_raw),$(if $(filter /%,$(f)),$(f),$(COURSE_MATERIAL_DIR)/$(patsubst ./%,%,$(f))))

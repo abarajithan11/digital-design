@@ -27,7 +27,8 @@ include basic_docker.mk
 
 FRESH        ?= 0
 SIM_MAX_TIME ?= 1s
-DESIGNS := $(basename $(notdir $(wildcard material/designs/*.f)))
+DESIGN_FILES := $(wildcard material/designs/*.f material/designs/*/*.f)
+DESIGNS := $(sort $(basename $(notdir $(DESIGN_FILES))))
 
 .PHONY: image-scratch publish generate_outputs build_pages site serve \
         sim_output sim_outputs_all gds_output gds_outputs_all gds_glb_assets 3d_assets scratch
@@ -104,7 +105,7 @@ serve: site
 sim_output:
 	test -n "$(DESIGN)"
 	mkdir -p out/sim out/sim-assets/$(DESIGN)
-	if $(MAKE) run CMD="make sim DESIGN=$(DESIGN) SIM_MAX_TIME=$(SIM_MAX_TIME)" IMAGE="$(IMAGE)"; then \
+	if $(MAKE) run CMD="make sim wave_svg DESIGN=$(DESIGN) SIM_MAX_TIME=$(SIM_MAX_TIME)" IMAGE="$(IMAGE)"; then \
 		fst="material/sim/$(DESIGN)/$(DESIGN).fst"; \
 		svg="material/sim/$(DESIGN)/$(DESIGN)_short.svg"; \
 		[ -f "$$fst" ] && cp "$$fst" "out/sim-assets/$(DESIGN)/$(DESIGN).fst" || true; \
@@ -139,19 +140,20 @@ sim_outputs_all:
 gds_output:
 	test -n "$(DESIGN)"
 	mkdir -p "out/gds-assets/$(DESIGN)"
+	rtl_top="$$(make -s -C material print_rtl_top DESIGN="$(DESIGN)")"; \
 	if $(MAKE) run CMD="make gds DESIGN=$(DESIGN)" IMAGE="$(IMAGE)"; then \
 		printf '%s\n' "pass" > "out/gds-assets/$(DESIGN)/status.txt"; \
 	else \
 		printf '%s\n' "fail" > "out/gds-assets/$(DESIGN)/status.txt"; \
 		status=1; \
 	fi; \
-	gds_src="material/openroad/work/results/asap7/$(DESIGN)/base/6_final.gds"; \
+	gds_src="material/openroad/work/results/asap7/$$rtl_top/base/6_final.gds"; \
 	[ -f "$$gds_src" ] && cp "$$gds_src" "out/gds-assets/$(DESIGN)/$(DESIGN).gds" || true; \
-	logs_src="material/openroad/work/logs/asap7/$(DESIGN)/base"; \
+	logs_src="material/openroad/work/logs/asap7/$$rtl_top/base"; \
 	rm -f "out/gds-assets/$(DESIGN)/logs.zip"; \
 	[ -d "$$logs_src" ] && zip -qr "out/gds-assets/$(DESIGN)/logs.zip" "$$logs_src" || true; \
 	for img in final_routing.webp final_placement.webp final_worst_path.webp; do \
-		src="material/openroad/work/reports/asap7/$(DESIGN)/base/$$img"; \
+		src="material/openroad/work/reports/asap7/$$rtl_top/base/$$img"; \
 		[ -f "$$src" ] && cp "$$src" "out/gds-assets/$(DESIGN)/$$img" || true; \
 	done; \
 	exit $${status:-0}

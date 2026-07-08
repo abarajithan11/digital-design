@@ -54,13 +54,19 @@ It is the first step in your journey towards more advanced courses at the univer
 </figure>
 ```
 
+## Where this Course Fits
+
+![Where Fits](https://media.abapages.com/course-site/where_fits.png)
+
 ## Learning Outcomes
 
 The following will be taught through examples ([listed here](https://abapages.com/digital-design/design_outputs.html)) of increasing complexity, inspired by real digital systems.
 
 ### Digital Design Concepts
 
-- Decomposing boolean functions into gates
+- Basic CMOS gates
+- Logic Minimization: Boolean Algebra, Identities, K-maps
+- Number Representation: Two's complement, fixed-point
 - Combinational and sequential elements
 - Finite-state machines
 - AXI-Stream protocol - ready/valid handshake
@@ -91,6 +97,9 @@ SystemVerilog/Verilog is one of the most complex languages ever, with a lot of h
 
 ## Final Projects
 
+- **A CPU in 40 lines of SystemVerilog**
+  - Only 7 opcodes: `LOAD`, `STORE`, `MOVE`, `ADD`, `SUB`, `MUL`, `JNZ`
+  - Runs programs like `fibonacci`, `dot_product`, `factorial`
 - **FIR Filter on FPGA to extract bass/treble from your favorite song** 
   - A worked example gradually built through our lectures and discussions.
   - We will **NOT** teach the mathematics of calculating the filter coefficients. [Here is our Python file](https://github.com/abarajithan11/digital-design/blob/main/material/py/sys_fir_filter_gen.py) to generate them. We will teach you how such filters work and how to implement them as a circuit.
@@ -137,13 +146,20 @@ Home <self>
 syllabus
 design_outputs
 3d-cells
+cpu
+acronyms.md
+contact-us
+```
+
+```{toctree}
+:maxdepth: 1
+:caption: Weekly Content
+
 week-1
 week-2
 week-3
 week-4
 week-5
-acronyms.md
-contact-us
 ```
 
 ```{toctree}

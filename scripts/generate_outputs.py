@@ -44,7 +44,11 @@ DESIGNS = [
     },
     {
         "design_name": "fir_filter",
-        "description": f"FIR Filter [[Naive RTL]({ROOT_MAT}/rtl/fir_filter_naive.sv)]",
+        "description": f"FIR Filter [[Naive RTL]({ROOT_MAT}/rtl/systems/fir_filter_naive.sv)]",
+    },
+    {
+        "design_name": "cpu_factorial",
+        "description": f"Simple CPU with 7 opcodes [[in 40 lines of SV]({ROOT_MAT}/rtl/cpu/cpu.sv)] [[Example programs](https://github.com/abarajithan11/digital-design/tree/main/material/tb/cpu)]",
     },
     {
         "design_name": "sys_fir_filter",
@@ -59,7 +63,13 @@ STATIC_GLB_ASSETS = [
 def build_design_entry(index: int, design_meta: dict, repo: Path) -> dict:
     """Return metadata for a design from the explicit design list."""
     design_name = design_meta["design_name"]
-    flist_path = repo / "material" / "designs" / f"{design_name}.f"
+    flist_matches = list((repo / "material" / "designs").glob(f"*/{design_name}.f"))
+    flist_matches += list((repo / "material" / "designs").glob(f"{design_name}.f"))
+    if len(flist_matches) != 1:
+        raise ValueError(
+            f"{design_name} must match exactly one file list; found {flist_matches}"
+        )
+    flist_path = flist_matches[0]
     flist_lines = [
         line.strip()
         for line in flist_path.read_text(encoding="utf-8").splitlines()
@@ -73,7 +83,7 @@ def build_design_entry(index: int, design_meta: dict, repo: Path) -> dict:
         "index": index,
         "heading": f'{index}. {design_meta["description"]}',
         "slug": design_name.replace("_", "-"),
-        "flist_rel": f"material/designs/{design_name}.f",
+        "flist_rel": flist_path.relative_to(repo).as_posix(),
         "top_rtl_rel": f"material/{rtl_files[0]}" if rtl_files else None,
         "top_tb_rel": f"material/{tb_files[0]}" if tb_files else None,
     }
@@ -160,7 +170,7 @@ def build_markdown(designs_data: list[dict], assets_root: Path) -> list[str]:
     ]
 
     for d in designs_data:
-        flist_link = f"[link]({ROOT_MAT}/designs/{d['design_name']}.f)"
+        flist_link = f"[link]({REPO_URL}/blob/main/{d['flist_rel']})"
         rtl_link = f"[link]({REPO_URL}/blob/main/{d['top_rtl_rel']})" if d["top_rtl_rel"] else "—"
         tb_link = f"[link]({REPO_URL}/blob/main/{d['top_tb_rel']})" if d["top_tb_rel"] else "—"
         outputs_link = f'<a href="#{d["slug"]}">link</a>'
@@ -282,7 +292,7 @@ def generate_outputs(repo: Path) -> None:
                 sim_statuses[name] = status.strip()
 
     configured_designs = [design_meta["design_name"] for design_meta in DESIGNS]
-    discovered_designs = sorted(path.stem for path in (repo / "material" / "designs").glob("*.f"))
+    discovered_designs = sorted(path.stem for path in (repo / "material" / "designs").glob("**/*.f"))
     missing_from_tree = sorted(set(configured_designs) - set(discovered_designs))
     if missing_from_tree:
         print("\nConfigured designs are missing from material/designs: " + ", ".join(missing_from_tree))

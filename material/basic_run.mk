@@ -8,6 +8,7 @@ TB           ?= basic
 FLIST        ?=
 SIM_GEN      ?=
 TOP_TB       ?= tb_$(TB)_$(DESIGN)
+TOP_RTL      ?= $(DESIGN)
 SIM_MAX_TIME ?= 1s
 
 CONT_REPO     ?= /repo
@@ -26,7 +27,7 @@ ORFS_HOME        ?= /OpenROAD-flow-scripts
 ORFS_FLOW_DIR    := $(ORFS_HOME)/flow
 WORK_HOME        ?= $(MATERIAL_DIR)/openroad/work
 DESIGN_CONFIG    ?= $(MATERIAL_DIR)/openroad/config.mk
-RESULTS_DIR      := $(WORK_HOME)/results/$(PDK)/$(DESIGN)/base
+RESULTS_DIR      := $(WORK_HOME)/results/$(PDK)/$(TOP_RTL)/base
 FINAL_GDS        := $(RESULTS_DIR)/6_final.gds
 SYNTH_NETLIST    := $(RESULTS_DIR)/1_2_yosys.v
 FINAL_NETLIST    := $(RESULTS_DIR)/6_final.v
@@ -42,7 +43,7 @@ KLAYOUT_CMD  ?= klayout
 GDS3XTRUDE_EXE       ?= gds3xtrude
 OPENSCAD_EXE         ?= openscad
 GDS3XTRUDE_TECH      ?= $(MATERIAL_DIR)/openroad/gds3xtrude/$(PDK).layerstack
-GDS3XTRUDE_TOP       ?= $(DESIGN)
+GDS3XTRUDE_TOP       ?= $(TOP_RTL)
 GDS3XTRUDE_OUT       ?= $(RESULTS_DIR)/6_final.scad
 GDS3XTRUDE_GLB       ?= $(patsubst %.scad,%.glb,$(GDS3XTRUDE_OUT))
 GDS3XTRUDE_SCALE     ?= 1.0
@@ -107,15 +108,15 @@ gds: check_tools
 	fi
 	mkdir -p "$(WORK_HOME)"
 	rm -rf \
-	    "$(WORK_HOME)/results/$(PDK)/$(DESIGN)" \
-	    "$(WORK_HOME)/logs/$(PDK)/$(DESIGN)" \
-	    "$(WORK_HOME)/reports/$(PDK)/$(DESIGN)" \
-	    "$(WORK_HOME)/objects/$(PDK)/$(DESIGN)"
+	    "$(WORK_HOME)/results/$(PDK)/$(TOP_RTL)" \
+	    "$(WORK_HOME)/logs/$(PDK)/$(TOP_RTL)" \
+	    "$(WORK_HOME)/reports/$(PDK)/$(TOP_RTL)" \
+	    "$(WORK_HOME)/objects/$(PDK)/$(TOP_RTL)"
 	REPORT_IMAGE_SCALE="$(REPORT_IMAGE_SCALE)" \
 	$(MAKE) -C "$(ORFS_FLOW_DIR)" \
 	    $(_GDS_VERILOG_ARG) \
 	    $(_GDS_BASIC_GATES_ARG) \
-	    DESIGN_NAME="$(DESIGN)" \
+	    DESIGN_NAME="$(TOP_RTL)" \
 	    DESIGN_CONFIG="$(DESIGN_CONFIG)" \
 	    WORK_HOME="$(WORK_HOME)" \
 	    YOSYS_EXE="$(YOSYS_EXE)" \
@@ -154,15 +155,25 @@ show_3d: check_tools
 	"$(OPENSCAD_EXE)" "$(GDS3XTRUDE_OUT)"
 
 sim_all: check_tools
-	for design_file in designs/*.f; do \
+	for design_file in designs/*.f designs/*/*.f; do \
+	    [ -f "$$design_file" ] || continue; \
 	    design_name="$${design_file##*/}"; \
 	    design_name="$${design_name%.f}"; \
 	    $(MAKE) sim DESIGN=$$design_name; \
 	done
 
 gds_all: check_tools
-	for design_file in designs/*.f; do \
+	declare -A seen_tops=()
+	for design_file in designs/*.f designs/*/*.f; do \
+	    [ -f "$$design_file" ] || continue; \
 	    design_name="$${design_file##*/}"; \
 	    design_name="$${design_name%.f}"; \
+	    rtl_top="$$($(MAKE) -s print_rtl_top DESIGN="$$design_name")"; \
+	    if [ -n "$${seen_tops[$$rtl_top]:-}" ]; then \
+	        printf 'Skipping %s: RTL top %s was already built by %s\n' \
+	            "$$design_name" "$$rtl_top" "$${seen_tops[$$rtl_top]}"; \
+	        continue; \
+	    fi; \
+	    seen_tops[$$rtl_top]="$$design_name"; \
 	    $(MAKE) gds DESIGN=$$design_name; \
 	done

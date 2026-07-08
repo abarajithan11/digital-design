@@ -21,7 +21,15 @@ _CONT_MATERIAL_REL := $(shell realpath --relative-to="$(HOST_REPO)" "$(HOST_MATE
 CONT_MATERIAL := $(if $(filter .,$(_CONT_MATERIAL_REL)),$(CONT_REPO),$(CONT_REPO)/$(_CONT_MATERIAL_REL))
 
 TOP_TB      = tb_$(DESIGN)
-FLIST       = designs/$(DESIGN).f
+DESIGN_FLISTS := $(wildcard designs/$(DESIGN).f designs/*/$(DESIGN).f)
+ifneq ($(words $(DESIGN_FLISTS)),1)
+$(error DESIGN='$(DESIGN)' must match exactly one file in designs/ or designs/*/; found: $(DESIGN_FLISTS))
+endif
+FLIST       = $(firstword $(DESIGN_FLISTS))
+TOP_RTL     = $(firstword $(shell \
+	rtl_file=$$(grep -m1 '^[[:space:]]*rtl/' "$(FLIST)" | awk '{ print $$1 }'); \
+	sed -nE 's/^[[:space:]]*module[[:space:]]+([A-Za-z_][A-Za-z0-9_$$]*).*/\1/p' \
+	    "$$rtl_file"))
 SIM_GEN     = py/$(DESIGN)_gen.py
 SIM_WORKDIR = $(MATERIAL_DIR)/sim/$(DESIGN)
 WAVE_FST    = $(SIM_WORKDIR)/$(DESIGN).fst
@@ -42,7 +50,10 @@ CELL_3D_DIR  := $(MATERIAL_DIR)/openroad/work/results/cell_3d
 
 include basic_run.mk
 
-.PHONY: prepare gtkwave wave_svg show_layout_cells show_3d_cell glb cell_glbs 3d_assets clean
+.PHONY: prepare print_rtl_top gtkwave wave_svg show_layout_cells show_3d_cell glb cell_glbs 3d_assets clean
+
+print_rtl_top:
+	@printf '%s\n' "$(TOP_RTL)"
 
 prepare: check_tools
 	mkdir -p "$(WORK_HOME)" "$(MATERIAL_DIR)/sim" "$(CELL_3D_DIR)"

@@ -25,7 +25,9 @@ def _bit_char(value: str) -> str:
 def _bus_label(value: str) -> str:
     if _is_unknown(value):
         return "x"
-    return format(int(value, 2), "x")
+    if re.fullmatch(r"[01]+", value):
+        return format(int(value, 2), "x")
+    return value
 
 
 def _sample_values(tv, sample_times):
