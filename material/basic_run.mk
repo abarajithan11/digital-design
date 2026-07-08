@@ -91,6 +91,7 @@ compile: check_tools
 	mkdir -p "$(SIM_WORKDIR)"
 	if [ -n "$(SIM_GEN)" ] && [ -f "$(SIM_GEN)" ]; then python3 "$(SIM_GEN)"; fi
 	verilator --binary --trace-fst --timing --sv \
+	    --preproc-token-limit 2000000 \
 	    --top-module "$(TOP_TB)" \
 	    -Mdir "$(SIM_WORKDIR)/obj_dir" \
 	    "-DFST_PATH=\"$(WAVE_FST)\"" \

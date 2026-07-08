@@ -13,7 +13,8 @@ export TB_FILES ?= $(filter $(COURSE_MATERIAL_DIR)/tb/%,$(DESIGN_FILES))
 
 # Tiny ASAP7 designs can floorplan into too few rows for the shared M5/M6 PDN
 # geometry, so keep a small-design allowlist with a safer utilization target.
-SMALL_DESIGNS := full_adder not_gate flip_flop auto_light
+SMALL_DESIGNS := full_adder not_gate flip_flop auto_light \
+                 mux demux encoder decoder priority_encoder look_up_table
 
 ifneq ($(filter $(DESIGN),$(SMALL_DESIGNS)),)
 

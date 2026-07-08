@@ -1,40 +1,69 @@
 # Week 2 – Combinational Logic
 
-## Lecture
+## Lecture 1
 
+- K-Maps
+  - 3 variable, 4-variable
+  - don't cares
+  - wrap around
+  - limits of K-maps: Half Adder
 - Hello SystemVerilog!
+  - Programming language vs HDL
+  - Two roles: design (hardware) & verification (software)
+  - Run hello world examples, view waveforms
 - Number representation
-  - Unsigned Integer
-  - Addition, Multiplication
-  - Two's complement
+  - Unsigned Integer: Binary ↔ Decimal
+  - Addition, bit growth
   - Dot product of vectors of size N
-- ALU Components
-  - Full adder
-  - Ripple carry adder
-  - Adder-Subtractor
+  - Sign-Magnitude, Two's complement
   - Multiplication
+  - Overflow
+  - Handling overflow: clamping/clipping
+
+## Lecture 2
+
+- Number representation
+  - Fixed-point arithmatic, measure error
+  SystemVerilog Literals
+- Combinational Circuits 1
+  - Half adder
+  - Full adder + Testbench
+  - Ripple carry adder + Testbench
+  - Adder-Subtractor
   - Comparator
-  - Shifter
+  - Shifter: Logical, Arthmetic, Circular
+  - Error from truncation
   - Multiplexer
-  - ALU
-- Other combinational circuits
+  - Logic using multiplexers
+  - Saturating adder
+  - ALU + Testbench
+  - SV Functions
+  - Lookup Tables
   - Demultiplexer
-  - Encoder
+- Sequential Circuits 1
+  - Latches, Flipflops and Registers
+- Combinational circuits 2
+  - Encoder, priority encoder
   - Decoder
-- SystemVerilog Functions
-- Look-up Tables
+  - Logic using decoders
+  - Register file example
+
+## Discussion
+
 - FPGA Design:
   - Meta-chip: a flexible chip that lets you realize your own digital circuit within it.
   - ASIC vs FPGA: speed, power, cost, time-to-market
   - Real-world applications
   - FPGA flow
 
-## Assignment
 
-- Create a module to apply quantization and ReLU: `y = relu(quant(x))`
-  - Quantization: `q = clip(y / (2^f))`, where `f` is a constant
-  - ReLU: `z = max(0, q)`
-- For each combinational element
-  - Consider inputs of 3 bits
-  - Decompose into sum of minterms
-  - Derive the minimal expression using K-maps
+## Assignment 2
+
+- Theory: Number representation, K-maps of muxes, multipliers...etc.
+- Programming Assignments:
+  - `quant_relu` module to perform:
+    - Divide an input by `2^SHIFT`
+    - Perform banker's rounding / round to nearest even
+    - Clamp it to the output width
+    - `ReLU(x) = max(0,x)`
+  - Two `popcount(x)` modules that count the number of 1s in `x`. One as a LUT, other as a combinational circuit (SV function)

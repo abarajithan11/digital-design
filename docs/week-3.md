@@ -2,14 +2,19 @@
 
 ## Lecture
 
-- Intro
-  - All circuits are a mix of combinational and sequential logic
+- Timing Analysis
   - Why a chip needs a clock
-- Flip-flop, Register
-- Counter
-- Parameterized Binary Reduction Tree to find the minimum value in a vector `y = min(X)`
-- Setup time, hold time, critical path
-- Nested counters
+  - Contamination Delay
+  - Propagation Delay
+  - Setup time, Hold time
+  - Critical path analysis
+- Sequential Circuits 2
+  - Parameterized Binary Reduction Tree to find the minimum value in a vector `y = min(X)`
+
+- Finite State Machines
+  - Up Counter
+  - Down Counter
+  - Nested counters
 
 ## Assignment
 

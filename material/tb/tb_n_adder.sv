@@ -25,7 +25,7 @@ module tb_n_adder;
       status = std::randomize(A) with { A inside {[0:255]}; };
       status = std::randomize(B) with { B inside {[0:255]}; };
       #1ps
-      assert ({co,S} == $signed(A) + $signed(B) + $signed(ci))
+      assert ({co,S} == {1'b0, A} + {1'b0, B} + ci)
         else $error("%d+%d+%d != {%d,%d}", A,B,ci,co,S);
     end
 
