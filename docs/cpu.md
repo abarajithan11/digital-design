@@ -3,7 +3,7 @@
 This project builds a small 16-bit CPU in five incremental steps. 
 Each step is complete, and adds only few new lines.
 Programs are written directly in SV testbench.
-[Full CPU here](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/cpu/cpu.sv).
+[Full CPU here](#full-cpu-40-loc).
 
 ### Quickstart
 
@@ -98,3 +98,9 @@ Each instruction field is 4-bits, so it becomes a character when displayed as he
 
 Waveform of Fibonacci program:
 ![Fibonacci Code](https://media.abapages.com/course-site/fibonacci.png)
+
+## Full CPU (40 LOC)
+
+```{literalinclude} ../material/rtl/cpu/cpu.sv
+:language: systemverilog
+```
