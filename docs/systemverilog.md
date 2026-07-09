@@ -6,95 +6,12 @@ Some constructs synthesize into hardware; others exist only for simulation.
 :::{admonition} Keywords & Features of SystemVerilog Avoided in this Course
 
 `reg`, `wire`, `assign`, `always`, packed arrays
+:::
 
 SystemVerilog is a strict superset of old Verilog, which dates to 1984. 
 Therefore is one of the most complex languages ever, with a lot of historical baggage and countless footguns, that have been since superseded by newer features that allow us to write clean code. 
-To avoid wasting our limited time debating those, we will avoid the above. 
+To prevent wasting our limited time debating those, we will avoid the above. 
 However, this page explains various details for the sake of completeness.
-:::
-
-### Signals and Vectors
-
-A **vector** is an ordered group of bits treated as one value, such as `logic [7:0]`, an 8-bit vector numbered from 7 down to 0. 
-Most built-in integral types are essentially convenient names for fixed-width vectors:
-
-| Type | Vector equivalent | States |
-|---|---|---|
-| `byte` | `bit signed [7:0]` | 2-state |
-| `shortint` | `bit signed [15:0]` | 2-state |
-| `int` | `bit signed [31:0]` | 2-state |
-| `longint` | `bit signed [63:0]` | 2-state |
-| `integer` | `logic signed [31:0]` | 4-state |
-| `time` | `logic [63:0]` | 4-state |
-
-Explicit packed vectors are usually clearer for RTL because their hardware width is visible in the declaration.
-
-### Literals, Widths, and Casts
-
-An integer literal can specify its width and radix:
-
-```systemverilog
-8'b1010_0011  // 8-bit binary
-12'hA5F       // 12-bit hexadecimal
-6'd42         // 6-bit decimal
-4'o7          // 4-bit octal
-```
-
-The general form is `width'radix value`, where the radix is `b`, `o`, `d`, or `h`. Add `s` for a signed literal: `8'shFE`. 
-Four-state literals may contain `x` (unknown) and `z` (high impedance). 
-The literals `'0`, `'1`, `'x`, and `'z` fill the destination width:
-
-```systemverilog
-mask = '1;  // all 32 bits are 1
-```
-
-Widths and signedness affect arithmetic, comparisons, and extension. 
-Prefer sized literals and make conversions explicit:
-
-```systemverilog
-logic signed [7:0] a;
-logic signed [8:0] sum;
-
-sum   = 9'(a) + 9'sd1;  // size cast
-count = $clog2(N)'(N);  // expression sized to the counter width
-value = $signed(a) + $signed(sum);  // interpret the bit pattern as signed
-```
-
-`$bits(value)` returns a type or expression's width. 
-A cast changes how an expression is interpreted; it does not add hardware by itself.
-
-### Concatenation, Replication, and Slices
-
-```systemverilog
-word     = {upper_byte, lower_byte}; // concatenate
-extended = {{8{value[7]}}, value};   // replicate the sign bit
-```
-
-A fixed slice uses `[msb:lsb]`. An indexed part-select chooses a fixed number of
-bits from a variable starting point:
-
-```systemverilog
-byte0 = word[7:0];
-byteN = word[start +: 8];  // start, start+1, ..., start+7
-byteN = word[start -: 8];  // start, start-1, ..., start-7
-```
-
-### Logical, Bitwise, and Reduction Operators
-
-Logical operators treat each operand as true or false and produce one bit. 
-If a vector is all zeros, it is false, else it is true.
-Bitwise operators act independently on every bit. 
-Reduction operators combine all bits of one vector into one bit:
-
-```systemverilog
-valid = ready && enable; // logical AND, equivalent to: (ready != 0) AND enable != 0)
-masked = data & mask;    // bitwise AND, equivalent to: for (i=0;i<N;i++) masked[i] = data[i] AND mask[i]
-all_set = &data;         // reduction AND: 1 if every bit is 1
-any_set = |data;         // reduction OR: 1 if any bit is 1
-parity  = ^data;         // reduction XOR
-```
-
-For OR and NOT, the logical forms are `||` and `!`, while the bitwise forms are `|` and `~`. 
 
 ## Datatypes
 
@@ -135,6 +52,22 @@ Use `===` mainly in testbenches when checking explicitly for `x` or `z`; careles
 
 Often we use `bit` in testbenches, in the place of `logic`.
 It represents two-state logic, either `0` or `1`.
+
+### Vectors
+
+A **vector** is an ordered group of bits treated as one value, such as `logic [7:0]`, an 8-bit vector numbered from 7 down to 0. 
+Most built-in integral types are essentially convenient names for fixed-width vectors:
+
+| Type | Vector equivalent | States |
+|---|---|---|
+| `byte` | `bit signed [7:0]` | 2-state |
+| `shortint` | `bit signed [15:0]` | 2-state |
+| `int` | `bit signed [31:0]` | 2-state |
+| `longint` | `bit signed [63:0]` | 2-state |
+| `integer` | `logic signed [31:0]` | 4-state |
+| `time` | `logic [63:0]` | 4-state |
+
+Explicit packed vectors are usually clearer for RTL because their hardware width is visible in the declaration.
 
 SystemVerilog silently creates a one-bit wire for some undeclared names. 
 Prevent misspellings from becoming implicit wires by placing this before the modules in a source file:
@@ -181,6 +114,75 @@ typedef struct packed {
 
 A `packed struct` is one contiguous vector and can pass through a port or be assigned as a whole. 
 An unpacked struct is a collection of separate members.
+
+### Literals, Widths, and Casts
+
+An integer literal can specify its width and radix:
+
+```systemverilog
+8'b1010_0011  // 8-bit binary
+12'hA5F       // 12-bit hexadecimal
+6'd42         // 6-bit decimal
+4'o7          // 4-bit octal
+```
+
+The general form is `width'radix value`, where the radix is `b`, `o`, `d`, or `h`. Add `s` for a signed literal: `8'shFE`. 
+Four-state literals may contain `x` (unknown) and `z` (high impedance). 
+The literals `'0`, `'1`, `'x`, and `'z` fill the destination width:
+
+```systemverilog
+mask = '1;  // all 32 bits are 1
+```
+
+Widths and signedness affect arithmetic, comparisons, and extension. 
+Prefer sized literals and make conversions explicit:
+
+```systemverilog
+logic signed [7:0] a;
+logic signed [8:0] sum;
+
+sum   = 9'(a) + 9'sd1;  // size cast
+count = $clog2(N)'(N);  // expression sized to the counter width
+value = $signed(a) + $signed(sum);  // interpret the bit pattern as signed
+```
+
+`$bits(value)` returns a type or expression's width. 
+A cast changes how an expression is interpreted; it does not add hardware by itself.
+
+## Operators
+
+### Concatenation, Replication, and Slices
+
+```systemverilog
+word     = {upper_byte, lower_byte}; // concatenate
+extended = {{8{value[7]}}, value};   // replicate the sign bit
+```
+
+A fixed slice uses `[msb:lsb]`. An indexed part-select chooses a fixed number of
+bits from a variable starting point:
+
+```systemverilog
+byte0 = word[7:0];
+byteN = word[start +: 8];  // start, start+1, ..., start+7
+byteN = word[start -: 8];  // start, start-1, ..., start-7
+```
+
+### Logical, Bitwise, and Reduction Operators
+
+Logical operators treat each operand as true or false and produce one bit. 
+If a vector is all zeros, it is false, else it is true.
+Bitwise operators act independently on every bit. 
+Reduction operators combine all bits of one vector into one bit:
+
+```systemverilog
+valid = ready && enable; // logical AND, equivalent to: (ready != 0) AND enable != 0)
+masked = data & mask;    // bitwise AND, equivalent to: for (i=0;i<N;i++) masked[i] = data[i] AND mask[i]
+all_set = &data;         // reduction AND: 1 if every bit is 1
+any_set = |data;         // reduction OR: 1 if any bit is 1
+parity  = ^data;         // reduction XOR
+```
+
+For OR and NOT, the logical forms are `||` and `!`, while the bitwise forms are `|` and `~`. 
 
 ## Modules, Parameters, and Instantiation
 

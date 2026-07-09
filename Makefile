@@ -140,22 +140,51 @@ sim_outputs_all:
 gds_output:
 	test -n "$(DESIGN)"
 	mkdir -p "out/gds-assets/$(DESIGN)"
-	rtl_top="$$(make -s -C material print_rtl_top DESIGN="$(DESIGN)")"; \
+	rtl_top="$$( $(MAKE) --no-print-directory -s -C material print_rtl_top DESIGN="$(DESIGN)" | tail -n 1 | tr -d '\r' )"; \
+	case "$$rtl_top" in \
+		""|*[!A-Za-z0-9_$$]*) \
+			printf 'Invalid RTL top for %s: <%s>\n' "$(DESIGN)" "$$rtl_top" >&2; \
+			exit 1 ;; \
+	esac; \
+	printf 'Resolved design %s to RTL top %s\n' "$(DESIGN)" "$$rtl_top"; \
 	if $(MAKE) run CMD="make gds DESIGN=$(DESIGN)" IMAGE="$(IMAGE)"; then \
-		printf '%s\n' "pass" > "out/gds-assets/$(DESIGN)/status.txt"; \
+		results_dir="material/openroad/work/results/asap7/$$rtl_top/base"; \
+		logs_dir="material/openroad/work/logs/asap7/$$rtl_top/base"; \
+		reports_dir="material/openroad/work/reports/asap7/$$rtl_top/base"; \
+		artifact_status=0; \
+		gds_src="$$results_dir/6_final.gds"; \
+		if [ -f "$$gds_src" ]; then \
+			cp "$$gds_src" "out/gds-assets/$(DESIGN)/$(DESIGN).gds"; \
+		else \
+			printf 'Missing GDS artifact: %s\n' "$$gds_src" >&2; \
+			artifact_status=1; \
+		fi; \
+		rm -f "out/gds-assets/$(DESIGN)/logs.zip"; \
+		if [ -d "$$logs_dir" ]; then \
+			zip -qr "out/gds-assets/$(DESIGN)/logs.zip" "$$logs_dir"; \
+		else \
+			printf 'Missing GDS logs: %s\n' "$$logs_dir" >&2; \
+			artifact_status=1; \
+		fi; \
+		for img in final_routing.webp final_placement.webp final_worst_path.webp; do \
+			src="$$reports_dir/$$img"; \
+			if [ -f "$$src" ]; then \
+				cp "$$src" "out/gds-assets/$(DESIGN)/$$img"; \
+			else \
+				printf 'Missing layout image: %s\n' "$$src" >&2; \
+				artifact_status=1; \
+			fi; \
+		done; \
+		if [ "$$artifact_status" -eq 0 ]; then \
+			printf '%s\n' "pass" > "out/gds-assets/$(DESIGN)/status.txt"; \
+		else \
+			printf '%s\n' "fail" > "out/gds-assets/$(DESIGN)/status.txt"; \
+			status=1; \
+		fi; \
 	else \
 		printf '%s\n' "fail" > "out/gds-assets/$(DESIGN)/status.txt"; \
 		status=1; \
 	fi; \
-	gds_src="material/openroad/work/results/asap7/$$rtl_top/base/6_final.gds"; \
-	[ -f "$$gds_src" ] && cp "$$gds_src" "out/gds-assets/$(DESIGN)/$(DESIGN).gds" || true; \
-	logs_src="material/openroad/work/logs/asap7/$$rtl_top/base"; \
-	rm -f "out/gds-assets/$(DESIGN)/logs.zip"; \
-	[ -d "$$logs_src" ] && zip -qr "out/gds-assets/$(DESIGN)/logs.zip" "$$logs_src" || true; \
-	for img in final_routing.webp final_placement.webp final_worst_path.webp; do \
-		src="material/openroad/work/reports/asap7/$$rtl_top/base/$$img"; \
-		[ -f "$$src" ] && cp "$$src" "out/gds-assets/$(DESIGN)/$$img" || true; \
-	done; \
 	exit $${status:-0}
 
 gds_outputs_all:

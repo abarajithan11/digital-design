@@ -22,7 +22,6 @@ This five-week course introduces digital design by taking circuits from SystemVe
 * Announcements: [Discord→ #announcements](https://discord.com/channels/1519434395822461069/1519434904889327826)
 * Q&A + Discussion Forum: [Discord→ Various channels](https://discord.com/channels/1519434395822461069/1519434904889327826)
 * Design Examples: [GitHub→ Digital Design](https://github.com/abarajithan11/digital-design)
-* Starter code: [GitHub→ Template Repositories](https://github.com/ucsd-cse140-s126/)
 * Assignment submission: [Gradescope](https://www.gradescope.com/courses/1324483)
 * Grades: [Canvas→ Grades](https://canvas.ucsd.edu/courses/76952/gradebook)
 * Slides: [Canvas→ Assignments→ Slides](https://canvas.ucsd.edu/courses/76952/assignments)
