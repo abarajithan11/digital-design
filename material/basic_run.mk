@@ -104,7 +104,7 @@ sim: compile
 
 gds: check_tools
 	if [ -n "$(SIM_GEN)" ] && [ -f "$(SIM_GEN)" ]; then \
-	    ( cd "$(MATERIAL_DIR)/rtl" && python3 "$(abspath $(SIM_GEN))" ); \
+	    ( cd "$(MATERIAL_DIR)" && python3 "$(abspath $(SIM_GEN))" ); \
 	fi
 	mkdir -p "$(WORK_HOME)"
 	rm -rf \

@@ -147,6 +147,7 @@ syllabus
 design_outputs
 3d-cells
 cpu
+systemverilog
 acronyms.md
 contact-us
 ```
