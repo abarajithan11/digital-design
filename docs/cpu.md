@@ -5,6 +5,47 @@ Each step is complete, and adds only few new lines.
 Programs are written directly in SV testbench.
 [Full CPU here](#full-cpu-40-loc).
 
+```{raw} html
+<figure class="hero-model">
+  <model-viewer
+    class="hero-model-viewer"
+    src="_static/cpu_factorial.glb"
+    poster="_static/cpu_factorial.png"
+    alt="16-bit CPU circuit in 7nm (ASAP7) visualized in 3D"
+    orientation="135deg 0deg 0deg"
+    camera-controls
+    camera-target="0m 0m 0m"
+    camera-orbit="0deg 150deg 1m"
+    field-of-view="50deg"
+    interaction-prompt="when-focused"
+    touch-action="pan-y"
+    shadow-intensity="1"
+    exposure="0.8"
+    tone-mapping="commerce"
+    environment-image="neutral"
+    transparent-background
+    ar-status="not-presenting"
+    loading="eager"
+  >
+    <div class="hero-model-fallback" hidden>
+      <img
+        class="hero-model-fallback-image"
+        src="_static/cpu_factorial.png"
+        alt="Top-down routing view of the 16-bit CPU"
+        loading="lazy"
+      />
+      <p>
+        Interactive 3D preview unavailable in this browser.
+        <a href="_static/cpu_factorial.glb">Open the GLB file directly.</a>
+      </p>
+    </div>
+  </model-viewer>
+  <figcaption>
+    16-bit CPU circuit in 7nm (ASAP7) visualized in 3D. Drag to rotate, scroll to zoom.
+  </figcaption>
+</figure>
+```
+
 ### Quickstart
 
 ```bash

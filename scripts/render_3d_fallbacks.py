@@ -34,6 +34,18 @@ MODELS = [
         "height": "760",
     },
     {
+        "page_name": "cpu_factorial.html",
+        "png_name": "cpu_factorial.png",
+        "glb_path": "out/gds-assets/cpu_factorial/cpu_factorial.glb",
+        "alt": "16-bit CPU circuit in 7nm (ASAP7) visualized in 3D",
+        "camera_target": "0m 0m 0m",
+        "camera_orbit": "0deg 150deg 1m",
+        "field_of_view": "50deg",
+        "exposure": "0.8",
+        "width": "1200",
+        "height": "760",
+    },
+    {
         "page_name": "inv_3d.html",
         "png_name": "inv_3d.png",
         "glb_path": "out/gds-assets/cell_3d/INVx1_ASAP7_75t_R.glb",
@@ -162,13 +174,13 @@ def serve_repo() -> tuple[socketserver.TCPServer, int]:
     return server, int(server.server_address[1])
 
 
-def ensure_assets_exist() -> None:
-    missing = [m["glb_path"] for m in MODELS if not (REPO_ROOT / m["glb_path"]).is_file()]
-    if missing:
-        missing_text = "\n".join(f"- {path}" for path in missing)
+def available_models() -> list[dict[str, str]]:
+    models = [m for m in MODELS if (REPO_ROOT / m["glb_path"]).is_file()]
+    if not models:
         raise FileNotFoundError(
-            "Missing GLB assets. Run `make gds_glb_assets` first.\n" + missing_text
+            "No GLB assets found. Run `make gds_glb_assets` first."
         )
+    return models
 
 
 def render_png(chrome: str, port: int, model: dict[str, str]) -> None:
@@ -195,19 +207,19 @@ def render_png(chrome: str, port: int, model: dict[str, str]) -> None:
 
 def main() -> int:
     chrome = find_chrome()
-    ensure_assets_exist()
+    models = available_models()
 
     PAGES_DIR.mkdir(parents=True, exist_ok=True)
     PNGS_DIR.mkdir(parents=True, exist_ok=True)
     DOCS_STATIC_DIR.mkdir(parents=True, exist_ok=True)
 
-    for model in MODELS:
+    for model in models:
         (PAGES_DIR / model["page_name"]).write_text(build_page(model), encoding="utf-8")
 
     server, port = serve_repo()
     try:
         time.sleep(1.0)
-        for model in MODELS:
+        for model in models:
             render_png(chrome, port, model)
             shutil.copy2(PNGS_DIR / model["png_name"], DOCS_STATIC_DIR / model["png_name"])
             print(f"Wrote {PNGS_DIR / model['png_name']}")

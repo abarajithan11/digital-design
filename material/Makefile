@@ -87,6 +87,15 @@ show_layout_cells: check_tools
 
 glb: check_tools
 	test -f "$(FINAL_GDS)"
+	input_gds="$(FINAL_GDS)"; \
+	if [ "$(GDS3XTRUDE_TOP)" = cpu ]; then \
+		# Keep M3 and above for a responsive whole-chip web preview. \
+		input_gds="$(RESULTS_DIR)/6_final_3d.gds"; \
+		python3 "$(DD_ROOT)/scripts/prepare_gds_for_3d.py" \
+			"$(FINAL_GDS)" "$$input_gds" --cell "$(GDS3XTRUDE_TOP)" \
+			--exclude-layer 11/0 --exclude-layer 18/0 --exclude-layer 19/0 \
+			--exclude-layer 20/0 --exclude-layer 21/0 --exclude-layer 25/0; \
+	fi; \
 	apply_z_scale() { \
 	  local scad="$$1" z="$$2" tmp; \
 	  case "$$z" in 1|1.0|1.00) return 0;; esac; \
@@ -95,7 +104,7 @@ glb: check_tools
 	  mv "$$tmp" "$$scad"; \
 	}; \
 	"$(GDS3XTRUDE_EXE)" -v --tech "$(GDS3XTRUDE_TECH)" \
-		--input "$(FINAL_GDS)" --cell "$(GDS3XTRUDE_TOP)" \
+		--input "$$input_gds" --cell "$(GDS3XTRUDE_TOP)" \
 		--output "$(GDS3XTRUDE_OUT)" $(GDS3XTRUDE_FLAGS) $(GDS3XTRUDE_EXTRA_FLAGS); \
 	apply_z_scale "$(GDS3XTRUDE_OUT)" "$(GDS3XTRUDE_Z_SCALE)"; \
 	python3 "$(DD_ROOT)/scripts/scad_to_glb.py" "$(GDS3XTRUDE_OUT)" "$(GDS3XTRUDE_GLB)"; \
@@ -141,13 +150,17 @@ cell_glbs: check_tools
 	done
 
 3d_assets: check_tools
-	mkdir -p "$(DD_ROOT)/out/gds-assets/n_adder"
-	if [ ! -f "$(MATERIAL_DIR)/openroad/work/results/$(PDK)/n_adder/base/6_final.gds" ]; then \
-		$(MAKE) gds DESIGN=n_adder; \
-	fi
-	$(MAKE) glb DESIGN=n_adder
-	cp "$(MATERIAL_DIR)/openroad/work/results/$(PDK)/n_adder/base/6_final.glb" \
-		"$(DD_ROOT)/out/gds-assets/n_adder/n_adder.glb"
+	for design in n_adder cpu_factorial; do \
+		top="$$design"; \
+		[ "$$design" = cpu_factorial ] && top=cpu; \
+		mkdir -p "$(DD_ROOT)/out/gds-assets/$$design"; \
+		if [ ! -f "$(MATERIAL_DIR)/openroad/work/results/$(PDK)/$$top/base/6_final.gds" ]; then \
+			$(MAKE) gds DESIGN=$$design; \
+		fi; \
+		$(MAKE) glb DESIGN=$$design; \
+		cp "$(MATERIAL_DIR)/openroad/work/results/$(PDK)/$$top/base/6_final.glb" \
+			"$(DD_ROOT)/out/gds-assets/$$design/$$design.glb"; \
+	done
 
 clean: check_tools
 	rm -rf $(MATERIAL_DIR)/sim $(MATERIAL_DIR)/openroad/work

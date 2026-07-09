@@ -57,6 +57,7 @@ DESIGNS = [
 ]
 STATIC_GLB_ASSETS = [
     ("out/gds-assets/n_adder/n_adder.glb", "n_adder.glb"),
+    ("out/gds-assets/cpu_factorial/cpu_factorial.glb", "cpu_factorial.glb"),
 ]
 
 

@@ -207,14 +207,19 @@ gds_outputs_all:
 	exit $$fail
 
 gds_glb_assets:
-	mkdir -p out/gds-assets/n_adder
-	if [ ! -f material/openroad/work/results/asap7/n_adder/base/6_final.glb ]; then \
-		if [ ! -f material/openroad/work/results/asap7/n_adder/base/6_final.gds ]; then \
-			$(MAKE) run CMD="make gds DESIGN=n_adder" IMAGE="$(IMAGE)"; \
+	for design in n_adder cpu_factorial; do \
+		top="$$design"; \
+		[ "$$design" = cpu_factorial ] && top=cpu; \
+		mkdir -p "out/gds-assets/$$design"; \
+		if [ ! -f "material/openroad/work/results/asap7/$$top/base/6_final.glb" ]; then \
+			if [ ! -f "material/openroad/work/results/asap7/$$top/base/6_final.gds" ]; then \
+				$(MAKE) run CMD="make gds DESIGN=$$design" IMAGE="$(IMAGE)"; \
+			fi; \
+			$(MAKE) run CMD="make glb DESIGN=$$design" IMAGE="$(IMAGE)"; \
 		fi; \
-		$(MAKE) run CMD="make glb DESIGN=n_adder" IMAGE="$(IMAGE)"; \
-	fi
-	cp material/openroad/work/results/asap7/n_adder/base/6_final.glb out/gds-assets/n_adder/n_adder.glb
+		cp "material/openroad/work/results/asap7/$$top/base/6_final.glb" \
+			"out/gds-assets/$$design/$$design.glb"; \
+	done
 
 3d_assets:
 	$(MAKE) run CMD="make 3d_assets" IMAGE="$(IMAGE)"

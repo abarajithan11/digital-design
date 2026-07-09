@@ -194,6 +194,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install sphinx furo myst-parser
 
+      - name: Render 3D model fallbacks
+        run: python scripts/render_3d_fallbacks.py
+
       - name: Build site
         run: make site
 
