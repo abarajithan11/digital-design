@@ -87,13 +87,6 @@ The following will be taught through examples ([listed here](https://abapages.co
 - Randomizing with constraints
 - Transactional testbenches: simple driver/monitor, basic OOP
 
-:::{admonition} Keywords & Features of SystemVerilog Avoided in this Course
-
-`reg`, `wire`, `assign`, `always`, unpacked arrays
-
-SystemVerilog/Verilog is one of the most complex languages ever, with a lot of historical baggage and countless footguns. To avoid wasting our limited time debating those, we will avoid the above. However, I will create a page here explaining each of their uses in detail for the sake of completeness.
-:::
-
 
 ## Final Projects
 

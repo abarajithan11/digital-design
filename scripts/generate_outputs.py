@@ -190,7 +190,7 @@ def build_markdown(designs_data: list[dict], assets_root: Path) -> list[str]:
             "",
             "collects their outputs and displays them here.",
             "",
-            "To reproduce this on your machine, check out our [docker setup](setting-up-docker.md).",
+            f"To reproduce this on your machine, check out our [docker setup]({REPO_URL}).",
             "",
             f"* Our repository: [github.com/abarajithan11/digital-design]({REPO_URL})",
             "* Filelists: [material/designs](https://github.com/abarajithan11/digital-design/tree/main/material/designs)",

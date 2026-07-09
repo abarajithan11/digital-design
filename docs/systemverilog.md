@@ -2,7 +2,16 @@
 
 SystemVerilog describes both hardware (digital circuits) and testbenches (software code to test them). 
 Some constructs synthesize into hardware; others exist only for simulation. 
-SV is a superset of old Verilog, which dates to 1980s, therefore it has a ton of complex, legacy features that we can safely ignore and write much cleaner code now.
+
+:::{admonition} Keywords & Features of SystemVerilog Avoided in this Course
+
+`reg`, `wire`, `assign`, `always`, packed arrays
+
+SystemVerilog is a strict superset of old Verilog, which dates to 1984. 
+Therefore is one of the most complex languages ever, with a lot of historical baggage and countless footguns, that have been since superseded by newer features that allow us to write clean code. 
+To avoid wasting our limited time debating those, we will avoid the above. 
+However, this page explains various details for the sake of completeness.
+:::
 
 ### Signals and Vectors
 
@@ -89,7 +98,7 @@ For OR and NOT, the logical forms are `||` and `!`, while the bitwise forms are 
 
 ## Datatypes
 
-Old Verilog mainly used `wire` and `reg`:
+Old Verilog mainly used `wire` and `reg`, both four-state types:
 
 - A `wire` is driven continuously, for example by `assign` or a module output.
 - A signal assigned inside an `always` block must be declared `reg`.
@@ -99,18 +108,17 @@ The statements in the `always` block determine the hardware.
 This old Verilog describes a combinational multiplexer, but `y` must still be a `reg`:
 
 ```systemverilog
-reg y;
+reg y; // named reg, but becomes combinational
 always @(*) begin
   if (sel) y = b;
   else     y = a;
 end
 ```
 
-SystemVerilog introduced `logic`, a four-state type (`0`, `1`, `x`, `z`) that works for most single-driver RTL signals. Use `logic` by default. 
+SystemVerilog introduced `logic`, a four-state type (`0`, `1`, `x`, `z`) that works for most single-driver RTL signals. 
+Use `logic` by default.
 Use an explicit net type such as `wire` for continuous or multiple drivers. 
 `tri` behaves like `wire`, but emphasizes that tri-state or multiple drivers are expected.
-`var logic` explicitly declares a variable; `wire logic` explicitly declares a four-state net. 
-`logic` is shorthand for `var logic`.
 
 ### Four-State Logic
 
@@ -122,6 +130,11 @@ These values help simulation expose missing resets, conflicting drivers, and inc
 
 Use `==` for normal RTL comparisons. 
 Use `===` mainly in testbenches when checking explicitly for `x` or `z`; careless use can hide an unknown-value bug.
+
+### Two-State Logic
+
+Often we use `bit` in testbenches, in the place of `logic`.
+It represents two-state logic, either `0` or `1`.
 
 SystemVerilog silently creates a one-bit wire for some undeclared names. 
 Prevent misspellings from becoming implicit wires by placing this before the modules in a source file:
@@ -216,13 +229,15 @@ Synthesizable modules should communicate through ports rather than reach into an
 
 ## Combinational and Sequential Circuits
 
-Use the specialized procedural blocks to state the intended hardware:
+Use these specialized procedural blocks to state the intended hardware:
 
 - `always_comb` describes combinational logic and creates its sensitivity list automatically. 
   Assign every output on every path to avoid an unintended latch.
 - `always_ff @(posedge clk ...)` describes flip-flops. Include reset behavior in the event control and body when needed.
 - `always_latch` describes an intentional level-sensitive latch. 
   Most designs avoid latches unless they are required.
+
+Never drive a signal from multiple always blocks / module ports, unless you are doing something advanced, with tri-state logic, and you know what you're doing.
 
 ```systemverilog
 always_comb begin
@@ -253,7 +268,7 @@ always_ff @(posedge clk)
   else     q <= d;
 ```
 
-Use blocking assignment `=` for combinational calculations and nonblocking assignment `<=` for clocked sequential logic. 
+Use blocking assignment `=` for combinational logic (`always_comb`) and nonblocking assignment `<=` for clocked sequential logic (`always_ff`). 
 A nonblocking assignment updates after the current simulation region, so every flip-flop observes the old values from that clock edge.
 
 ### Continuous Assignment and `always_comb`
@@ -272,7 +287,30 @@ end
 `assign` can be used for simple expressions and net connections. 
 Use `always_comb` when the calculation needs control flow or intermediate values. 
 Do not drive the same signal from both.
-In this class we will avoid assign, and only use `always_comb`.
+In this class we will avoid `assign`, and only use `always_comb`.
+
+### Last Assignment Wins
+
+Inside an always block (`always_comb`, `always_ff`), the **last assignment wins**.
+This property enables us to describe circuits in a readable way.
+
+```systemverilog
+logic [N-1:0]    code;
+logic [2**N-1:0] onehot;
+logic [W-1:0]    vector [N-1:0];
+logic [W+$clog2(N)-1:0] sum;
+
+always_comb begin // This generates a decoder
+  onehot       = '0;
+  onehot[code] = 1'b1;
+end
+
+always_comb begin // This generates a circuit that sums N numbers combinationally
+  sum = '0;
+  for (int i=0; i<N i++) sum += vector[i];
+end
+```
+
 
 ### `case`, `unique`, and `priority`
 
@@ -322,7 +360,7 @@ Their conditions and loop bounds must be constant:
 if (USE_PIPELINE) begin : g_pipe
   pipeline_stage u_stage (.*);
 end else begin : g_bypass
-  assign out = in;
+  always_comb out = in;
 end
 
 for (genvar i = 0; i < WIDTH; i++) begin : g_bit
@@ -484,9 +522,4 @@ end
 - Stuart Sutherland, Don Mills, and Chris Spear, *Synthesizing SystemVerilog:
   Busting the Myth that SystemVerilog is only for Verification*
 - Chris Spear, *SystemVerilog for Verification*, 2nd ed.
-- Doulos, [*SystemVerilog Golden Reference Guide*](https://www.doulos.com/training/soc-design-and-verification/systemverilog-uvm/comprehensive-systemverilog/)
-- systemverilog.dev,
-  [*SystemVerilog for RTL Modeling, Simulation, and Verification: Modules, Controls, and Interfaces*](https://systemverilog.dev)
-- Verification Academy discussions on
-  [fork/join](https://verificationacademy.com/forums/t/fork-join-none/35113)
-  and [packed versus unpacked arrays](https://verificationacademy.com/forums/t/packed-vs-un-packed-arrays/41971)
+- [*SystemVerilog for RTL Modeling, Simulation, and Verification: Modules, Controls, and Interfaces*](https://systemverilog.dev)
