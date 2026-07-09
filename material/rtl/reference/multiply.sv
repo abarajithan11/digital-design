@@ -1,5 +1,3 @@
-`timescale 1ns/1ps
-
 // One W x W multiply, three ways, all to a 2W-bit product:
 //   p_unsigned : plain a*b            (operands treated as unsigned)
 //   p_signed   : $signed(a)*$signed(b)(tool sign-extends for us)

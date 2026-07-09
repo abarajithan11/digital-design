@@ -1,5 +1,3 @@
-`timescale 1ns/1ps
-
 // Sign-extend W_IN bits to W_OUT bits, two equivalent ways:
 //   y_concat : manually replicate the sign bit
 //   y_cast   : let $signed()/width-cast do it

@@ -1,5 +1,3 @@
-`timescale 1ns/1ps
-
 // Priority encoder: `code` = index of the most-significant set bit of `in`.
 // The `found` flag keeps the first (highest) hit and ignores lower ones, making
 // the priority explicit (unlike a one-hot encoder, `in` may have several bits set).

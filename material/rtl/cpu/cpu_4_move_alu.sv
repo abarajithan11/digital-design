@@ -1,5 +1,3 @@
-`timescale 1ns/1ps
-
 module cpu_4_move_alu (
   input  logic        clk,
   input  logic        reset,

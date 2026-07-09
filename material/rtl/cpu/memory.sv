@@ -1,5 +1,3 @@
-`timescale 1ns/1ps
-
 module memory (
   input  logic        clk,
   input  logic [7:0]  addr,

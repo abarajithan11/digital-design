@@ -1,5 +1,3 @@
-`timescale 1ns/1ps
-
 // Binary decoder: drive the one output selected by `code` (inverse of encoder).
 module decoder #(
   parameter N = 3

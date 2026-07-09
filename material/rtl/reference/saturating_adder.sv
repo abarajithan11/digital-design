@@ -1,5 +1,3 @@
-`timescale 1ns/1ps
-
 // Signed adder that clamps to the representable range instead of wrapping.
 module saturating_adder #(
   parameter W = 8

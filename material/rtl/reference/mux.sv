@@ -1,5 +1,3 @@
-`timescale 1ns/1ps
-
 // 2:1 mux, one behaviour, five ways to describe it (out = sel ? b : a).
 // TYPE picks which style is elaborated:
 //   0: if-else   1: ternary   2: priority case   3: unique case   4: array index

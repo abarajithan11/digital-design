@@ -1,6 +1,3 @@
-`timescale 1ns/1ps
-
-
 module shifter #(
   parameter W           = 8,
   parameter SHIFT_CONST = 2

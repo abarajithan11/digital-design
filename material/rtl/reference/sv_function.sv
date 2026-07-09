@@ -1,5 +1,3 @@
-`timescale 1ns/1ps
-
 // A SystemVerilog function is just combinational logic. Here it evaluates the
 // smoothstep s-curve  y = 3u^2 - 2u^3  in fixed point, where the W-bit input and
 // output represent u = in/2^W and y in [0,1). Rearranged to integers:

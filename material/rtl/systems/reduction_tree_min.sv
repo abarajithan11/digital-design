@@ -1,5 +1,3 @@
-`timescale 1ns / 1ps
-
 module reduction_tree_min #(
     parameter  N   = 8,
     parameter  W_X = 8,

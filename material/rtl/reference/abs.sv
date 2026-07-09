@@ -1,5 +1,3 @@
-`timescale 1ns/1ps
-
 // Absolute value: negate when negative. Output is unsigned so |MIN| = 2**(W-1)
 // fits (it would overflow a signed W-bit result).
 module abs #(

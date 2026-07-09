@@ -1,5 +1,3 @@
-`timescale 1ns/1ps
-
 module uart_echo #(
     parameter 
       CLKS_PER_BIT   = 4,

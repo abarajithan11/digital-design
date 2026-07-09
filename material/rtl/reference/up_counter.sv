@@ -1,5 +1,3 @@
-`timescale 1ns/1ps
-
 module up_counter #(parameter WIDTH = 8)(
   input  logic clk, rstn, incr,
   output logic [WIDTH-1:0] count

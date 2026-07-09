@@ -1,5 +1,3 @@
-`timescale 1ns/1ps
-
 module full_adder (
   input  logic a, b, ci,
   output logic sum, co

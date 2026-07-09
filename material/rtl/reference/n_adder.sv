@@ -1,5 +1,3 @@
-`timescale 1ns/1ps
-
 module n_adder #(
   parameter N=8
 )(

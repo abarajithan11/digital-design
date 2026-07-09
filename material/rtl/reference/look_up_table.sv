@@ -1,5 +1,3 @@
-`timescale 1ns/1ps
-
 // Same smoothstep s-curve as sv_function, implemented as LUTs
 module look_up_table #(
   parameter W = 4,

@@ -1,5 +1,3 @@
-`timescale 1ns/1ps
-
 module cpu (
   input  logic        clk, reset,
   output logic [7 :0] imem_addr,  dmem_addr,

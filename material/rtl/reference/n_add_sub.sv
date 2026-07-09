@@ -1,4 +1,3 @@
-`timescale 1ns/1ps
 // sub=1 : invert B and inject carry-in 1  ->  A + (~B) + 1 = A - B
 module n_add_sub #(
   parameter N = 8

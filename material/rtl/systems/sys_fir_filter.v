@@ -1,5 +1,3 @@
-`timescale 1ns/1ps
-
 module sys_fir_filter #(
     parameter
       CLKS_PER_BIT   = 4,

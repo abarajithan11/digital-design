@@ -1,5 +1,3 @@
-`timescale 1ns/1ps
-
 module demux #(
   parameter W     = 3,
   parameter W_SEL = 2

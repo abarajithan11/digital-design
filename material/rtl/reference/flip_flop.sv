@@ -1,5 +1,3 @@
-`timescale 1ns/1ps
-
 module flip_flop (
   input  logic clk,
   input  logic rstn,

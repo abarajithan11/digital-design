@@ -91,7 +91,7 @@ check_tools:
 compile: check_tools
 	mkdir -p "$(SIM_WORKDIR)"
 	if [ -n "$(SIM_GEN)" ] && [ -f "$(SIM_GEN)" ]; then python3 "$(SIM_GEN)"; fi
-	verilator --binary --trace-fst --timing --sv \
+	verilator --binary --trace-fst --timing --sv --timescale 1ns/1ps \
 	    --preproc-token-limit 2000000 \
 	    --top-module "$(TOP_TB)" \
 	    -Mdir "$(SIM_WORKDIR)/obj_dir" \

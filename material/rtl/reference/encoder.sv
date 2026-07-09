@@ -1,5 +1,3 @@
-`timescale 1ns/1ps
-
 // Binary encoder: one-hot input -> index of the set bit.
 module encoder #(
   parameter N = 3

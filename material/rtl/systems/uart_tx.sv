@@ -1,5 +1,3 @@
-`timescale 1ns/1ps
-
 module uart_tx #(
   parameter CLKS_PER_BIT  = 4,
             BITS_PER_WORD = 8,

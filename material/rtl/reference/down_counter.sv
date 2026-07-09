@@ -1,5 +1,3 @@
-`timescale 1ns/1ps
-
 module down_counter #(parameter WIDTH = 8)(
   input  logic clk, rstn, en, clear,
   input  logic [WIDTH-1:0] max_in,

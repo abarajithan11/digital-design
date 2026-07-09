@@ -1,5 +1,3 @@
-`timescale 1ns/1ps
-
 module fir_filter_naive #(
   parameter N = 5, W_X = 8, W_K = 4,
   parameter logic [(N+1)*W_K-1:0] K = {

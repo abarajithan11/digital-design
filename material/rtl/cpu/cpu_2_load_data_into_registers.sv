@@ -1,5 +1,3 @@
-`timescale 1ns/1ps
-
 module cpu_2_load_data_into_registers (
   input  logic        clk,
   input  logic        reset,

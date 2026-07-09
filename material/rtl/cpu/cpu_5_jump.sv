@@ -1,5 +1,3 @@
-`timescale 1ns/1ps
-
 module cpu_5_jump (
   input  logic        clk,
   input  logic        reset,

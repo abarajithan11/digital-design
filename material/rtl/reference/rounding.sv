@@ -1,5 +1,3 @@
-`timescale 1ns/1ps
-
 // Round a signed value after a right shift (divide by 2**SHIFT).
 //   mode 0: truncate       (floor, toward -inf)
 //   mode 1: nearest        (ties away from -inf, "round half up")

@@ -1,5 +1,3 @@
-`timescale 1ns/1ps
-
 module cpu_3_store_data (
   input  logic        clk,
   input  logic        reset,

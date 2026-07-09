@@ -1,5 +1,3 @@
-`timescale 1ns/1ps
-
 module cpu_1_load_instruction (
   input  logic        clk,
   input  logic        reset,

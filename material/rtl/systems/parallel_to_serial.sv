@@ -1,5 +1,3 @@
-`timescale 1ns/1ps
-
 module parallel_to_serial #(WIDTH = 8)
 (
   input  logic clk, rstn, 
