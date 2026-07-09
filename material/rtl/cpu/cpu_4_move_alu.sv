@@ -25,7 +25,7 @@ module cpu_4_move_alu (
 
     dmem_addr  = addr;
     dmem_wdata = regs[i_reg];
-    dmem_wen   = !reset && opcode == STORE;
+    dmem_wen   = opcode == STORE;
 
     reg_1      = regs[i_rs1]; // --- new
     reg_2      = regs[i_rs2]; // --- new

@@ -25,7 +25,7 @@ module cpu_5_jump (
 
     dmem_addr  = addr;
     dmem_wdata = regs[i_reg];
-    dmem_wen   = !reset && opcode == STORE;
+    dmem_wen   = opcode == STORE;
 
     reg_1      = regs[i_rs1];
     reg_2      = regs[i_rs2];

@@ -23,7 +23,7 @@ module cpu_3_store_data (
 
     dmem_addr  = addr;
     dmem_wdata = regs[i_reg]; // --- new
-    dmem_wen   = !reset && opcode == STORE; // --- new
+    dmem_wen   = opcode == STORE; // --- new
   end
 
   always_ff @(posedge clk) begin

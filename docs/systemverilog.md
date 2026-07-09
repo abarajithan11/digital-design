@@ -37,7 +37,7 @@ Use `logic` by default.
 Use an explicit net type such as `wire` for continuous or multiple drivers. 
 `tri` behaves like `wire`, but emphasizes that tri-state or multiple drivers are expected.
 
-### Four-State Logic
+#### Four-State Logic
 
 `logic` can represent `x` when a value is unknown and `z` when a net is not driven. 
 These values help simulation expose missing resets, conflicting drivers, and incomplete assignments.
@@ -48,7 +48,7 @@ These values help simulation expose missing resets, conflicting drivers, and inc
 Use `==` for normal RTL comparisons. 
 Use `===` mainly in testbenches when checking explicitly for `x` or `z`; careless use can hide an unknown-value bug.
 
-### Two-State Logic
+#### Two-State Logic
 
 Often we use `bit` in testbenches, in the place of `logic`.
 It represents two-state logic, either `0` or `1`.
@@ -76,7 +76,7 @@ Prevent misspellings from becoming implicit wires by placing this before the mod
 `default_nettype none
 ```
 
-## Packed and Unpacked Arrays
+### Packed and Unpacked Arrays
 
 Dimensions **before** the name are packed; dimensions **after** the name are
 unpacked:
@@ -93,7 +93,7 @@ A packed array is easier to deal with when assigning to flat arrays.
 An unpacked array is easier to read in simulation waveforms.
 For `memory`, `memory[3]` selects an 8-bit element and `memory[3][0]` selects one bit within it.
 
-## `typedef`, `enum`, and `struct`
+### `typedef`, `enum`, and `struct`
 
 `typedef` gives a type a reusable name. 
 An `enum` gives meaningful names to encoded values, which is especially useful for states and opcodes:
@@ -336,24 +336,7 @@ Simulators can warn when these promises are broken, and synthesis may optimize u
 Always write safe defaults. 
 Do not use these keywords merely to silence incomplete logic.
 
-## Functions and Tasks
-
-A function returns a value and cannot consume simulation time.
-It is a good way to package reusable combinational logic:
-
-```systemverilog
-function automatic logic [7:0] min_value(
-  input logic [7:0] a, b
-);
-  return (a < b) ? a : b;
-endfunction
-```
-
-A task may have multiple input/output arguments and may consume time using `#`, `@`, or `wait`, making tasks useful for testbench operations such as sending a
-UART packet. 
-Time-consuming tasks are not synthesizable.
-
-## Generate Blocks
+### Generate Blocks
 
 Generate constructs create hardware during elaboration. 
 Their conditions and loop bounds must be constant:
@@ -391,7 +374,27 @@ Both can synthesize to parallel hardware.
 A procedural loop repeats statements inside a process. 
 A generate loop creates separate scopes and instances during elaboration.
 
-## Simulation Time and Events
+## Functions and Tasks
+
+A function returns a value and cannot consume simulation time.
+It is a good way to package reusable combinational logic:
+
+```systemverilog
+function automatic logic [7:0] min_value(
+  input logic [7:0] a, b
+);
+  return (a < b) ? a : b;
+endfunction
+```
+
+A task may have multiple input/output arguments and may consume time using `#`, `@`, or `wait`, making tasks useful for testbench operations such as sending a
+UART packet. 
+Time-consuming tasks are not synthesizable.
+
+
+## Testbench Features
+
+### Simulation Time and Events
 
 Set the simulation time unit and precision at the top of the file:
 
@@ -411,7 +414,7 @@ Delays are normally testbench-only.
 Edge event controls are also used by synthesizable `always_ff` blocks. 
 `` `timescale`` is file-scoped, so place it in each source file that uses simulation delays.
 
-## `initial`, `fork`, and `join`
+### `initial`, `fork`, and `join`
 
 An `initial` block starts at simulation time 0 and runs once.
 It is commonly used for testbench stimulus. 
@@ -446,7 +449,7 @@ join
 - `join_any` waits until any one child finishes; the others keep running.
 - `join_none` returns immediately; all children keep running.
 
-## Assertions
+### Assertions
 
 An immediate assertion checks an expression when execution reaches it:
 
@@ -459,7 +462,7 @@ Assertions make failures visible where they occur.
 Use `$fatal` to crash when simulation cannot continue meaningfully and `$error` when later checks are still useful.
 Concurrent assertions can check behavior across clock cycles, but are beyond this basic introduction.
 
-## System Tasks
+### System Tasks
 
 System tasks and functions begin with `$` and are primarily simulation utilities:
 
@@ -474,25 +477,8 @@ Useful control and reporting tasks include `$finish`, `$stop`, `$fatal`, `$error
 Common format specifiers are `%b`, `%d`, `%h`, `%s`, and `%0t`. 
 These tasks do not describe hardware and are not synthesizable.
 
-## Other Testbench Features
+### File Handling
 
-Random stimulus explores cases that directed tests may miss:
-
-```systemverilog
-data = 8'($urandom);
-delay = $urandom_range(1, 20);
-assert (std::randomize(data) with { data inside {[1:100]}; });
-```
-
-Queue is a dynamic array that grows and shrinks during simulation:
-
-```systemverilog
-logic [7:0] expected [$];
-expected.push_back(data);
-data = expected.pop_front();
-```
-
-Queues, dynamic arrays, classes, constrained randomization, and file I/O are testbench features and are not synthesizable. 
 Common file operations are `$fopen`, `$fscanf`, `$fwrite`, and `$fclose`.
 
 ```systemverilog
@@ -513,6 +499,26 @@ initial begin
   $fclose(f);
 end
 ```
+
+### Other Testbench Features
+
+Random stimulus explores cases that directed tests may miss:
+
+```systemverilog
+data = 8'($urandom);
+delay = $urandom_range(1, 20);
+assert (std::randomize(data) with { data inside {[1:100]}; });
+```
+
+Queue is a dynamic array that grows and shrinks during simulation:
+
+```systemverilog
+logic [7:0] expected [$];
+expected.push_back(data);
+data = expected.pop_front();
+```
+
+Queues, dynamic arrays, classes, constrained randomization, and file I/O are testbench features and are not synthesizable. 
 
 ## Main Sources
 

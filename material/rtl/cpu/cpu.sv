@@ -20,7 +20,7 @@ module cpu (
 
     dmem_addr  = addr;
     dmem_wdata = regs[i_reg];
-    dmem_wen   = !reset && opcode == STORE;
+    dmem_wen   = opcode == STORE;
 
     reg_1      = regs[i_rs1];
     reg_2      = regs[i_rs2];
@@ -43,5 +43,4 @@ module cpu (
         default: ;
       endcase
     end
-
 endmodule
