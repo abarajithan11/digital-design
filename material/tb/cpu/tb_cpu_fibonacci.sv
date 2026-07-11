@@ -13,30 +13,30 @@ module tb_cpu_fibonacci;
   memory imem(clk, imem_addr,         '0,     1'b0, imem_rdata);
   memory dmem(clk, dmem_addr, dmem_wdata, dmem_wen, dmem_rdata);
 
-  initial forever #5 clk = ~clk;
+  initial forever #1 clk = ~clk;
 
   initial begin
     $dumpfile(`FST_PATH);
     $dumpvars(0, tb_cpu_fibonacci);
 
-    dmem.mem[0] = 16'd10;
+    dmem.mem[0] = 16'd0;
     dmem.mem[1] = 16'd1;
-    dmem.mem[2] = 16'd0;
+    dmem.mem[2] = 16'd10;
 
-    // Initialize counter, constant one, and consecutive Fibonacci values.
-    imem.mem[0] = {8'h00,        4'h1, LOAD};  // r1 (counter) = 10
-    imem.mem[1] = {8'h01,        4'h2, LOAD};  // r2 (one) = 1
-    imem.mem[2] = {8'h02,        4'h3, LOAD};  // r3 (a) = 0
-    imem.mem[3] = {8'h01,        4'h4, LOAD};  // r4 (b) = 1
+    // Initialize consecutive Fibonacci values, counter, and constant one.
+    imem.mem[0] = {8'h00,        4'h0, LOAD};  // r0 (a)       = mem[0] = 0
+    imem.mem[1] = {8'h01,        4'h1, LOAD};  // r1 (b)       = mem[1] = 1
+    imem.mem[2] = {8'h02,        4'h3, LOAD};  // r3 (counter) = 10
+    imem.mem[3] = {8'h01,        4'h4, LOAD};  // r4 (one)     = 1
 
     // Advance the pair and repeat ten times.
-    imem.mem[4] = {4'h4,  4'h3,  4'h5, ADD};   // r5 (next) = r3 (a) + r4 (b)
-    imem.mem[5] = {4'h0,  4'h4,  4'h3, MOVE};  // r3 (a) = r4 (b)
-    imem.mem[6] = {4'h0,  4'h5,  4'h4, MOVE};  // r4 (b) = r5 (next)
-    imem.mem[7] = {4'h2,  4'h1,  4'h1, SUB};   // r1 (counter) -= r2 (one)
-    imem.mem[8] = {8'h04,        4'h1, JNZ};   // repeat while r1 (counter) != 0
+    imem.mem[4] = {4'h1,  4'h0,  4'h2, ADD};   // r2 (next) = r0 (a) + r1 (b)
+    imem.mem[5] = {4'h0,  4'h1,  4'h0, MOVE};  // r0 (a) = r1 (b)
+    imem.mem[6] = {4'h0,  4'h2,  4'h1, MOVE};  // r1 (b) = r2 (next)
+    imem.mem[7] = {4'h4,  4'h3,  4'h3, SUB};   // r3 (counter) -= r4 (one)
+    imem.mem[8] = {8'h04,        4'h3, JNZ};   // repeat while r3 (counter) != 0
 
-    imem.mem[9] = {8'h03,        4'h3, STORE}; // mem[3] = r3 = F(10)
+    imem.mem[9] = {8'h03,        4'h0, STORE}; // mem[3] = r0 = F(10)
 
     @(posedge clk); #1ps reset = 0;
     repeat (56) @(posedge clk);

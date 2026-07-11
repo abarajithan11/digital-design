@@ -12,7 +12,7 @@ module tb_cpu_2_load_data_into_registers;
   memory imem(clk, imem_addr, '0, 1'b0, imem_rdata);
   memory dmem(clk, dmem_addr, '0, 1'b0, dmem_rdata);
 
-  initial forever #5 clk = ~clk;
+  initial forever #1 clk = ~clk;
 
   initial begin
     $dumpfile(`FST_PATH);

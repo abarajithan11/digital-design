@@ -10,7 +10,7 @@ module tb_cpu_1_load_instruction;
 
   memory imem(clk, imem_addr, '0, 1'b0, imem_rdata);
 
-  initial forever #5 clk = ~clk;
+  initial forever #1 clk = ~clk;
 
   initial begin
     $dumpfile(`FST_PATH);

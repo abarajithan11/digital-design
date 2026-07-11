@@ -423,7 +423,7 @@ They all start at the same time and run in parallel from the simulation perspect
 Use blocking assignment `=` inside `initial` so each statement takes effect in sequence:
 
 ```systemverilog
-initial forever #5 clk = ~clk; // Toggle clock every 5 units indefinitely.
+initial forever #1 clk = ~clk; // Toggle clock every 5 units indefinitely.
 
 initial begin
   rstn = 0;
