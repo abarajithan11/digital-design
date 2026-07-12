@@ -81,6 +81,51 @@ RUN git clone --depth 1 --single-branch --branch "${VERILATOR_VERSION}" https://
  && make install \
  && rm -rf /tmp/verilator
 
+# ============================================================================
+#  Tang Nano 20K FPGA toolchain (open-source apicula flow).
+#  yosys (installed via the ORFS base) already has synth_gowin, so we add ONLY
+#  the missing pieces - and deliberately do NOT bake in the whole ~1.5 GB
+#  oss-cad-suite. Instead we pull one pinned release and copy out just:
+#    * nextpnr-himbaechel + openFPGALoader   (the two prebuilt binaries)
+#    * chipdb-GW2A-18C.bin                    (only this board's device, ~18 MB)
+#    * the apicula packer                     (version-matched to that nextpnr)
+#  then delete the archive in the same layer. The binaries' runtime .so deps
+#  come from apt: boost 1.74 ships in jammy; the prebuilt nextpnr links
+#  libpython3.11, pulled from deadsnakes. Net add is tens of MB, not 1.5 GB.
+ARG OSS_CAD_SUITE_DATE=2026-07-11
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      software-properties-common curl \
+ && add-apt-repository -y ppa:deadsnakes/ppa \
+ && apt-get update && apt-get install -y --no-install-recommends \
+      libpython3.11 \
+      libboost-thread1.74.0 libboost-program-options1.74.0 \
+      libusb-1.0-0 libftdi1-2 libhidapi-libusb0 \
+ && rm -rf /var/lib/apt/lists/* \
+ && pip install --no-cache-dir cattrs
+
+RUN set -eux; \
+    case "$(uname -m)" in \
+      x86_64)        arch=x64;;   \
+      aarch64|arm64) arch=arm64;; \
+      *) echo "unsupported arch $(uname -m)" >&2; exit 1;; \
+    esac; \
+    stamp="$(echo "$OSS_CAD_SUITE_DATE" | tr -d -)"; \
+    url="https://github.com/YosysHQ/oss-cad-suite-build/releases/download/${OSS_CAD_SUITE_DATE}/oss-cad-suite-linux-${arch}-${stamp}.tgz"; \
+    curl -fsSL "$url" -o /tmp/oss.tgz; \
+    mkdir -p /tmp/oss && tar -xzf /tmp/oss.tgz -C /tmp/oss; \
+    S=/tmp/oss/oss-cad-suite; \
+    cp "$S/libexec/nextpnr-himbaechel" "$S/libexec/openFPGALoader" /usr/local/bin/; \
+    mkdir -p /usr/local/share/himbaechel/gowin; \
+    cp "$S/share/nextpnr/himbaechel/gowin/chipdb-GW2A-18C.bin" /usr/local/share/himbaechel/gowin/; \
+    cp -r "$S/share/openFPGALoader" /usr/local/share/openFPGALoader; \
+    site="$(python3 -c 'import site; print(site.getsitepackages()[0])')"; \
+    cp -r "$S"/lib/python3.11/site-packages/apycula "$site"/; \
+    printf '#!/usr/bin/env bash\nexec python3 -c "import sys; from apycula.gowin_pack import main; sys.exit(main())" "$@"\n' \
+        > /usr/local/bin/gowin_pack; \
+    chmod +x /usr/local/bin/gowin_pack; \
+    nextpnr-himbaechel --version; gowin_pack --help >/dev/null; openFPGALoader --Help >/dev/null 2>&1 || true; \
+    rm -rf /tmp/oss /tmp/oss.tgz
+
 # macOS GUI support (only when INSTALL_GUI=1, i.e. arm64). On macOS the tools
 # can't use XQuartz well (its only OpenGL path to a container is indirect GLX =
 # OpenGL 1.4, too old for openscad), so the container runs its own Xvfb display

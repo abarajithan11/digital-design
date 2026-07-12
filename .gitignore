@@ -19,3 +19,7 @@ material/data/x_music.txt
 material/data/y_exp.txt
 material/data/filter.png
 obj_dir
+
+# FPGA bitstream build artifacts
+material/fpga/*/build/
+material/temp_fpga

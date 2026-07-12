@@ -140,6 +140,19 @@ exit                     # to leave the container
 * The `material/Makefile` handles the in-container design flows.
 * Reports and layout images are stored in `material/openroad/work/reports/asap7/alu/base`
 
+## Run on real hardware (Tang Nano 20K FPGA)
+
+Optional: put any design (except the CPU) onto a [Sipeed Tang Nano 20K](https://wiki.sipeed.com/tangnano20k).
+Run these from the **repo root on your host** (not inside the container) — the bitstream is built in Docker, so it's the same on Ubuntu, macOS, and Windows:
+
+```bash
+make bitstream DESIGN=full_adder   # build the .fs bitstream only
+make program   DESIGN=up_counter   # build, then flash the board and run it
+```
+
+One-time USB setup differs per OS (Linux: nothing; Windows: `usbipd`; macOS: `brew install openfpgaloader`). See
+[`material/fpga/tang_nano_20k/README.md`](material/fpga/tang_nano_20k/README.md).
+
 ## For Staff
 
 <details>

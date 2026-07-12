@@ -10,7 +10,8 @@ module tb_sys_fir_filter;
               N                = 100,
               W_Y              = WIDTH + W_K + $clog2(N+1),
               PACKET_SIZE_TX   = WIDTH+5,
-              N_WORDS          = 1;
+              N_WORDS          = 1,
+              NUM_SAMPLES      = 44100;
 
   typedef logic [N_WORDS-1:0][WIDTH-1:0] data_t;
 
@@ -53,12 +54,10 @@ module tb_sys_fir_filter;
   end
 
   initial begin
-    $dumpfile(`FST_PATH); $dumpvars;
-
     // Read files
     file = $fopen("data/x_music.txt", "r");
     if (file==0) $fatal(1, "failed to open data/x_music.txt");
-    while (!$feof(file)) begin
+    while (!$feof(file) && x_queue.size() < NUM_SAMPLES) begin
       status = $fscanf(file, "%d,", x_val);
       x_queue.push_back(WIDTH'(x_val));
     end
@@ -66,7 +65,7 @@ module tb_sys_fir_filter;
 
     file = $fopen("data/y_exp.txt", "r");
     if (file==0) $fatal(1, "failed to open data/y_exp.txt");
-    while (!$feof(file)) begin
+    while (!$feof(file) && y_queue.size() < NUM_SAMPLES) begin
       status = $fscanf(file, "%d,", y_val);
       y_queue.push_back(WIDTH'(y_val));
     end

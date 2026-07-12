@@ -32,31 +32,48 @@ module sys_fir_filter #(
     .m_data (data_rx)
   );
 
-  fir_filter_naive #(
-    .N       (N),
-    .W_X     (WIDTH),
-    .W_K     (W_K),
-    .K       (K)
+  fir_filter #(
+    .N  (N),
+    .W_X(WIDTH),
+    .W_K(W_K),
+    .K  (K)
   ) u_fir (
-    .clk  (clk),
-    .rstn (rstn),
-    .en   (valid),
-    .x    (data_rx),
-    .y    (y)
+    .clk (clk),
+    .rstn(rstn),
+    .en  (valid),
+    .x   (data_rx),
+    .y   (y)
   );
 
+  // Requantize the W_Y-bit result back to a signed WIDTH-bit sample (saturating).
   wire [W_Y-1:0] y_shift;
   wire [WIDTH-1:0] y_q;
 
   localparam [WIDTH-1:0] MAX_Q = {1'b0, {(WIDTH-1){1'b1}}};
   localparam [WIDTH-1:0] MIN_Q = {1'b1, {(WIDTH-1){1'b0}}};
-
   localparam [W_Y-1:0] MAX_Q_EXT = {{(W_Y-WIDTH){1'b0}}, MAX_Q};
   localparam [W_Y-1:0] MIN_Q_EXT = {{(W_Y-WIDTH){1'b1}}, MIN_Q};
 
   assign y_shift = $signed(y) >>> FRAC;
   assign y_q =  ($signed(y_shift) > $signed(MAX_Q_EXT)) ? MAX_Q :
                 ($signed(y_shift) < $signed(MIN_Q_EXT)) ? MIN_Q : y_shift[WIDTH-1:0];
+
+  // Elastic buffer so the transmitter can backpressure the receiver. uart_rx
+  // produces one sample per byte and cannot be stalled; the skid buffer holds
+  // the sample while uart_tx is busy, so nothing is dropped. It registers y_q on
+  // the same cycle valid is asserted (before the FIR taps advance).
+  wire            fifo_ready, tx_valid, tx_ready;
+  wire [WIDTH-1:0] tx_data;
+  skid_buffer #(.WIDTH(WIDTH)) u_fifo (
+    .clk    (clk),
+    .rstn   (rstn),
+    .s_valid(valid),
+    .s_ready(fifo_ready),
+    .s_data (y_q),
+    .m_valid(tx_valid),
+    .m_ready(tx_ready),
+    .m_data (tx_data)
+  );
 
   uart_tx #(
     .CLKS_PER_BIT  (CLKS_PER_BIT),
@@ -66,10 +83,10 @@ module sys_fir_filter #(
   ) u_tx (
     .clk    (clk),
     .rstn   (rstn),
-    .s_valid(valid),
-    .s_data (y_q),
+    .s_valid(tx_valid),
+    .s_data (tx_data),
     .tx     (tx),
-    .s_ready()
+    .s_ready(tx_ready)
   );
 
 endmodule

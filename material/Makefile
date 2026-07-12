@@ -50,6 +50,10 @@ CELL_3D_DIR  := $(MATERIAL_DIR)/openroad/work/results/cell_3d
 
 include basic_run.mk
 
+# FPGA bitstream/programming flow
+FPGA ?= tang_nano_20k
+include fpga/$(FPGA)/common/fpga.mk
+
 .PHONY: prepare print_rtl_top gtkwave wave_svg show_layout_cells show_3d_cell glb cell_glbs 3d_assets clean
 
 print_rtl_top:
