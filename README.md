@@ -142,7 +142,7 @@ exit                     # to leave the container
 
 ## Run on real hardware (Tang Nano 20K FPGA)
 
-Implement any design (except the CPU) onto a [Sipeed Tang Nano 20K](https://wiki.sipeed.com/tangnano20k).
+Implement a design onto a [Sipeed Tang Nano 20K](https://wiki.sipeed.com/tangnano20k).
 
 ### 1. Build the bitstream in the container:
 
@@ -276,6 +276,35 @@ Expected final output:
 ```text
 PASS: all 735000 samples match .../material/data/bass_only_8bit.wav.
 ```
+
+### 5. Run the CPU
+
+Build and program the CPU bitstream using the same container and web-programmer
+steps above:
+
+```bash
+make enter
+make bitstream DESIGN=cpu_fpga
+exit
+```
+
+Select `material/fpga/tang_nano_20k/build/cpu_fpga/cpu_fpga.fs` in the web programmer. 
+Restore or attach the UART interface, then run:
+
+```bash
+python3 -m pip install --user pyserial  # one time
+python3 material/py/program_cpu.py
+```
+
+The script loads a program that computes `1 + ... + 10`. Press **S1** when prompted to start the CPU. 
+As it runs at one instruction per second, the LEDs show the opcode in binary.
+Hold **S2** to show the low six bits of `dmem[4]` on the LEDs.
+When it is done, it streams the data RAM to the python script, and should print:
+
+```text
+dmem[4] = 55  (sum(1..10) should be 55)
+```
+
 
 ## For Staff
 
