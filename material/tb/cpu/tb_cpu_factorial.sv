@@ -33,14 +33,14 @@ module tb_cpu_factorial;
     imem.mem[5] = {8'h03,        4'h2, JNZ}; // repeat while r2 (counter) != 0
 
     // Store 5! at memory address 2.
-    imem.mem[6] = {8'h02,        4'h0, STORE}; // mem[2] = r0 (factorial)
+    imem.mem[6] = {8'h04,        4'h0, STORE}; // mem[4] = r0 (factorial)
 
     @(posedge clk); #1ps reset = 0;
     repeat (20) @(posedge clk);
     #1ps;
 
-    assert (dmem.mem[2] == 120)
-      $display("PASS: factorial=%0d", dmem.mem[2]);
+    assert (dmem.mem[4] == 120)
+      $display("PASS: factorial=%0d", dmem.mem[4]);
       else $fatal(1, "Factorial failed");
     $finish;
   end

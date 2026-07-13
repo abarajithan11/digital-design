@@ -1,0 +1,10 @@
+fpga/tang_nano_20k/top_glue/cpu/cpu_fpga.sv
+rtl/cpu/cpu.sv
+rtl/cpu/memory.sv
+rtl/systems/uart_rx.sv
+rtl/systems/uart_tx.sv
+rtl/reference/up_counter.sv
+rtl/reference/down_counter.sv
+tb/systems/vip_uart_rx.sv
+tb/systems/vip_uart_tx.sv
+tb/cpu/tb_cpu_fpga.sv

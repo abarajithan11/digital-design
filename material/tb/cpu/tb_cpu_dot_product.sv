@@ -48,14 +48,14 @@ module tb_cpu_dot_product;
     imem.mem[11] = {4'h2,  4'h1,  4'h3, MUL};   // r3 (product) = r1 (x) * r2 (y)
     imem.mem[12] = {4'h3,  4'h0,  4'h0, ADD};   // r0 (sum) += r3 (product)
 
-    imem.mem[13] = {8'h07,        4'h0, STORE}; // mem[7] = r0 (sum)
+    imem.mem[13] = {8'h04,        4'h0, STORE}; // mem[4] = r0 (sum)
 
     @(posedge clk); #1ps reset = 0;
     repeat (15) @(posedge clk);
     #1ps;
 
-    assert (dmem.mem[7] == 32)
-      $display("PASS: dot_product=%0d", dmem.mem[7]);
+    assert (dmem.mem[4] == 32)
+      $display("PASS: dot_product=%0d", dmem.mem[4]);
       else $fatal(1, "Dot product failed");
     $finish;
   end
