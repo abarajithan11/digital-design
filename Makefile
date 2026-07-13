@@ -27,6 +27,7 @@ include basic_docker.mk
 
 FRESH        ?= 0
 SIM_MAX_TIME ?= 1s
+SIM_OUTPUT_MAX_TIME = $(if $(filter cpu_fpga,$(DESIGN)),100us,$(SIM_MAX_TIME))
 DESIGN_FILES := $(wildcard material/designs/*.f material/designs/*/*.f)
 DESIGNS := $(sort $(basename $(notdir $(DESIGN_FILES))))
 
@@ -137,7 +138,7 @@ serve: site
 sim_output:
 	test -n "$(DESIGN)"
 	mkdir -p out/sim out/sim-assets/$(DESIGN)
-	if $(MAKE) run CMD="make sim wave_svg DESIGN=$(DESIGN) SIM_MAX_TIME=$(SIM_MAX_TIME)" IMAGE="$(IMAGE)"; then \
+	if $(MAKE) run CMD="make sim wave_svg DESIGN=$(DESIGN) SIM_MAX_TIME=$(SIM_OUTPUT_MAX_TIME)" IMAGE="$(IMAGE)"; then \
 		fst="material/sim/$(DESIGN)/$(DESIGN).fst"; \
 		svg="material/sim/$(DESIGN)/$(DESIGN)_short.svg"; \
 		[ -f "$$fst" ] && cp "$$fst" "out/sim-assets/$(DESIGN)/$(DESIGN).fst" || true; \
