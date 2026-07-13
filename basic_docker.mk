@@ -61,10 +61,8 @@ XAUTH_MOUNT  := $(if $(IS_MAC),,$(if $(wildcard $(HOME)/.Xauthority),-e XAUTHORI
 DRI_DEVICE   := $(if $(wildcard /dev/dri),--device /dev/dri)
 DXG_DEVICE   := $(if $(wildcard /dev/dxg),--device /dev/dxg)
 WSL_LIB_MOUNT := $(if $(wildcard /usr/lib/wsl/lib),-v /usr/lib/wsl:/usr/lib/wsl)
-# USB passthrough for FPGA programming (openFPGALoader). Added only when a USB
-# bus is present, so `make program` can reach the board from inside the
-# container. On WSL the board must first be attached with usbipd-win (see
-# material/fpga/tang_nano_20k/README.md).
+# Optional USB passthrough for tools that inspect attached hardware. On WSL the
+# board must first be attached with usbipd-win.
 USB_MOUNT    := $(if $(wildcard /dev/bus/usb),--device /dev/bus/usb -v /dev/bus/usb:/dev/bus/usb)
 GL_ENV       := $(if $(wildcard /usr/lib/wsl/lib),\
 	-e LD_LIBRARY_PATH=/usr/lib/wsl/lib -e LIBGL_ALWAYS_SOFTWARE=0 -e GALLIUM_DRIVER=d3d12 -e MESA_LOADER_DRIVER_OVERRIDE=d3d12,\

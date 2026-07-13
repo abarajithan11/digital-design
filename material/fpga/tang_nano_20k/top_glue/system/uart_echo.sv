@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 `default_nettype none
 
-// uart_echo at 2 Mbaud.  Needs SYS_HZ=108 MHz (fpga.mk sets it) so
+// uart_echo at 2 Mbaud.  board_top supplies 108 MHz, so
 // CLKS_PER_BIT = 108e6/2e6 = 54.  The design drives tx; the board's onboard
 // bridge runs the UART at 2 Mbaud.  Host: python3 py/uart_echo.py.
 module board_glue (

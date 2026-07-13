@@ -30,56 +30,40 @@ SIM_MAX_TIME ?= 1s
 DESIGN_FILES := $(wildcard material/designs/*.f material/designs/*/*.f)
 DESIGNS := $(sort $(basename $(notdir $(DESIGN_FILES))))
 
-# ---- FPGA (Tang Nano 20K): one host command that works on all three OSes -----
-# `make bitstream` is pure compute and always runs in the container. `make
-# program`/`program_flash` build in the container, then flash the board by the
-# least-painful route for the host OS:
-#   * Linux / WSL : flash inside the container via /dev/bus/usb passthrough
-#                   (no host tools). On WSL the board must first be attached with
-#                   usbipd-win; on Linux, plug it in.
-#   * macOS       : Docker Desktop cannot pass USB into its VM, so flash with a
-#                   host openFPGALoader (one-time `brew install openfpgaloader`).
+# ---- FPGA (Tang Nano 20K) ---------------------------------------------------
+# Build the bitstream INSIDE the container (that is where the toolchain lives):
+#     make enter
+#     make bitstream DESIGN=<design>
+# then flash it from the HOST (needs openFPGALoader + USB access to the board):
+#     make program_fpga DESIGN=<design>             # load to SRAM (volatile)
+#     make program_fpga DESIGN=<design> TO_FLASH=1  # write to flash (persists)
 FPGA      ?= tang_nano_20k
 OFL_BOARD ?= tangnano20k
 OFL_FREQ  ?= 1000000
-UNAME_S   := $(shell uname -s)
-IS_WSL    := $(shell grep -qi microsoft /proc/version 2>/dev/null && echo 1)
+TO_FLASH  ?= 0
 FS_REL     = material/fpga/$(FPGA)/build/$(DESIGN)/$(DESIGN).fs
+FLASH_FLAG = $(if $(filter 1,$(TO_FLASH)),-f,)
 
 .PHONY: image-scratch publish generate_outputs build_pages site serve \
         sim_output sim_outputs_all gds_output gds_outputs_all gds_glb_assets 3d_assets scratch \
-        bitstream program program_flash
+        program_fpga
 
-bitstream:
-	test -n "$(DESIGN)"
-	$(MAKE) run CMD="make bitstream DESIGN=$(DESIGN) FPGA=$(FPGA)" IMAGE="$(IMAGE)"
-
-program:       FLASH_FLAG :=
-program_flash: FLASH_FLAG := -f
-program program_flash: bitstream
-	@if [ "$(UNAME_S)" = "Darwin" ]; then \
-	    command -v openFPGALoader >/dev/null 2>&1 || { \
-	        echo "macOS can't pass USB into Docker. Install the flasher once:"; \
-	        echo "    brew install openfpgaloader"; \
-	        echo "then re-run this command."; exit 1; }; \
-	    openFPGALoader -b $(OFL_BOARD) --freq $(OFL_FREQ) $(FLASH_FLAG) "$(FS_REL)"; \
-	elif [ -n "$(USB_MOUNT)" ]; then \
-	    docker run --rm --user root $(USB_MOUNT) \
-	        -v "$(HOST_REPO)":"$(CONT_REPO)" -w "$(CONT_REPO)" $(IMAGE) \
-	        bash -lc 'openFPGALoader -b $(OFL_BOARD) --freq $(OFL_FREQ) $(FLASH_FLAG) "$(FS_REL)"'; \
-	else \
-	    echo "No USB device visible to $$(uname -s) (looked for /dev/bus/usb)."; \
-	    if [ -n "$(IS_WSL)" ]; then \
-	        echo "On Windows/WSL, attach the board first (admin PowerShell):"; \
-	        echo "    usbipd list"; \
-	        echo "    usbipd bind   --busid <BUSID>   # once per device"; \
-	        echo "    usbipd attach --wsl --busid <BUSID>"; \
-	        echo "then re-run. See material/fpga/$(FPGA)/README.md."; \
-	    else \
-	        echo "Plug in the Tang Nano 20K and re-run."; \
-	    fi; \
-	    exit 1; \
-	fi
+program_fpga:
+	@test "$(TO_FLASH)" = 0 || test "$(TO_FLASH)" = 1 || { \
+	    echo "TO_FLASH must be 0 or 1 (got '$(TO_FLASH)')."; exit 1; }
+	@test -n "$(DESIGN)" || { echo "Set DESIGN=<design>."; exit 1; }
+	@test -f "$(FS_REL)" || { \
+	    echo "Bitstream not found: $(FS_REL)"; \
+	    echo "Build it in the container first:  make enter   then   make bitstream DESIGN=$(DESIGN)"; \
+	    exit 1; }
+	@command -v openFPGALoader >/dev/null 2>&1 || { \
+	    echo "openFPGALoader is not on PATH."; \
+	    echo "Install it on the host from your package manager (when available) or source:"; \
+	    echo "    https://github.com/trabucayre/openFPGALoader/blob/master/doc/guide/install.rst"; \
+	    echo "On Ubuntu 22.04/WSL the package may be unavailable; use the source build."; \
+	    echo "(WSL also needs the board attached with usbipd - see material/fpga/$(FPGA)/README.md.)"; \
+	    exit 1; }
+	openFPGALoader -b $(OFL_BOARD) --freq $(OFL_FREQ) $(FLASH_FLAG) "$(FS_REL)"
 
 scratch: kill image-scratch start
 

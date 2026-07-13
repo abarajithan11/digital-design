@@ -142,16 +142,140 @@ exit                     # to leave the container
 
 ## Run on real hardware (Tang Nano 20K FPGA)
 
-Optional: put any design (except the CPU) onto a [Sipeed Tang Nano 20K](https://wiki.sipeed.com/tangnano20k).
-Run these from the **repo root on your host** (not inside the container) — the bitstream is built in Docker, so it's the same on Ubuntu, macOS, and Windows:
+Implement any design (except the CPU) onto a [Sipeed Tang Nano 20K](https://wiki.sipeed.com/tangnano20k).
+
+### 1. Build the bitstream in the container:
+
+First you need to "compile" or implement your SystemVerilog code into a bitstream, which is a stream of bits that configures the FPGA to implement the digital logic you wanted.
 
 ```bash
-make bitstream DESIGN=full_adder   # build the .fs bitstream only
-make program   DESIGN=up_counter   # build, then flash the board and run it
+make enter
+make bitstream DESIGN=up_counter
+exit
 ```
 
-One-time USB setup differs per OS (Linux: nothing; Windows: `usbipd`; macOS: `brew install openfpgaloader`). See
+### 2. Program it via the web programmer
+
+<details>
+<summary><strong>Windows: install the WebUSB driver through Zadig first</strong></summary>
+
+1. Download and run [Zadig](https://zadig.akeo.ie/). It is portable and does not need to be installed.
+2. Connect the Tang Nano 20K to Windows. Do not attach it to WSL yet.
+3. In Zadig, select **Options → List All Devices**.
+4. Select the Tang Nano JTAG interface, usually **Dual RS232-HS (Interface 0)** or **Interface A**.
+5. Select **WinUSB** and click **Replace Driver**.
+6. Close Zadig when the replacement finishes.
+
+Only replace **Interface 0/A**. 
+Do not replace **Interface 1/B**: it is the USB-UART interface used by `uart_echo.py` and `fir_audio.py`.
+
+</details>
+
+Next you need to send the bitstream to your FPGA (called programming the FPGA). 
+Connect your FPGA to your machine, then visit [openFPGALoader Web](https://ofl.trabucayre.com/) via Google Chrome. 
+Note, Firefox does not support the required WebUSB access.
+
+1. Visit the site, then choose  
+   - Automatic Operations
+   - Tang Nano 20K
+   - SRAM or Flash (SRAM is volatile, Flash persists after power-off)
+
+2. and select the file:
+   ```text
+   material/fpga/tang_nano_20k/build/up_counter/up_counter.fs
+   ```
+3. Then click **Program FPGA**. You will see this and the lights lighting up as a counter.
+   ```
+   Done
+   DONE
+   Execution completed in ---ms
+   ```
+
+### 3. UART Serial Examples - Sending data between your computer and FPGA
+
+For UART examples, you need to switch the ownership of the USB port between Chrome, and your OS.
+
+<details>
+<summary><strong>Ubuntu</strong></summary>
+
+Chrome cannot claim the board while the Linux FTDI serial driver owns it. 
+Before programming, close programs using `/dev/ttyUSB*` and run:
+
+```bash
+sudo modprobe -r ftdi_sio
+```
+
+After programming, restore the serial ports for UART examples:
+
+```bash
+sudo modprobe ftdi_sio
+```
+
+</details>
+
+<details>
+<summary><strong>Windows (WSL)</strong></summary>
+
+First connect the board to your computer.
+Now Windows owns it. 
+Program from Chrome. 
+For UART examples, switch the ownership to WSL after you program from Chrome.
+
+To do this, open Powershell as Administrator. Then:
+
+```powershell
+usbipd list
+usbipd bind --busid <BUSID>
+usbipd attach --wsl --busid <BUSID>
+```
+
+Run `bind` once from Administrator PowerShell. 
+Run `attach` from a regular PowerShell each time the device is reconnected.
+
+</details>
+
+<details>
+<summary><strong>MacOS</strong></summary>
+
+Open the web programmer in Chrome, select the generated `.fs` file, and program the board. 
+For UART examples, set the Python script's `PORT` to the board's `/dev/tty.usbserial-*` device.
+
+</details>
+
+More FPGA details are in
 [`material/fpga/tang_nano_20k/README.md`](material/fpga/tang_nano_20k/README.md).
+
+### 4. Run the FIR audio example
+
+The following commands build `sys_fir_filter`, load it into volatile FPGA SRAM,
+stream `material/data/chill_sub.wav` through the board, write
+`material/data/fpga_out.wav`, and compare it with the reference output.
+
+1. From the `digital-design` repository root, build the bitstream inside the container:
+
+   ```bash
+   make enter
+   make bitstream DESIGN=sys_fir_filter
+   exit
+   ```
+
+2. Install the Python packages on the host once:
+
+   ```bash
+   python3 -m pip install --user numpy scipy pyserial
+   ```
+
+3. Program `sys_fir_filter.fs` into SRAM with openFPGALoader Web as described above. Restore or attach the serial device using the relevant OS section, then run the Python script. It resolves its WAV paths relative to itself, so it also works when invoked by absolute path from another directory.
+
+   ```bash
+   python3 material/py/fir_audio.py
+   ```
+
+Expected final output:
+
+```text
+PASS: all 735000 samples match .../material/data/bass_only_8bit.wav.
+```
 
 ## For Staff
 
@@ -201,4 +325,3 @@ Get your GHCR token as:
 * Scroll to the bottom and click Generate token.
 
 </details>
-

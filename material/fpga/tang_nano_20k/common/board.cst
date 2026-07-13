@@ -9,8 +9,7 @@
 //
 //  Hardware polarity (handled inside board_top):
 //   * LEDs are ACTIVE-LOW  ("low voltage level enable"): pin=0 => LED on.
-//   * Buttons are ACTIVE-LOW: pressed => pin reads 0. That's why we call the
-//     raw ports led_n / btn_n.
+//   * Buttons are ACTIVE-HIGH: pressed => pin reads 1.
 // ============================================================================
 
 
@@ -30,11 +29,11 @@ IO_LOC  "led_n[4]" 19; IO_PORT "led_n[4]" PULL_MODE=UP DRIVE=8 IO_TYPE=LVCMOS33;
 IO_LOC  "led_n[5]" 20; IO_PORT "led_n[5]" PULL_MODE=UP DRIVE=8 IO_TYPE=LVCMOS33;
 
 
-// --- 2 user buttons, active-low -> btn_n[1:0]  (S1=pin 88, S2=pin 87) ---
+// --- 2 user buttons, active-high -> btn[1:0]  (S1=pin 88, S2=pin 87) ---
 
-// btn_n[0] = S1, btn_n[1] = S2. board_top uses S2 as reset by convention.
-IO_LOC  "btn_n[0]" 88; IO_PORT "btn_n[0]" PULL_MODE=UP IO_TYPE=LVCMOS33;
-IO_LOC  "btn_n[1]" 87; IO_PORT "btn_n[1]" PULL_MODE=UP IO_TYPE=LVCMOS33;
+// btn[0] = S1, btn[1] = S2.
+IO_LOC  "btn[0]" 88; IO_PORT "btn[0]" PULL_MODE=UP IO_TYPE=LVCMOS33;
+IO_LOC  "btn[1]" 87; IO_PORT "btn[1]" PULL_MODE=UP IO_TYPE=LVCMOS33;
 
 
 // --- BL616 UART (FPGA rx=pin 70, tx=pin 69) ---

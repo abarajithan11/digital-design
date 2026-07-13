@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 `default_nettype none
 
-// sys_fir_filter live audio at 2 Mbaud.  Needs SYS_HZ=108 MHz -> CLKS_PER_BIT=54.
+// sys_fir_filter live audio at 2 Mbaud. board_top's 108 MHz -> CLKS_PER_BIT=54.
 // Needs data/coef.svh on the include path (material/ is added by fpga.mk).
 // Host: python3 py/fir_audio.py.
 module board_glue (
