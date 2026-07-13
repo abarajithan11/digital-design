@@ -8,14 +8,7 @@ module reduction_tree_min #(
     output logic        [W_X-1:0] y
   );
 
-  typedef logic [W_X-1:0] data_t;
-
-  function automatic data_t min_val(input data_t a, input data_t b);
-      if ($signed(a) < $signed(b)) min_val = a;
-      else                         min_val = b;
-  endfunction 
-
-  genvar level, pos;
+  genvar stage, node;
   logic [DEPTH:0][N-1:0][W_X-1:0] tree;
 
   always_comb begin
@@ -24,27 +17,30 @@ module reduction_tree_min #(
     y = tree[DEPTH][0];
   end
 
-  for (level = 0; level < DEPTH; level++) begin : gen_d
-    localparam CURR_N = (N + 2**level - 1) / 2**level;
-    localparam NEXT_N = (CURR_N + 1) / 2;
+  for (stage = 0; stage < DEPTH; stage++) begin : gen_stage
+    localparam int STAGE_SIZE      = (N + 2**stage - 1) / 2**stage;
+    localparam int NEXT_STAGE_SIZE = (STAGE_SIZE + 1) / 2;
 
-    for (pos = 0; pos < NEXT_N; pos++) begin : gen_a
+    for (node = 0; node < NEXT_STAGE_SIZE; node++) begin : gen_node
       always_ff @(posedge clk or negedge rstn) begin
 
-        int i_left, i_right;
-        logic [W_X-1:0] vl, vr;
+        int idx_left, idx_right;
+        logic [W_X-1:0] val_left, val_right, result;
         
-        if (!rstn) tree[level+1][pos] <= '0;
-        else if (cen) begin
-          i_left = 2*pos;
-          i_right = i_left + 1;
+        if (!rstn) begin
+          tree[stage+1][node] <= '0;
+        end else if (cen) begin
+          idx_left  = 2 * node;
+          idx_right = idx_left + 1;
 
-          if (i_right < CURR_N) begin
-            vl = tree[level][i_left];
-            vr = tree[level][i_right];
-            tree[level+1][pos] <= min_val(vl, vr);
+          if (idx_right < STAGE_SIZE) begin
+            val_left  = tree[stage][idx_left];
+            val_right = tree[stage][idx_right];
+            if ($signed(val_left) < $signed(val_right)) result = val_left;
+            else                                        result = val_right;
+            tree[stage+1][node] <= result;
           end else begin
-            tree[level+1][pos] <= tree[level][i_left];
+            tree[stage+1][node] <= tree[stage][idx_left];
           end
         end
       end
