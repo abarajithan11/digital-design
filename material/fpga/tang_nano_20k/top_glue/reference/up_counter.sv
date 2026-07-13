@@ -15,12 +15,20 @@ module board_glue (
 );
 
   logic [7:0] count;
+  logic       btn_prev, incr;
+
+  always_ff @(posedge clk) begin
+    if (rst) btn_prev <= 1'b0;
+    else     btn_prev <= btn[0];
+  end
+  always_comb incr = btn[0] && !btn_prev;
+
   up_counter #(
     .WIDTH(8)
   ) u_dut (
     .clk  (clk),
     .rstn (~rst),
-    .incr (btn[0]),
+    .incr (incr),
     .count(count)
   );
 

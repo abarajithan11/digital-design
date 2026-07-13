@@ -47,8 +47,7 @@ module board_top (
   );
 
   // ---- Buttons: 2-FF sync + debounce -> active-high `button` --------------
-  // A reading is accepted only after it holds steady ~2^16 clocks, so a press
-  // registers as a single clean edge.
+  // A reading is accepted only after it holds steady ~2^16 clocks.
   logic [1:0]  button_sync_0, button_sync_1, button;
   logic [15:0] debounce_count[2];
   always_ff @(posedge clk_sys) begin
