@@ -54,6 +54,8 @@ module tb_sys_fir_filter;
   end
 
   initial begin
+    $dumpfile(`FST_PATH); $dumpvars;
+
     // Read files
     file = $fopen("data/x_music.txt", "r");
     if (file==0) $fatal(1, "failed to open data/x_music.txt");
