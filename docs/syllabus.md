@@ -6,14 +6,15 @@ This five-week course introduces digital design by taking circuits from SystemVe
 
 * **Instructional Team:** Abarajithan G (Instructor), Zhenghua Ma (TA), Sriharsha Kavuri (Tutor) & Aarav Vidhawan (Tutor).
 * **Lectures:** Tuesdays & Thursdays, 11:00 a.m. - 1:50 p.m., [COA - Coalition Building](https://maps.app.goo.gl/bmoSkuejwRAZGHEy9), Room B26.
-* **Discussion:** Fridays, 3:00 p.m. - 4:50 p.m., [COA - Coalition Building](https://maps.app.goo.gl/bmoSkuejwRAZGHEy9), Room 213.
+* **Discussion:** Fridays, 3:00 p.m. - 4:50 p.m., [COA - Coalition Building](https://maps.app.goo.gl/bmoSkuejwRAZGHEy9), Room 123.
 * **Expected workload** [16 hours outside class](https://senate.ucsd.edu/media/276096/epc-credit-hour-policy-and-supplement.pdf) per week. That is 3.2 extra hours per weekday on your own.
 * **Office hours:**
   * **Zhenghua:** 2:00 p.m. to 3:00 p.m on Wednesdays & Fridays [Zoom link](https://ucsd.zoom.us/j/99670531654). Since the Friday, 3rd of July is a holiday, that session is moved to Thursday, 2nd of July 07:00 p.m. to 08:00 p.m.
   * **Aarav, Harsha:** 2:00 p.m. - 3:00 p.m. on Mondays starting on July 6th. [Zoom link](https://ucsd.zoom.us/j/94923591908)
   * **Abarajithan:** 2:00 p.m. - 2:30 p.m. on Tuesdays & Thursdays (after the lecture).
-* **Midterm exam:** Friday, July 17, 4:00 p.m. - 4:45 p.m., [COA - Coalition Building](https://maps.app.goo.gl/bmoSkuejwRAZGHEy9), Room 213. Conducted during discussion session.
+* **Midterm exam:** Friday, July 17, 3:00 p.m. - 3:45 p.m., [COA - Coalition Building](https://maps.app.goo.gl/bmoSkuejwRAZGHEy9), Room 123. Conducted during discussion session.
 * **Final exam:** Saturday, August 1, 11:30 a.m. - 2:26 p.m., [COA - Coalition Building](https://maps.app.goo.gl/bmoSkuejwRAZGHEy9), Room B26.
+* **Students with OSD Accommodations:** Midterm at 2:00 pm on Friday, July 17 at Triton Testing Center. Schedule 3 days in advance [here](https://tritontesting.ucsd.edu/accommodated-and-makeup-testing/students/index.html). Finals at 11:30 am on August 1 at Triton Testing Center.
 
 ## Where things live:
 
