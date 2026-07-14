@@ -7,7 +7,7 @@ module sys_fir_filter #(
       FRAC           = 7,
       N              = 100,
       W_K            = 4,
-    parameter [(N+1)*W_K-1:0] K = {
+    parameter signed [(N+1)*W_K-1:0] K = {
       `include "data/coef.svh"
     },
     localparam W_Y = WIDTH + W_K + $clog2(N+1)

@@ -2,15 +2,15 @@ module uart_tx #(
   parameter CLKS_PER_BIT  = 4,
             BITS_PER_WORD = 8,
             PACKET_SIZE   = BITS_PER_WORD+5,
-            W_OUT         = 24
+            W_OUT         = 24,
+  localparam int NUM_WORDS = W_OUT/BITS_PER_WORD
   )(
     input  logic clk, rstn, s_valid,
     input  logic [NUM_WORDS-1:0][BITS_PER_WORD-1:0] s_data,
     output logic tx, s_ready
   );
-  localparam NUM_WORDS = W_OUT/BITS_PER_WORD;
-  localparam END_BITS  = PACKET_SIZE-BITS_PER_WORD-1;
-  localparam NUM_BITS  = NUM_WORDS*PACKET_SIZE;
+  localparam int END_BITS = PACKET_SIZE-BITS_PER_WORD-1;
+  localparam int NUM_BITS = NUM_WORDS*PACKET_SIZE;
 
   logic [NUM_BITS-1:0] m_packets;
   logic [NUM_WORDS-1:0][PACKET_SIZE-1:0] s_packets;

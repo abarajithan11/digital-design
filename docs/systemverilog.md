@@ -5,7 +5,7 @@ Some constructs synthesize into hardware; others exist only for simulation.
 
 :::{admonition} Keywords & Features of SystemVerilog Avoided in this Course
 
-`reg`, `wire`, `assign`, `always`, packed arrays
+`reg`, `wire`, `assign`, `always`
 :::
 
 SystemVerilog is a strict superset of old Verilog, which dates to 1984. 
@@ -85,13 +85,26 @@ unpacked:
 logic [7:0] byte_value;       // one packed 8-bit value
 logic [3:0][7:0] word;        // one packed 32-bit value: four bytes
 logic [7:0] memory [0:255];   // 256 unpacked elements, each 8 bits
+
+logic [A-1:0][B-1:0][C-1:0] signal_name [D-1:0][E-1:0][F-1:0];
+// Select one bit as signal_name[a][b][c][d][e][f].
 ```
 
 A packed array is one contiguous integral value so it supports arithmetic, bitwise operations, and slicing. 
 An unpacked array is a collection of separate elements, useful for memories and lists. 
-A packed array is easier to deal with when assigning to flat arrays.
-An unpacked array is easier to read in simulation waveforms.
 For `memory`, `memory[3]` selects an 8-bit element and `memory[3][0]` selects one bit within it.
+
+Packed arrays can be assigned directly to flat vectors of the same total width;
+unpacked arrays cannot:
+
+```systemverilog
+logic [B-1:0][A-1:0] signal_1;
+logic [B*A-1:0]      signal_2;
+
+always_comb signal_2 = signal_1;
+```
+
+Prefer packed arrays unless a specific tool or memory interface requires an unpacked array.
 
 ### `typedef`, `enum`, and `struct`
 

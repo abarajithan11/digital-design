@@ -38,6 +38,7 @@ BASIC_GATES_DONT_USE_CELLS ?= *x1p*_ASAP7* *xp*_ASAP7* SDF* ICG* OA21* OAI21*
 NETLIST_VIEWER ?= pygmentize -l systemverilog -f terminal256
 
 YOSYS_EXE    ?= yosys
+SYNTH_HDL_FRONTEND ?= slang
 OPENROAD_EXE ?= openroad
 KLAYOUT_CMD  ?= klayout
 
@@ -92,7 +93,7 @@ check_tools:
 compile: check_tools
 	mkdir -p "$(SIM_WORKDIR)"
 	if [ -n "$(SIM_GEN)" ] && [ -f "$(SIM_GEN)" ]; then python3 "$(SIM_GEN)"; fi
-	verilator --binary --trace-fst --timing --sv --timescale 1ns/1ps \
+	verilator --binary --trace-fst --trace-structs --timing --sv --timescale 1ns/1ps \
 	    $(VERILATOR_EXTRA_FLAGS) \
 	    --preproc-token-limit 2000000 \
 	    --top-module "$(TOP_TB)" \
@@ -122,6 +123,7 @@ gds: check_tools
 	    DESIGN_CONFIG="$(DESIGN_CONFIG)" \
 	    WORK_HOME="$(WORK_HOME)" \
 	    YOSYS_EXE="$(YOSYS_EXE)" \
+	    SYNTH_HDL_FRONTEND="$(SYNTH_HDL_FRONTEND)" \
 	    OPENROAD_EXE="$(OPENROAD_EXE)" \
 	    KLAYOUT_CMD="$(KLAYOUT_CMD)" \
 	    gds
