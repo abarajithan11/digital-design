@@ -11,7 +11,11 @@ ifneq ($(filter $(ARCH),amd64 arm64),$(ARCH))
 $(error Unsupported ARCH '$(ARCH)' from uname -m='$(HOST_ARCH)'; set ARCH=amd64 or ARCH=arm64)
 endif
 IMAGE     ?= ghcr.io/ucsd-cse140-s126/digital-design-$(ARCH):latest
-CONTAINER ?= orfs-$(USR)
+# Per-repo container name (not just per-user), so a student can have containers
+# for different assignments / checkouts running at once without a name clash.
+# Sanitize the directory name to characters Docker allows in a container name.
+_DIRTAG   := $(shell printf '%s' '$(notdir $(CURDIR))' | tr -c 'A-Za-z0-9_.-' '-')
+CONTAINER ?= orfs-$(USR)-$(_DIRTAG)
 
 # macOS GUI support. XQuartz can't display these tools well (its only OpenGL
 # path to a container is indirect GLX = OpenGL 1.4, too old for openscad), so on
@@ -89,6 +93,9 @@ run:
 		$(IMAGE) bash -lc '$(CMD)'
 
 start:
+	# Drop any stale container of this name so re-running `start` never errors
+	# with a name conflict (idempotent; different repos already get distinct names).
+	- docker rm -f $(CONTAINER) >/dev/null 2>&1 || true
 	# x86 only: let the container reach the host X server. Skipped on arm macOS,
 	# where the GUI goes through the in-container VNC display not the X server
 	$(if $(IS_MAC),,- xhost +Local:docker 2>/dev/null || true)

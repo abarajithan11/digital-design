@@ -10,7 +10,9 @@ $(error DESIGN='$(DESIGN)' must match exactly one file in designs/ or designs/*/
 endif
 design_flist := $(firstword $(design_flists))
 
-design_files_raw := $(strip $(shell awk '{sub(/#.*/, ""); gsub(/^[ \t]+|[ \t]+$$/, ""); if (length) print $$0}' $(design_flist) 2>/dev/null))
+# `\#` escaped for GNU Make 3.81 (macOS's 2006 build): an unescaped `#` in a
+# function call is treated as a comment start and truncates the line.
+design_files_raw := $(strip $(shell awk '{sub(/\#.*/, ""); gsub(/^[ \t]+|[ \t]+$$/, ""); if (length) print $$0}' $(design_flist) 2>/dev/null))
 export DESIGN_FILES ?= $(foreach f,$(design_files_raw),$(if $(filter /%,$(f)),$(f),$(COURSE_MATERIAL_DIR)/$(patsubst ./%,%,$(f))))
 
 # ORFS uses only RTL sources; simulation flows can use full DESIGN_FILES.
