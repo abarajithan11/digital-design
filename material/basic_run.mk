@@ -10,6 +10,7 @@ SIM_GEN      ?=
 TOP_TB       ?= tb_$(TB)_$(DESIGN)
 TOP_RTL      ?= $(DESIGN)
 SIM_MAX_TIME ?= 1s
+VERILATOR_EXTRA_FLAGS ?=
 
 CONT_REPO     ?= /repo
 CONT_MATERIAL ?= $(CONT_REPO)
@@ -92,6 +93,7 @@ compile: check_tools
 	mkdir -p "$(SIM_WORKDIR)"
 	if [ -n "$(SIM_GEN)" ] && [ -f "$(SIM_GEN)" ]; then python3 "$(SIM_GEN)"; fi
 	verilator --binary --trace-fst --timing --sv --timescale 1ns/1ps \
+	    $(VERILATOR_EXTRA_FLAGS) \
 	    --preproc-token-limit 2000000 \
 	    --top-module "$(TOP_TB)" \
 	    -Mdir "$(SIM_WORKDIR)/obj_dir" \
