@@ -13,17 +13,27 @@ module tb_reduction_tree_min;
 
   reduction_tree_min #(.N(N), .W_X(W_X)) dut (.*);
 
+  task automatic check(
+    input logic [N-1:0][W_X-1:0] x_in,
+    input logic          [W_X-1:0] expected
+  );
+    x = x_in;
+    cen = 1;
+    repeat(LATENCY) @(posedge clk); #1ps;
+    cen = 0;
+    assert (y == expected)
+      else $error("Mismatch: y=%0d expected=%0d x=%p",
+                  $signed(y), $signed(expected), x_in);
+  endtask
+
   initial begin
     $dumpfile(`FST_PATH); $dumpvars;
 
     @(posedge clk) #1ps rstn = 1;
 
-    // Manual checking
-    @(posedge clk) #1ps  x = '{ 8'd7,   8'd2,   8'd9,  8'd4,  8'd1}; cen = 1;
-    repeat(LATENCY-1) @(posedge clk);
-
-    @(posedge clk) #1ps  x = '{-8'sd3,  8'd12, -8'sd1, 8'd5,  8'd0}; cen = 1;
-    repeat(LATENCY-1) @(posedge clk);
+    // All-positive inputs catch an incorrect zero pad for a minimum tree.
+    check('{ 8'd7,   8'd2,   8'd9,  8'd4,  8'd1},   8'd1);
+    check('{-8'sd3,  8'd12, -8'sd1, 8'd5,  8'd0}, -8'sd3);
 
     // Self-checking
     repeat(N_EXP) begin
