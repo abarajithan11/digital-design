@@ -1,7 +1,8 @@
 module uart_rx #(
   parameter CLKS_PER_BIT  = 4,
             BITS_PER_WORD = 8,
-            W_OUT         = 24
+            W_OUT         = 24,
+            PACKET_GAP_CLKS = 0
 )(
   input  logic clk, rstn, rx,
   output logic m_valid,
@@ -9,6 +10,8 @@ module uart_rx #(
 );
   localparam NUM_WORDS = W_OUT/BITS_PER_WORD;
   localparam BITS_WORDS = $clog2(NUM_WORDS) == 0 ? 1 : $clog2(NUM_WORDS);
+  localparam GAP_COUNT_BITS = $clog2(PACKET_GAP_CLKS + 1) == 0
+                              ? 1 : $clog2(PACKET_GAP_CLKS + 1);
 
   logic bw_clr;
   logic [$clog2(CLKS_PER_BIT) -1:0] c, c_max;
@@ -17,6 +20,8 @@ module uart_rx #(
   logic c_en, c_clr, c_last, c_last_clk;
   logic b_en, b_clr, b_last, b_last_clk;
   logic w_en, w_clr, w_last, w_last_clk;
+  logic [GAP_COUNT_BITS-1:0] gap_count;
+  logic packet_gap;
 
   enum {IDLE, START, DATA, END} state;
 
@@ -30,7 +35,7 @@ module uart_rx #(
   always_comb begin
     c_clr = 0; 
     b_clr = bw_clr; 
-    w_clr = bw_clr;
+    w_clr = bw_clr | (state == IDLE && !rx && packet_gap);
     c_en = state != IDLE;
     b_en = c_last_clk;
     w_en = b_last_clk;
@@ -46,6 +51,21 @@ module uart_rx #(
       b_clr = 1;
       c_max = $bits(c)'(CLKS_PER_BIT-1);
     end
+  end
+
+  always_comb
+    packet_gap = PACKET_GAP_CLKS != 0
+                 && gap_count == GAP_COUNT_BITS'(PACKET_GAP_CLKS);
+
+  // Optionally discard an incomplete multi-word packet after a long idle gap.
+  // The next start bit then begins word zero instead of continuing stale state.
+  always_ff @(posedge clk or negedge rstn) begin
+    if (!rstn)
+      gap_count <= '0;
+    else if (state != IDLE || !rx)
+      gap_count <= '0;
+    else if (!packet_gap)
+      gap_count <= gap_count + 1'b1;
   end
 
   always_ff @(posedge clk or negedge rstn) begin

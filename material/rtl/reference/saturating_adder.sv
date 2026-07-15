@@ -5,8 +5,8 @@ module saturating_adder #(
   input  logic [W-1:0] a, b,
   output logic [W-1:0] s
 );
-  localparam [W-1:0] MAX = {1'b0, {(W-1){1'b1}}};   // 0111...1
-  localparam [W-1:0] MIN = {1'b1, {(W-1){1'b0}}};   // 1000...0
+  localparam logic [W-1:0] MIN = W'(1) << (W-1);   // 1000...0
+  localparam logic [W-1:0] MAX = MIN - 1'b1;       // 0111...1
 
   logic [W:0] sum_ext;   // one extra bit holds the true sum
   logic overflow, negative;

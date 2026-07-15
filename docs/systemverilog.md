@@ -104,6 +104,15 @@ logic [B*A-1:0]      signal_2;
 always_comb signal_2 = signal_1;
 ```
 
+For broad synthesis-tool compatibility, pass a multidimensional constant as a
+flat packed parameter, then assign it to a local packed view for indexing:
+
+```systemverilog
+parameter logic [B*A-1:0] P = '0;
+logic [B-1:0][A-1:0] p_view;
+always_comb p_view = P;
+```
+
 Prefer packed arrays unless a specific tool or memory interface requires an unpacked array.
 
 ### `typedef`, `enum`, and `struct`

@@ -57,9 +57,7 @@ bitstream: check_fpga_tools
 	mkdir -p "$(FPGA_BUILD)"
 	# flist paths are relative to material/; strip comments/blanks and absolutize.
 	dut=$$(sed 's/#.*//' "$(FPGA_FLIST)" | while read -r f; do [ -n "$$f" ] && printf '%s ' "$(MATERIAL_DIR)/$$f"; done)
-	# Keep the board/vendor wrapper on the built-in frontend; use Slang for the
-	# design RTL so SystemVerilog array declarations elaborate correctly.
-	yosys -q -p "plugin -i slang; read_verilog -sv $(FPGA_INCS) $(FPGA_COMMON)/board_top.sv; read_slang --top board_glue -D SYNTHESIS $(FPGA_INCS) $(FPGA_GLUE) $$dut; synth_gowin -top board_top -json $(FPGA_JSON)"
+	yosys -q -p "read_verilog -sv $(FPGA_INCS) $(FPGA_COMMON)/board_top.sv $(FPGA_GLUE) $$dut; synth_gowin -top board_top -json $(FPGA_JSON)"
 	nextpnr-himbaechel --device "$(GOWIN_DEVICE)" --vopt family=$(GOWIN_FAMILY) \
 	    --vopt cst="$(FPGA_COMMON)/board.cst" --freq $$(($(SYS_HZ) / 1000000)) \
 	    --json "$(FPGA_JSON)" --write "$(FPGA_PNR)"

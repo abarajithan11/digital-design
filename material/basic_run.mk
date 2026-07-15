@@ -38,7 +38,6 @@ BASIC_GATES_DONT_USE_CELLS ?= *x1p*_ASAP7* *xp*_ASAP7* SDF* ICG* OA21* OAI21*
 NETLIST_VIEWER ?= pygmentize -l systemverilog -f terminal256
 
 YOSYS_EXE    ?= yosys
-SYNTH_HDL_FRONTEND ?= slang
 OPENROAD_EXE ?= openroad
 KLAYOUT_CMD  ?= klayout
 
@@ -123,7 +122,6 @@ gds: check_tools
 	    DESIGN_CONFIG="$(DESIGN_CONFIG)" \
 	    WORK_HOME="$(WORK_HOME)" \
 	    YOSYS_EXE="$(YOSYS_EXE)" \
-	    SYNTH_HDL_FRONTEND="$(SYNTH_HDL_FRONTEND)" \
 	    OPENROAD_EXE="$(OPENROAD_EXE)" \
 	    KLAYOUT_CMD="$(KLAYOUT_CMD)" \
 	    gds

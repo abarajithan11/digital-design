@@ -4,7 +4,8 @@ module vip_uart_rx #(
   parameter CLKS_PER_BIT   = 4,
             BITS_PER_WORD  = 8,
             W_OUT          = 24,
-            N_WORDS        = W_OUT / BITS_PER_WORD
+            N_WORDS        = W_OUT / BITS_PER_WORD,
+            INTER_WORD_GAP_MAX = 20
   )(
     input  logic clk,
     output logic rx
@@ -16,10 +17,15 @@ module vip_uart_rx #(
   initial rx = 1'b1;
 
   task automatic send_packet(input data_t data);
-    for (int iw = 0; iw < N_WORDS; iw++) begin
+    send_words(data, N_WORDS);
+  endtask
+
+  task automatic send_words(input data_t data, input int n_words);
+    for (int iw = 0; iw < n_words; iw++) begin
       s_packet = {1'b1, data[iw], 1'b0};
 
-      repeat ($urandom_range(1,20)) @(posedge clk);
+      if (INTER_WORD_GAP_MAX > 0)
+        repeat ($urandom_range(1, INTER_WORD_GAP_MAX)) @(posedge clk);
 
       for (int ib = 0; ib < BITS_PER_WORD+2; ib++) begin
         repeat (CLKS_PER_BIT) begin
