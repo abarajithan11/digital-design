@@ -94,7 +94,7 @@ A packed array is one contiguous integral value so it supports arithmetic, bitwi
 An unpacked array is a collection of separate elements, useful for memories and lists. 
 For `memory`, `memory[3]` selects an 8-bit element and `memory[3][0]` selects one bit within it.
 
-Packed arrays can be assigned directly to flat vectors of the same total width;
+Packed arrays can be assigned directly to flat vectors of the same total width and vice versa;
 unpacked arrays cannot:
 
 ```systemverilog
@@ -104,16 +104,15 @@ logic [B*A-1:0]      signal_2;
 always_comb signal_2 = signal_1;
 ```
 
-For broad synthesis-tool compatibility, pass a multidimensional constant as a
-flat packed parameter, then assign it to a local packed view for indexing:
+Some synthesis tools may not support some SV features.
+Yosys does not support packed array parameters.
+Therefore, we pass a flattned array as a parameter and then assign it to a local packed view for indexing:
 
 ```systemverilog
 parameter logic [B*A-1:0] P = '0;
 logic [B-1:0][A-1:0] p_view;
 always_comb p_view = P;
 ```
-
-Prefer packed arrays unless a specific tool or memory interface requires an unpacked array.
 
 ### `typedef`, `enum`, and `struct`
 
