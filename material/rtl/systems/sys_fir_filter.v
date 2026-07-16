@@ -4,7 +4,8 @@ module sys_fir_filter #(
       BITS_PER_WORD  = 8,
       PACKET_SIZE_TX = BITS_PER_WORD+5,
       WIDTH          = 8,
-      FRAC           = 7,
+      FRAC           = 11,  // == K_FRAC in py/sys_fir_filter_gen.py: undoes the
+                            // coefficient scale, which is NOT the input's 1<<7
       N              = 100,
       W_K            = 8,
     parameter [(N+1)*W_K-1:0] K = {

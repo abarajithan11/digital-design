@@ -5,7 +5,7 @@ module tb_sys_fir_filter;
   timeunit 1ns/1ps;
   localparam  CLKS_PER_BIT     = 4,
               WIDTH            = 8,
-              FRAC             = 7,
+              FRAC             = 11,   // == K_FRAC in py/sys_fir_filter_gen.py
               W_K              = 8,
               N                = 100,
               W_Y              = WIDTH + W_K + $clog2(N+1),
