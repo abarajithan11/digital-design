@@ -9,9 +9,7 @@ module memory #(
 );
   logic [15:0] mem [2**ADDR_W];
 
-  // Only the low ADDR_W address bits select a row; a smaller memory (e.g. on
-  // FPGA, to save area) simply ignores the upper bits.
-  wire [ADDR_W-1:0] a = addr[ADDR_W-1:0];
+  logic [ADDR_W-1:0] a = addr[ADDR_W-1:0];
 
   always_ff @(posedge clk)
     if (wen) mem[a] <= wdata;

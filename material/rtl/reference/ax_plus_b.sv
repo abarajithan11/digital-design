@@ -21,8 +21,8 @@ module ax_plus_b #(
       mul <= $signed(a) * $signed(x);
       b_1 <= b;
       sum <= WS'($signed(mul)) + WS'($signed(b_1));
-      y   <=  $signed(sum) < $signed(MIN) ? MIN :
-              $signed(sum) < $signed(MAX) ? MAX : 
+      y   <=  $signed(sum) < WS'($signed(MIN)) ? MIN :
+              $signed(sum) > WS'($signed(MAX)) ? MAX :
               W'(sum);
     end
   end

@@ -3,9 +3,12 @@
 module tb_ax_plus_b;
   localparam W = 8;
   localparam WS = 2*W+1;
+  localparam logic [W-1:0] MIN = 1 << (W-1),
+                           MAX = MIN - 1'b1;
 
   logic clk=0, rstn=0;
   logic [W-1:0] a, x, b, y, y_exp;
+  logic signed [WS-1:0] sum_exp;
 
   initial forever #1 clk = !clk;
 
@@ -25,7 +28,10 @@ module tb_ax_plus_b;
       a = W'($urandom);
       x = W'($urandom);
       b = W'($urandom);
-      y_exp = W'(WS'($signed(a)) * WS'($signed(x)) + WS'($signed(b)));
+      sum_exp = WS'($signed(a)) * WS'($signed(x)) + WS'($signed(b));
+      y_exp = sum_exp < WS'($signed(MIN)) ? MIN :
+              sum_exp > WS'($signed(MAX)) ? MAX :
+              W'(sum_exp);
       repeat(3) @(posedge clk);
       #1ps;
       assert (y == y_exp) $display("OK");
