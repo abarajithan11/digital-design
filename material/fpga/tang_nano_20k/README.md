@@ -16,8 +16,9 @@ make bitstream_all                  # (optional) build every design
 ```
 
 `FPGA` defaults to `tang_nano_20k`. `DESIGN` is any name with a glue file in
-`top_glue/{reference,system}/` and a flist in `design/{reference,system}/`
-(every RTL design except the CPU).
+`top_glue/{cpu,reference,system}/` and a shared flist in
+`material/designs/{cpu,reference,systems}/`. The bitstream flow omits `tb_*` and
+`vip_*` sources from that shared list before adding the design's board glue.
 
 ## Program the board (from Chrome)
 
@@ -30,8 +31,8 @@ common/
   board_top.sv   FIXED wrapper: pins <-> clean active-high world (+ 108 MHz PLL). Never edited.
   board.cst      FIXED pin constraints (LEDs, buttons, UART, GPIO).
   fpga.mk        the bitstream build target (included by material/Makefile).
-top_glue/{reference,system}/<design>.sv   one board_glue per design (the only per-design file).
-design/{reference,system}/<design>.f      RTL flist per design (no testbenches).
+top_glue/{cpu,reference,system}/<design>.sv   one board_glue per design (the only per-design file).
+../../designs/{cpu,reference,systems}/<design>.f   shared RTL/simulation flist.
 build/<design>/                            generated bitstreams (gitignored).
 ```
 
@@ -71,8 +72,3 @@ Both scripts have `PORT`/`INPUT`/etc. as constants at the top (default
 `/dev/ttyUSB1`); edit `PORT` for a native Windows `COM*` or macOS
 `/dev/tty.usbserial-*`.
 
----
-
-**Instructors:** the toolchain lives in the Docker image, so after pulling these
-changes rebuild and republish it (`make scratch` to build locally, `make publish`
-to push) before students `make fresh`.

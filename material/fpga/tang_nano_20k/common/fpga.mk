@@ -14,9 +14,10 @@ SHELL := /bin/bash
 #  Pipeline (tools live in the Docker image; see Dockerfile):
 #     yosys synth_gowin  ->  nextpnr-himbaechel  ->  gowin_pack
 #
-#  Per design we compile exactly: common/board_top.sv + the one top_glue/*.sv +
-#  the RTL listed in design/*/<DESIGN>.f (no testbenches). board_top runs every
-#  design at 108 MHz from the board's 27 MHz crystal.
+#  Per design we compile exactly: common/board_top.sv + the RTL in the shared
+#  designs/*/<DESIGN>.f list + the one top_glue/*.sv. Testbench and VIP sources
+#  from the shared list are omitted. board_top runs every design at 108 MHz
+#  from the board's 27 MHz crystal.
 # ============================================================================
 
 FPGA         ?= tang_nano_20k
@@ -39,9 +40,10 @@ GOWIN_FAMILY ?= GW2A-18C
 # turns that optimism into real margin.
 PNR_TARGET_HZ := 108000000
 
-# Locate the design's glue and flist under either <cat>/ subdir (reference|system).
+# Locate the design's glue. FLIST is the canonical list resolved by
+# material/Makefile from material/designs/.
 FPGA_GLUE    = $(firstword $(wildcard $(FPGA_DIR)/top_glue/$(DESIGN).sv $(FPGA_DIR)/top_glue/*/$(DESIGN).sv))
-FPGA_FLIST   = $(firstword $(wildcard $(FPGA_DIR)/design/$(DESIGN).f $(FPGA_DIR)/design/*/$(DESIGN).f))
+FPGA_FLIST   = $(MATERIAL_DIR)/$(FLIST)
 FPGA_INCS    = -I$(MATERIAL_DIR) -I$(FPGA_DIR)
 
 FPGA_JSON    = $(FPGA_BUILD)/board_top.json
@@ -61,11 +63,24 @@ check_fpga_tools:
 
 bitstream: check_fpga_tools
 	test -n "$(FPGA_GLUE)"  || { echo "No top_glue for DESIGN='$(DESIGN)' in $(FPGA_DIR)/top_glue/" >&2; exit 1; }
-	test -n "$(FPGA_FLIST)" || { echo "No flist for DESIGN='$(DESIGN)' in $(FPGA_DIR)/design/"     >&2; exit 1; }
+	test -f "$(FPGA_FLIST)" || { echo "No shared flist for DESIGN='$(DESIGN)' in $(MATERIAL_DIR)/designs/" >&2; exit 1; }
 	mkdir -p "$(FPGA_BUILD)"
-	# flist paths are relative to material/; strip comments/blanks and absolutize.
-	dut=$$(sed 's/#.*//' "$(FPGA_FLIST)" | while read -r f; do [ -n "$$f" ] && printf '%s ' "$(MATERIAL_DIR)/$$f"; done)
-	yosys -q -p "read_verilog -sv $(FPGA_INCS) $(FPGA_COMMON)/board_top.sv $(FPGA_GLUE) $$dut; synth_gowin -top board_top -json $(FPGA_JSON)"
+	# Shared flist paths are relative to material/. Drop simulation-only files,
+	# then append the board glue if the shared list does not already contain it.
+	sources="$(FPGA_COMMON)/board_top.sv"
+	while IFS= read -r f || [ -n "$$f" ]; do
+	    f="$${f%%#*}"
+	    f="$${f#"$${f%%[![:space:]]*}"}"
+	    f="$${f%"$${f##*[![:space:]]}"}"
+	    [ -n "$$f" ] || continue
+	    case "$${f##*/}" in tb_*|vip_*) continue ;; esac
+	    sources="$$sources $(MATERIAL_DIR)/$$f"
+	done < "$(FPGA_FLIST)"
+	case " $$sources " in
+	    *" $(FPGA_GLUE) "*) ;;
+	    *) sources="$$sources $(FPGA_GLUE)" ;;
+	esac
+	yosys -q -p "read_verilog -sv $(FPGA_INCS) $$sources; synth_gowin -top board_top -json $(FPGA_JSON)"
 	nextpnr-himbaechel --device "$(GOWIN_DEVICE)" --vopt family=$(GOWIN_FAMILY) \
 	    --vopt cst="$(FPGA_COMMON)/board.cst" --freq $$(($(PNR_TARGET_HZ) / 1000000)) \
 	    --json "$(FPGA_JSON)" --write "$(FPGA_PNR)"

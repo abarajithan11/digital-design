@@ -1,1 +1,0 @@
-rtl/reference/encoder.sv
