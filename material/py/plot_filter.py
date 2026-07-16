@@ -32,13 +32,17 @@ def _plot_freq(ax, freqs, y_db, title, fs, cutoff_hz=None, add_markers=False):
     ax.grid(True, which="both")
 
 
-def plot_filter_response(x_q, h_q, fs, scale, cutoff_hz, output_path="data/filter.png"):
+def plot_filter_response(x_q, h_q, fs, x_scale, k_scale, cutoff_hz,
+                         output_path="data/filter.png"):
+    # Samples and coefficients carry different fixed-point scales (the input fills
+    # an int8 at 1<<7, the much smaller coefficients need 1<<11 to do the same),
+    # so they cannot share one.
     t0 = 0.02
     start_idx = int(t0 * fs)
     n_time = 100
 
-    x_plot = x_q.astype(np.float32) / scale
-    h_plot = h_q.astype(np.float32) / scale
+    x_plot = x_q.astype(np.float32) / x_scale
+    h_plot = h_q.astype(np.float32) / k_scale
     y_plot = np.convolve(x_plot, h_plot, mode="same")
 
     fx, x_db = _mag_db(x_plot, fs)

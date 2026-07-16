@@ -90,4 +90,4 @@ y_u8 = np.clip(np.round(y_f * 128.0 + 128.0), 0, 255).astype(np.uint8)
 wavfile.write(output_file, fs, y_u8)
 
 print(f"Saved: {output_file}")
-plot_filter_response(x_q, h_q, fs, k_scale, cutoff_hz)
+plot_filter_response(x_q, h_q, fs, x_scale, k_scale, cutoff_hz)
