@@ -1,8 +1,8 @@
 `timescale 1ns / 1ps
 `default_nettype none
 
-// uart_echo at 2 Mbaud.  board_top supplies 108 MHz, so
-// CLKS_PER_BIT = 108e6/2e6 = 54.  The design drives tx; the board's onboard
+// uart_echo at 2 Mbaud.  board_top supplies 54 MHz, so
+// CLKS_PER_BIT = 54e6/2e6 = 27.  The design drives tx; the board's onboard
 // bridge runs the UART at 2 Mbaud.  Host: python3 py/uart_echo.py.
 module board_glue (
     input  wire       clk,
@@ -17,7 +17,7 @@ module board_glue (
 );
 
   uart_echo #(
-    .CLKS_PER_BIT  (54),
+    .CLKS_PER_BIT  (27),
     .PACKET_SIZE_TX(10),
     .W_OUT         (8)
   ) u_dut (

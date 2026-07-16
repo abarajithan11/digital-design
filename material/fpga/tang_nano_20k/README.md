@@ -48,7 +48,7 @@ The Tang Nano 20K's onboard USB-serial bridge runs the FPGA-facing UART at
 **2 Mbaud**, has a **32-byte buffer**, and no hardware flow control. So the UART
 designs:
 
-* use `CLKS_PER_BIT = 108e6/2e6 = 54`, which gives exactly 2 Mbaud from the
+* use `CLKS_PER_BIT = 54e6/2e6 = 27`, which gives exactly 2 Mbaud from the
   board-wide 108 MHz system clock;
 * buffer with a **`skid_buffer`** (2-deep elastic buffer) so the transmitter can
   backpressure the receiver and no byte is dropped;

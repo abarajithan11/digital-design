@@ -32,8 +32,8 @@ module board_top (
       .DEVICE   ("GW2A-18C"),
       .FCLKIN   ("27"),
       .IDIV_SEL (0),
-      .FBDIV_SEL(3),
-      .ODIV_SEL (8)
+      .FBDIV_SEL(1),
+      .ODIV_SEL (16)
   ) i_pll (
       .CLKIN  (clk),
       .CLKOUT (clk_sys),

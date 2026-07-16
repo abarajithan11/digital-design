@@ -23,6 +23,10 @@ INPUT     = DATA_DIR / "chill_sub.wav"
 OUTPUT    = DATA_DIR / "fpga_out.wav"
 REFERENCE = DATA_DIR / "bass_only_8bit.wav"   # None to skip the check
 SECONDS   = None                        # None for the whole file
+WARMUP    = 101                         # N+1 taps: the FPGA keeps the delay line
+                                        # from the previous run, so its first N+1
+                                        # outputs mix in stale samples while the
+                                        # reference starts from zeros. Skip them.
 
 # ---- Quantize the source to signed int8 (mono), matching sys_fir_filter_gen ---
 fs, source = wavfile.read(INPUT)
@@ -55,7 +59,8 @@ print(f"Filtered {len(samples)} samples, stored in {OUTPUT}")
 if REFERENCE:
     _, reference = wavfile.read(REFERENCE)
     reference = reference[:len(result)]
-    if np.array_equal(result, reference):
-        print(f"PASS: all {len(result)} samples match {REFERENCE}.")
+    got, want = result[WARMUP:], reference[WARMUP:]
+    if np.array_equal(got, want):
+        print(f"PASS: all {len(got)} samples match {REFERENCE}.")
     else:
-        print(f"FAIL: {(result != reference).sum()} samples differ from {REFERENCE}.")
+        print(f"FAIL: {(got != want).sum()} samples differ from {REFERENCE}.")

@@ -29,7 +29,15 @@ FPGA_BUILD   := $(FPGA_DIR)/build/$(DESIGN)
 GOWIN_DEVICE ?= GW2AR-LV18QN88C8/I7
 GOWIN_FAMILY ?= GW2A-18C
 
-SYS_HZ       := 108000000
+# Place-and-route timing target ONLY - this does NOT set the clock. The system
+# clock is the rPLL in common/board_top.sv (54 MHz), and CLKS_PER_BIT in each
+# top_glue is derived from that, not from here.
+#
+# Deliberately 2x the real 54 MHz: nextpnr's Gowin model prices inter-tile carry
+# routing at 0 ns, so its Fmax overestimates silicon by ~2x. It reported 180 MHz
+# for sys_fir_filter, which still corrupted data at 108 MHz. Over-constraining
+# turns that optimism into real margin.
+PNR_TARGET_HZ := 108000000
 
 # Locate the design's glue and flist under either <cat>/ subdir (reference|system).
 FPGA_GLUE    = $(firstword $(wildcard $(FPGA_DIR)/top_glue/$(DESIGN).sv $(FPGA_DIR)/top_glue/*/$(DESIGN).sv))
@@ -59,7 +67,7 @@ bitstream: check_fpga_tools
 	dut=$$(sed 's/#.*//' "$(FPGA_FLIST)" | while read -r f; do [ -n "$$f" ] && printf '%s ' "$(MATERIAL_DIR)/$$f"; done)
 	yosys -q -p "read_verilog -sv $(FPGA_INCS) $(FPGA_COMMON)/board_top.sv $(FPGA_GLUE) $$dut; synth_gowin -top board_top -json $(FPGA_JSON)"
 	nextpnr-himbaechel --device "$(GOWIN_DEVICE)" --vopt family=$(GOWIN_FAMILY) \
-	    --vopt cst="$(FPGA_COMMON)/board.cst" --freq $$(($(SYS_HZ) / 1000000)) \
+	    --vopt cst="$(FPGA_COMMON)/board.cst" --freq $$(($(PNR_TARGET_HZ) / 1000000)) \
 	    --json "$(FPGA_JSON)" --write "$(FPGA_PNR)"
 	gowin_pack -d $(GOWIN_FAMILY) -o "$(FPGA_FS)" "$(FPGA_PNR)"
 	printf '\nBitstream: %s\n' "$(FPGA_FS)"

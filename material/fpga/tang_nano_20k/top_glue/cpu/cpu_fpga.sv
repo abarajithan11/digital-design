@@ -20,7 +20,7 @@
 //          After RUN_CYCLES CPU steps we stop.
 //    DUMP  send the whole data RAM back out over UART, one word per row.
 //
-//  The two RAMs run on the fast 108 MHz clock; only the CPU runs on the slow
+//  The two RAMs run on the fast 54 MHz clock; only the CPU runs on the slow
 //  1 Hz clock.  Because the RAMs read combinationally and the CPU's outputs are
 //  stable for a whole slow period, the fast-clock writes are simply repeated
 //  (idempotent) - no clock-domain-crossing logic is needed for the memories.
@@ -30,9 +30,10 @@
 // ============================================================================
 module board_glue #(
     parameter int ADDR_W       = 6,           // RAM depth = 2**ADDR_W rows (area knob)
-    parameter int CLKS_PER_BIT = 54,          // 108 MHz / 2 Mbaud
+    parameter int CLKS_PER_BIT = 27,          // 54 MHz / 2 Mbaud
     parameter int PACKET_SIZE  = 10,          // start + 8 data + stop (+ padding)
-    parameter int CPU_HALF     = 54_000_000,  // fast clks per half of the CPU clock (-> 1 Hz)
+    parameter int CPU_HALF     = 27_000_000,  // fast clks per half of the CPU clock
+                                              // (-> 1 Hz from board_top's 54 MHz)
     parameter int WATCH_ADDR   = 4,           // dmem row shown on the LEDs
     parameter int RUN_CYCLES   = (1 << ADDR_W)// CPU steps to run before dumping
 )(
@@ -95,7 +96,7 @@ module board_glue #(
   wire              ld_done    = ld_beat && ld_idx == LOAD_LAST;
 
   // ==========================================================================
-  //  The CPU and its ~1 Hz clock (a down_counter divides the 108 MHz clock)
+  //  The CPU and its ~1 Hz clock (a down_counter divides the 54 MHz clock)
   // ==========================================================================
   wire [7:0]  imem_addr, dmem_addr;
   wire [15:0] imem_rdata, dmem_rdata, dmem_wdata;
