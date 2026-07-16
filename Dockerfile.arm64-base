@@ -8,7 +8,7 @@
 #
 # Usage: docker buildx build --platform linux/arm64 -f Dockerfile.arm64-base .
 
-ARG ORFS_REF=26Q2
+ARG ORFS_REF=ae73a7dd2d4d01b12a9aa2448aba72c16ea8d5c6
 ARG UBUNTU_VERSION=22.04
 ARG NUM_THREADS=4
 
@@ -23,8 +23,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 ARG ORFS_REF
 WORKDIR /OpenROAD-flow-scripts
-RUN git clone --branch "${ORFS_REF}" --depth 1 \
-        https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts.git . \
+RUN git clone https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts.git . \
+ && git checkout --detach "${ORFS_REF}" \
  && git submodule update --init --recursive --depth 1 --jobs 4
 
 # ---------------------------------------------------------------------------
