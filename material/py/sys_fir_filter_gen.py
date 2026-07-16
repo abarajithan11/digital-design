@@ -15,7 +15,7 @@ N = 101
 cutoff_hz = 250.0
 transition_hz = 200.0
 frac = 7   # number of fractional bits for fixed-point values
-K_BITS = 4
+K_BITS = 8
 scale = 1 << frac
 
 os.makedirs("data", exist_ok=True)

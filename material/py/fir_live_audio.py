@@ -8,15 +8,21 @@ Records from the default input, streams the samples through the FPGA and plays
 the filtered ones on the default output. You should hear only the bass. Ctrl-C
 to stop.
 
-There is no hardware flow control, and the board drops samples if it is handed
-more than BURST bytes back to back, so a writer thread paces the link at the
-audio rate instead of sending each block in one go. The filtered bytes come
-back a few ms later, so a reader thread collects them and LEAD blocks are
-buffered before playback starts. PORT is the board's serial port.
+The board's USB bridge MCU has no hardware flow control and only a BURST-byte
+buffer, so writing faster than it drains loses samples before the FPGA sees
+them (the same reason fir_audio.py chunks). A writer thread therefore paces the
+link; it cannot live in the audio callback, which delivers a whole block at
+once. A reader thread collects the filtered bytes, which come back a few ms
+later, and PREFILL of them are buffered before playback starts so normal jitter
+does not starve the output. PORT is the board's serial port.
 
-Needs a PortAudio that can see your mic (on WSL: apt install libportaudio2
-libasound2-plugins, with ALSA defaulting to pulse).
+Pick devices with --input/--output (--list shows them). Note that on WSL there
+is nothing to pick: WSLg proxies audio to Windows and exposes exactly one mic
+(RDPSource) and one speaker (RDPSink), so choose the real devices in Windows'
+Sound settings instead. Run with /usr/bin/python3 there, not conda's python -
+conda's PortAudio is built without PulseAudio, so it sees no devices at all.
 """
+import argparse
 import queue
 import threading
 import time
@@ -27,26 +33,70 @@ import sounddevice as sd
 
 PORT  = "/dev/ttyUSB1"
 BAUD  = 2_000_000
-BURST = 32       # bytes the board absorbs back to back (the bridge's buffer)
+BURST = 32       # the bridge MCU's buffer size - never write more at once
 BLOCK = 512      # samples per audio callback
 RATE  = 44100    # the rate the filter's coefficients were designed for
-LEAD  = 4        # blocks buffered before playback, to cover the reply latency
+# Time for the MCU to shift a full BURST out at BAUD (10 bits/byte), plus 25%
+# margin. Writing faster than this overflows its buffer: there is no flow control.
+MIN_GAP = 1.25 * BURST * 10 / BAUD
+PREFILL = 4 * BLOCK   # filtered bytes buffered before playback (~46 ms)
+
+parser = argparse.ArgumentParser(description=__doc__,
+                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+parser.add_argument("--list", action="store_true", help="list audio devices and exit")
+parser.add_argument("-i", "--input", help="input device: index or name substring")
+parser.add_argument("-o", "--output", help="output device: index or name substring")
+args = parser.parse_args()
+
+if not len(sd.query_devices()):
+    raise SystemExit(
+        "PortAudio sees no audio devices.\n"
+        "  - Run with /usr/bin/python3: conda's PortAudio has no PulseAudio support.\n"
+        "  - On WSL also: apt install libportaudio2 libasound2-plugins, and point\n"
+        "    ALSA at pulse (pcm.!default { type pulse } in /etc/asound.conf).")
+
+if args.list:
+    print(sd.query_devices())
+    raise SystemExit
+
+def device(spec):
+    """An index, or a name substring for sounddevice to match. None = default."""
+    if spec is None:
+        return None
+    try:
+        return int(spec)
+    except ValueError:
+        return spec
 
 to_fpga = queue.Queue()         # int8 blocks from the mic
 from_fpga = bytearray()         # filtered bytes, filled by the reader thread
 lock = threading.Lock()
+playing = False                 # False until PREFILL bytes have arrived
 
 
 def writer(ser):
-    """Send BURST bytes at a time, paced at RATE bytes/s so the board keeps up."""
-    due = time.perf_counter()
+    """Send BURST bytes at a time, never faster than the bridge MCU drains.
+
+    The Tang Nano 20K's MCU buffers USB->UART in BURST bytes with no hardware
+    flow control, and empties it at the baud rate, so two writes closer together
+    than BURST*10/BAUD seconds overflow it and the samples are gone before the
+    FPGA sees them. MIN_GAP enforces that floor even when this thread has been
+    descheduled and is behind - catching up by bursting is what loses data. At
+    2 Mbaud the floor is 160 us while audio only needs a write every 726 us, so
+    there is ~4.5x of room to catch up within.
+    """
+    due = floor = time.perf_counter()
     while True:
         raw = to_fpga.get().tobytes()
         for i in range(0, len(raw), BURST):
-            ser.write(raw[i:i + BURST])
-            due = max(due + BURST / RATE, time.perf_counter() - 0.05)
-            while time.perf_counter() < due:   # too coarse for time.sleep
+            # Target the audio rate: the board echoes one byte per byte sent, so
+            # sending faster than RATE only makes the return path overrun. If we
+            # were descheduled and are behind, catch up no faster than MIN_GAP.
+            due = max(due + BURST / RATE, floor)
+            while time.perf_counter() < due:   # sub-ms: too fine for time.sleep
                 pass
+            ser.write(raw[i:i + BURST])
+            floor = time.perf_counter() + MIN_GAP
 
 
 def reader(ser):
@@ -58,11 +108,14 @@ def reader(ser):
 
 
 def callback(indata, outdata, frames, time_info, status):
+    global playing
     # float [-1,1] -> int8, matching fir_audio.py's quantization
     to_fpga.put(np.clip(np.round(indata[:, 0] * 128), -128, 127).astype(np.int8))
-    outdata[:] = 0
+    outdata[:] = 0                      # silence until the board's reply arrives
     with lock:
-        if len(from_fpga) >= frames:
+        if not playing and len(from_fpga) >= PREFILL:
+            playing = True
+        if playing and len(from_fpga) >= frames:
             y = np.frombuffer(bytes(from_fpga[:frames]), dtype=np.int8)
             del from_fpga[:frames]
             outdata[:, 0] = y.astype(np.float32) / 128.0
@@ -74,7 +127,8 @@ with serial.Serial(PORT, BAUD, timeout=0.1) as ser:
     threading.Thread(target=reader, args=(ser,), daemon=True).start()
 
     with sd.Stream(samplerate=RATE, blocksize=BLOCK, dtype="float32",
-                   channels=1, callback=callback):
+                   channels=1, device=(device(args.input), device(args.output)),
+                   callback=callback):
         print(f"Filtering mic -> FPGA -> speakers at {RATE} Hz. Ctrl-C to stop.")
         try:
             while True:
