@@ -43,6 +43,26 @@ copy `top_glue/_skeleton.sv` and wire your module's ports to those signals.
 Every design receives the same **108 MHz** system clock from the `rPLL` in
 `board_top` (`108 = 27 x 4`).
 
+## Prepare Python enviroment
+
+First, install miniconda.
+
+The python dependencies are under ``python_setup/``
+
+For all examples except NN training, do:
+
+```bash
+conda env create -f python-setup/tang-basic.yml
+conda activate tang-basic
+```
+
+If training the NN is part of the process, do:
+
+```bash
+conda env create -f python-setup/tang-training.yml
+conda activate tang-training
+```
+
 ## UART designs (uart_echo, sys_fir_filter) — 2 Mbaud
 
 The Tang Nano 20K's onboard USB-serial bridge runs the FPGA-facing UART at

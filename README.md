@@ -242,7 +242,7 @@ For UART examples, set the Python script's `PORT` to the board's `/dev/tty.usbse
 
 </details>
 
-More FPGA details are in
+More FPGA details, including setting up the conda environments, are in
 [`material/fpga/tang_nano_20k/README.md`](material/fpga/tang_nano_20k/README.md).
 
 ### 4. Run the FIR audio example

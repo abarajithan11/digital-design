@@ -1,0 +1,18 @@
+name: tang-training
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+  - portaudio
+  - pip:
+      - --extra-index-url https://download.pytorch.org/whl/cpu
+      - numpy==1.26.4
+      - scipy==1.15.3
+      - matplotlib==3.10.9
+      - pyserial==3.5
+      - sounddevice==0.5.5
+      - opencv-python==4.11.0.86
+      - torch==2.12.1
+      - torchvision==0.27.1
+      - brevitas==0.12.1

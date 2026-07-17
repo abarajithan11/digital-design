@@ -3,11 +3,11 @@
 back byte-for-byte.
 
     make program_fpga DESIGN=uart_echo
-    python3 /path/to/digital-design/material/py/fpga_uart_echo.py --port PORT
+    python3 /path/to/digital-design/material/py/fpga_uart_echo.py [--port PORT]
 
-PORT is the board's serial port: /dev/ttyUSB1 in WSL/Linux, COM5 on Windows,
-/dev/tty.usbserial-* on macOS. We send in 32-byte chunks (the bridge's buffer
-size) and read each chunk back, since there is no hardware flow control.
+The Tang Nano UART port is detected automatically; --port overrides it when
+needed. We send in 32-byte chunks (the bridge's buffer size) and read each chunk
+back, since there is no hardware flow control.
 """
 import argparse
 import random
