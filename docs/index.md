@@ -141,6 +141,7 @@ design_outputs
 3d-cells
 cpu
 systemverilog
+fpga_labs
 acronyms.md
 contact-us
 ```
