@@ -3,13 +3,13 @@
 data RAM.
 
     make program_fpga DESIGN=cpu_fpga     # flash the bitstream (from the host)
-    python3 /path/to/digital-design/material/py/program_cpu.py
+    python3 /path/to/digital-design/material/py/fpga_program_cpu.py --port PORT
 
 The board_glue (fpga/tang_nano_20k/top_glue/system/cpu_fpga.sv) holds a full toy
 computer: instruction RAM, data RAM, the CPU, and this UART loader/dumper.
 
 Flow:
-  1. Thhis script packs imem + dmem into a fixed-size image and stream it in: all MEM_ROWS
+  1. This script packs imem + dmem into a fixed-size image and streams it in: all MEM_ROWS
      instruction words, then all MEM_ROWS data words, each word little-endian
      (low byte, high byte) - the FPGA's 16-bit UART reassembles the two bytes.
   2. User presses S1 on the board to start the CPU.  It steps at ~1 Hz; the LEDs
@@ -19,17 +19,23 @@ Flow:
      print it (no checking - just look at the result).
 
 PORT is the board's serial port: /dev/ttyUSB1 in WSL/Linux, COM5 on Windows,
-/dev/tty.usbserial-* on macOS.  These constants must match the board_glue
-parameters (ADDR_W, WATCH_ADDR).
+or /dev/tty.usbserial-* on macOS. ADDR_W and WATCH_ADDR must match the
+board_glue parameters.
 """
-import serial
+import argparse
 
-PORT       = "/dev/ttyUSB1"
+from utils import add_port_argument, open_serial
+
 BAUD       = 2_000_000
 ADDR_W     = 6                     # board_glue ADDR_W -> MEM_ROWS = 2**ADDR_W
 WATCH_ADDR = 4                     # dmem row shown on the LEDs (S2 held)
 CHUNK      = 32                    # bridge buffer size (host -> FPGA)
 MEM_ROWS   = 1 << ADDR_W
+
+parser = argparse.ArgumentParser(description=__doc__,
+                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+add_port_argument(parser)
+args = parser.parse_args()
 
 # ---- Opcodes (must match the cpu.sv enum order) -----------------------------
 LOAD, STORE, MOVE, ADD, SUB, MUL, JNZ = range(7)
@@ -74,7 +80,7 @@ for word in imem + dmem:
 assert len(image) == MEM_ROWS * 4
 
 # ---- Stream it in (32-byte chunks; the FPGA consumes at line rate) ------------
-with serial.Serial(PORT, BAUD, timeout=5) as ser:
+with open_serial(args.port, BAUD, timeout=5) as ser:
     ser.reset_input_buffer()
     for i in range(0, len(image), CHUNK):
         ser.write(image[i:i + CHUNK])

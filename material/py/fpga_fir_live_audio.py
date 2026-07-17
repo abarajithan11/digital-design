@@ -2,7 +2,7 @@
 """Filter live microphone audio through the sys_fir_filter FPGA design.
 
     make program_fpga DESIGN=sys_fir_filter
-    python3 /path/to/digital-design/material/py/fir_live_audio.py
+    python3 /path/to/digital-design/material/py/fpga_fir_live_audio.py --port PORT
 
 Records from the default input, streams the samples through the FPGA and plays
 the filtered ones on the default output. You should hear only the bass. Ctrl-C
@@ -19,8 +19,8 @@ does not starve the output. PORT is the board's serial port.
 Pick devices with --input/--output (--list shows them). Note that on WSL there
 is nothing to pick: WSLg proxies audio to Windows and exposes exactly one mic
 (RDPSource) and one speaker (RDPSink), so choose the real devices in Windows'
-Sound settings instead. Run with /usr/bin/python3 there, not conda's python -
-conda's PortAudio is built without PulseAudio, so it sees no devices at all.
+Sound settings instead. On Linux, the audio dependency set also needs the
+PortAudio runtime supplied by the distribution.
 """
 import argparse
 import queue
@@ -28,10 +28,9 @@ import threading
 import time
 
 import numpy as np
-import serial
-import sounddevice as sd
 
-PORT  = "/dev/ttyUSB1"
+from utils import add_port_argument, open_serial
+
 BAUD  = 2_000_000
 BURST = 32       # the bridge MCU's buffer size - never write more at once
 BLOCK = 512      # samples per audio callback
@@ -46,7 +45,11 @@ parser = argparse.ArgumentParser(description=__doc__,
 parser.add_argument("--list", action="store_true", help="list audio devices and exit")
 parser.add_argument("-i", "--input", help="input device: index or name substring")
 parser.add_argument("-o", "--output", help="output device: index or name substring")
+add_port_argument(parser)
 args = parser.parse_args()
+
+# Import after argument parsing so --help works even before PortAudio is installed.
+import sounddevice as sd
 
 if not len(sd.query_devices()):
     raise SystemExit(
@@ -121,7 +124,7 @@ def callback(indata, outdata, frames, time_info, status):
             outdata[:, 0] = y.astype(np.float32) / 128.0
 
 
-with serial.Serial(PORT, BAUD, timeout=0.1) as ser:
+with open_serial(args.port, BAUD, timeout=0.1) as ser:
     ser.reset_input_buffer()
     threading.Thread(target=writer, args=(ser,), daemon=True).start()
     threading.Thread(target=reader, args=(ser,), daemon=True).start()

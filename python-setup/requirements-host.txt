@@ -1,0 +1,6 @@
+# Versions exercised by the course container. Wheels are available for the
+# supported CPython 3.10-3.12 range on Windows, macOS, and Linux.
+numpy==1.26.4
+scipy==1.15.3
+matplotlib==3.10.9
+pyserial==3.5

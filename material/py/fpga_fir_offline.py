@@ -2,11 +2,10 @@
 """Filter an audio file through the sys_fir_filter FPGA design and check it.
 
     make program_fpga DESIGN=sys_fir_filter
-    python3 /path/to/digital-design/material/py/fir_audio.py
+    python3 /path/to/digital-design/material/py/fpga_fir_offline.py --port PORT
 
 Sends INPUT (any WAV) sample-by-sample, reads back the filtered samples, writes
-OUTPUT, and - if REFERENCE is set - checks they match exactly. PORT is the
-board's serial port (/dev/ttyUSB1 in WSL).
+OUTPUT, and - if REFERENCE is set - checks they match exactly.
 
 The board's USB bridge MCU has no hardware flow control and only a CHUNK-byte
 buffer, so writing faster than it drains silently loses samples before the FPGA
@@ -15,15 +14,16 @@ error. Rather than wait for each chunk to come back (which would serialise a
 ~6ms USB round trip per 32 bytes and take minutes), we pace the writes and let
 a reader thread collect the replies as they arrive.
 """
+import argparse
 import threading
 import time
 from pathlib import Path
 
 import numpy as np
-import serial
 from scipy.io import wavfile
 
-PORT      = "/dev/ttyUSB1"
+from utils import add_port_argument, open_serial
+
 BAUD      = 2_000_000
 CHUNK     = 32                          # the bridge MCU's buffer size
 WINDOW    = 64                          # max bytes in flight (see below). Measured:
@@ -40,6 +40,11 @@ WARMUP    = 101                         # N+1 taps: the FPGA keeps the delay lin
                                         # outputs mix in stale samples while the
                                         # reference starts from zeros. Skip them.
 
+parser = argparse.ArgumentParser(description=__doc__,
+                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+add_port_argument(parser)
+args = parser.parse_args()
+
 # ---- Quantize the source to signed int8 (mono), matching sys_fir_filter_gen ---
 fs, source = wavfile.read(INPUT)
 samples = source.astype(np.float32)
@@ -53,7 +58,7 @@ if SECONDS:
 raw = samples.tobytes()
 out = bytearray()
 
-with serial.Serial(PORT, BAUD, timeout=2) as ser:
+with open_serial(args.port, BAUD, timeout=2) as ser:
     ser.reset_input_buffer()
 
     def reader():

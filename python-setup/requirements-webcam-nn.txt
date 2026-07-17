@@ -1,0 +1,5 @@
+# Host-side webcam capture and FPGA UART inference. Neural-network training is
+# intentionally excluded; use requirements-train-nn.txt for that workflow.
+numpy==1.26.4
+pyserial==3.5
+opencv-python==4.11.0.86

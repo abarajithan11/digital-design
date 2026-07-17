@@ -3,24 +3,30 @@
 back byte-for-byte.
 
     make program_fpga DESIGN=uart_echo
-    python3 /path/to/digital-design/material/py/uart_echo.py
+    python3 /path/to/digital-design/material/py/fpga_uart_echo.py --port PORT
 
 PORT is the board's serial port: /dev/ttyUSB1 in WSL/Linux, COM5 on Windows,
 /dev/tty.usbserial-* on macOS. We send in 32-byte chunks (the bridge's buffer
 size) and read each chunk back, since there is no hardware flow control.
 """
+import argparse
 import random
-import serial
 
-PORT  = "/dev/ttyUSB1"
+from utils import add_port_argument, open_serial
+
 BAUD  = 2_000_000
 N     = 4096
 CHUNK = 32
 
+parser = argparse.ArgumentParser(description=__doc__,
+                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+add_port_argument(parser)
+args = parser.parse_args()
+
 data = bytes(random.randrange(256) for _ in range(N))
 
 got = bytearray()
-with serial.Serial(PORT, BAUD, timeout=2) as ser:
+with open_serial(args.port, BAUD, timeout=2) as ser:
     ser.reset_input_buffer()
     for i in range(0, N, CHUNK):
         chunk = data[i:i + CHUNK]

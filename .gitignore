@@ -23,3 +23,6 @@ obj_dir
 # FPGA bitstream build artifacts
 material/fpga/*/build/
 material/temp_fpga
+
+# Host-side Python dependencies installed by python-setup/tools.py
+python-setup/.python-packages/

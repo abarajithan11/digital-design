@@ -1,0 +1,5 @@
+-r requirements-host.txt
+
+# pip bundles PortAudio on Windows and macOS. Linux also needs its distribution's
+# PortAudio runtime package (for example, libportaudio2 on Debian/Ubuntu).
+sounddevice==0.5.5
