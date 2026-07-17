@@ -1,4 +1,6 @@
-# FPGA Labs: Python Setup
+# FPGA Setup: Our Examples on Tang Nano 20K
+
+We highly recommend buying this cheap FPGA from either [Amazon](https://www.amazon.com/Tang-Nano-20K-Development-Computer/dp/B0GCVFLFPP/ref=sr_1_1?crid=32SUSOZGEPZC6&dib=eyJ2IjoiMSJ9.Ow-0YEuarWedIbDbBtOwJv4xyhVW5_qqUfOOYW4fjGJ99bRBUHdab_BTUgz_6cyVtW1qZHPo8yTWj7sGpRE0HKkyiMDAd1MSCc4Ea5OlgFsarB_M8y7Nu8sm-REsz0zofY8SMuVfBaJi9QecvRpHNlEv532AEdds7yn9hJ7QXQg.ZnVmNGdJX19GAopy9VviKF0bf9yAC0TmHz8vlWZ4xGQ&dib_tag=se&keywords=speed%2Btang%2Bnano%2B20k&qid=1779923800&sprefix=sipeed%2Btang%2Bnano%2B20k%2B%2Caps%2C286&sr=8-1&th=1), or [AliExpress](https://www.aliexpress.us/item/3256805394833478.html?spm=a2g0o.productlist.main.1.4b04HoNAHoNAIF&algo_pvid=809e9b1f-24a1-4c4b-b135-129d55ab0ff9&algo_exp_id=809e9b1f-24a1-4c4b-b135-129d55ab0ff9-0&pdp_ext_f=%7B%22order%22%3A%22621%22%2C%22eval%22%3A%221%22%2C%22fromPage%22%3A%22search%22%7D&pdp_npi=6%40dis%21USD%2132.39%2131.89%21%21%2132.39%2131.89%21%402103110517799236779054890ef451%2112000033650315249%21sea%21US%210%21ABX%211%210%21n_tag%3A-29910%3Bd%3A4ca8c57d%3Bm03_new_user%3A-29895%3BpisId%3A5000000204886261&curPageLogUid=zXmtXJ517f75&utparam-url=scene%3Asearch%7Cquery_from%3A%7Cx_object_id%3A1005005581148230%7C_p_origin_prod%3A), so you can get the hands-on experience. In AliExpress, carefully choose "Bundle: Nano 20K No header", and triple-check the delivery address before checkout.
 
 The FPGA tools use two separate environments:
 
@@ -125,28 +127,239 @@ python -c "import numpy, scipy, serial; print('FPGA Python environment is ready'
 The version should be Python 3.11, and the second command should print the
 ready message without an error.
 
-## 3. Give the Python tools access to the board
+## 3. Program the FPGA
 
 Program the matching `.fs` file with [openFPGALoader
 Web](https://ofl.trabucayre.com/) in Google Chrome before running a UART script.
 Firefox does not provide the WebUSB access used by the programmer.
 
-USB setup differs by operating system. Follow the relevant steps after
-programming the board.
+```{raw} html
+<details>
+<summary><strong>Windows 11: one-time WebUSB setup</strong></summary>
+```
+
+There are two interfaces on the board: interface 0/A is JTAG programming, and
+interface 1/B is UART. Keep them separate during the setup.
+
+One-time WebUSB setup:
+
+1. Download and run [Zadig](https://zadig.akeo.ie/).
+2. Connect the Tang Nano 20K to Windows.
+3. In Zadig, select **Options → List All Devices**.
+4. Select **Dual RS232-HS (Interface 0)** or **Interface A**.
+5. Select **WinUSB**, then click **Replace Driver**.
+
+Do not replace the driver for interface 1/B; that is the UART used by the
+Python scripts.
+
+```{raw} html
+</details>
+```
+
+## 4. Run UART Echo Test
+
+This test checks if your computer can talk to your hardware in the FPGA.
+
+1. Simulate `uart_echo`, then build its bitstream inside the Docker container:
+
+   ```bash
+   make enter
+   make sim DESIGN=uart_echo
+   make bitstream DESIGN=uart_echo
+   exit
+   ```
+
+2. In Chrome, program
+   `material/fpga/tang_nano_20k/build/uart_echo/uart_echo.fs`.
+   If the Python script cannot find or open the board afterward, see [UART
+   access troubleshooting](#uart-access-troubleshooting).
+3. Activate the basic environment and run the loopback test:
+
+   ```bash
+   conda activate tang-basic
+   python material/py/fpga_uart_echo.py
+   ```
+
+The test should finish with:
+
+```text
+PASS: echoed 4096 bytes with no loss.
+```
+
+## 5. Run FIR Filter with an Offline File
+
+This test sends the included audio file through the FPGA and compares every
+output sample with the reference file.
+
+1. Simulate `sys_fir_filter`, then build its bitstream inside the Docker
+   container. The simulation generates the files needed by the example:
+
+   ```bash
+   make enter
+   make sim DESIGN=sys_fir_filter
+   make bitstream DESIGN=sys_fir_filter
+   exit
+   ```
+
+2. In Chrome, program
+   `material/fpga/tang_nano_20k/build/sys_fir_filter/sys_fir_filter.fs`.
+   If the Python script cannot find or open the board afterward, see [UART
+   access troubleshooting](#uart-access-troubleshooting).
+3. Activate the basic environment and process the included WAV file:
+
+   ```bash
+   conda activate tang-basic
+   python material/py/fpga_fir_offline.py
+   ```
+
+The test should finish with a message similar to:
+
+```text
+PASS: all 735000 samples match .../material/data/bass_only_8bit.wav.
+```
+
+Both scripts detect the Tang Nano UART port automatically. If more than one
+serial port is connected, select it explicitly:
+
+```bash
+python material/py/fpga_fir_offline.py --port /dev/ttyUSB1
+```
+
+Use the path printed by your system; on macOS it will usually begin with
+`/dev/cu.usbserial-`, and on Windows it will look like `COM5`.
+
+## 6. Run FIR Filter with Live Audio
+
+This example records your microphone, sends the audio through the FPGA, and
+plays the filtered result through your selected output device. You should hear
+mostly bass because the FPGA is running a low-pass filter.
+
+1. Simulate `sys_fir_filter`, then build its bitstream inside the Docker
+   container. The simulation generates the files needed by the example:
+
+   ```bash
+   make enter
+   make sim DESIGN=sys_fir_filter
+   make bitstream DESIGN=sys_fir_filter
+   exit
+   ```
+
+2. In Chrome, program
+   `material/fpga/tang_nano_20k/build/sys_fir_filter/sys_fir_filter.fs`.
+   If the Python script cannot find or open the board afterward, see [UART
+   access troubleshooting](#uart-access-troubleshooting).
+3. Connect headphones and start at a low volume. Using speakers near the
+   microphone can create loud feedback.
+4. Activate the basic environment and list the available audio devices:
+
+   ```bash
+   conda activate tang-basic
+   python material/py/fpga_fir_live_audio.py --list
+   ```
+
+5. If your default microphone and output are correct, start the live filter:
+
+   ```bash
+   python material/py/fpga_fir_live_audio.py
+   ```
+
+   Press **Ctrl+C** to stop.
+
+To select different devices, pass the number shown by `--list` or a unique part
+of each device name:
+
+```bash
+python material/py/fpga_fir_live_audio.py --input 2 --output 5
+```
+
+The UART port can be selected in the same command when automatic detection is
+not possible. For example, on native Windows:
+
+```powershell
+python material/py/fpga_fir_live_audio.py --port COM5 --input 2 --output 5
+```
+
+```{raw} html
+<details>
+<summary><strong>Live-audio troubleshooting by operating system</strong></summary>
+```
+
+**Ubuntu:** Select the intended microphone and headphones in [**Settings →
+Sound**](https://help.ubuntu.com/stable/ubuntu-help/sound-usemic.html.en). If
+`--list` reports that PortAudio sees no devices, install the system audio
+support and try again:
+
+```bash
+sudo apt update
+sudo apt install libportaudio2 libasound2-plugins
+```
+
+If the Conda interpreter still cannot see the devices, install the Ubuntu
+Python audio packages and run only the live-audio script with the system
+interpreter:
+
+```bash
+sudo apt install python3-numpy python3-serial python3-sounddevice
+/usr/bin/python3 material/py/fpga_fir_live_audio.py --list
+/usr/bin/python3 material/py/fpga_fir_live_audio.py
+```
+
+**macOS:** The first run may request microphone access. If it was denied, open
+[**System Settings → Privacy & Security →
+Microphone**](https://support.apple.com/guide/mac-help/control-access-to-the-microphone-on-mac-mchla1b1e1fe/mac)
+and allow access for the terminal application you are using. Run the `--list`
+command again after changing the permission.
+
+**Windows 11:** Open [**Settings → Privacy & security →
+Microphone**](https://support.microsoft.com/en-us/windows/privacy/turn-on-app-permissions-for-your-microphone-in-windows)
+and enable **Microphone access** and **Let desktop apps access your
+microphone**. Select the intended microphone and headphones in **Settings →
+System → Sound**, then run the `--list` command again.
+
+```{raw} html
+</details>
+```
+
+## Common fixes
+
+- **`conda: command not found`:** close and reopen the terminal. If that does
+  not help, return to the Miniconda guide for your operating system and run its
+  shell-initialization step.
+- **The environment already exists:** activate it instead of creating it again.
+  To bring it up to date, run `conda env update -f
+  python-setup/tang-basic.yml --prune` (or use the training YAML).
+- **No serial port is found:** see [UART access
+  troubleshooting](#uart-access-troubleshooting).
+- **The wrong serial port is selected:** rerun the script with `--port PORT`.
+- **The live-audio script uses the wrong microphone or output:** run it with
+  `--list`, then pass the desired device numbers to `--input` and `--output`.
+
+(uart-access-troubleshooting)=
+## UART Access Troubleshooting
+
+macOS and native Windows normally require no UART handoff after programming.
+Ubuntu may need its FTDI driver released before Chrome programs the board and
+restored afterward.
+
+First, check which serial ports Python can see:
+
+```bash
+python -m serial.tools.list_ports -v
+```
 
 ```{raw} html
 <details>
 <summary><strong>Ubuntu</strong></summary>
 ```
 
-Before programming, close any serial programs that are using the board and
-release the FTDI serial driver:
+If Chrome cannot claim the board, close any programs using `/dev/ttyUSB*` and
+release the FTDI serial driver before programming:
 
 ```bash
 sudo modprobe -r ftdi_sio
 ```
 
-After programming, restore the driver and check that the serial ports appear:
+After programming, restore the driver and check that the ports appear:
 
 ```bash
 sudo modprobe ftdi_sio
@@ -169,18 +382,15 @@ sudo usermod -aG dialout "$USER"
 <summary><strong>macOS</strong></summary>
 ```
 
-No driver handoff is normally needed. After programming the board, its UART
-port should look like `/dev/cu.usbserial-*` or `/dev/tty.usbserial-*`.
-
-To list both forms, run:
+No driver restore is normally needed. The board's UART should appear as
+`/dev/cu.usbserial-*` or `/dev/tty.usbserial-*`:
 
 ```bash
 ls /dev/cu.usbserial-* /dev/tty.usbserial-* 2>/dev/null
 ```
 
-The Python tools usually detect the correct port automatically. If they find
-more than one possible serial port, pass the one beginning with `/dev/cu.` to
-`--port`.
+If the script finds more than one possible port, pass the `/dev/cu.*` port
+explicitly with `--port`.
 
 ```{raw} html
 </details>
@@ -191,66 +401,18 @@ more than one possible serial port, pass the one beginning with `/dev/cu.` to
 <summary><strong>Windows 11</strong></summary>
 ```
 
-There are two interfaces on the board: interface 0/A is JTAG programming, and
-interface 1/B is UART. Keep them separate during the setup.
-
-One-time WebUSB setup:
-
-1. Download and run [Zadig](https://zadig.akeo.ie/).
-2. Connect the Tang Nano 20K to Windows.
-3. In Zadig, select **Options → List All Devices**.
-4. Select **Dual RS232-HS (Interface 0)** or **Interface A**.
-5. Select **WinUSB**, then click **Replace Driver**.
-
-Do not replace the driver for interface 1/B; that is the UART used by the
-Python scripts.
-
-Program the board from Chrome. Then open **Anaconda Prompt (Miniconda3)** and
-list the serial ports visible to native Windows Python:
+No driver restore is normally needed. Interface 1/B should remain available to
+native Windows Python as a `COM` port:
 
 ```powershell
 python -m serial.tools.list_ports -v
 ```
 
-The UART interface should appear as a `COM` port. The lab scripts normally
-detect it automatically; if needed, pass it explicitly, for example
-`--port COM5`. Do not attach the board to WSL with `usbipd` when running the
-Python tools on Windows.
+If the board is not listed, make sure Zadig replaced the driver for interface
+0/A only. Do not replace interface 1/B, and do not attach the board to WSL with
+`usbipd`. If automatic detection is ambiguous, pass the port explicitly, for
+example `--port COM5`.
 
 ```{raw} html
 </details>
 ```
-
-## 4. Run a lab script
-
-Activate the environment, program the bitstream that matches the script, and
-run the script from the repository root. For example:
-
-```bash
-conda activate tang-basic
-python material/py/fpga_uart_echo.py
-python material/py/fpga_fir_offline.py
-```
-
-The scripts detect the Tang Nano UART port automatically. If more than one
-serial port is connected, select it explicitly:
-
-```bash
-python material/py/fpga_uart_echo.py --port /dev/ttyUSB1
-```
-
-Use the path printed by your system; on macOS it will usually begin with
-`/dev/cu.usbserial-`, and on Windows it will look like `COM5`.
-
-## Common fixes
-
-- **`conda: command not found`:** close and reopen the terminal. If that does
-  not help, return to the Miniconda guide for your operating system and run its
-  shell-initialization step.
-- **The environment already exists:** activate it instead of creating it again.
-  To bring it up to date, run `conda env update -f
-  python-setup/tang-basic.yml --prune` (or use the training YAML).
-- **No serial port is found:** make sure the board is programmed, Chrome has
-  released it, and you completed the operating-system setup above. List what
-  Python can see with `python -m serial.tools.list_ports -v`.
-- **The wrong serial port is selected:** rerun the script with `--port PORT`.
