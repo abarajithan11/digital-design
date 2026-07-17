@@ -1,6 +1,69 @@
 # FPGA Setup: Our Examples on Tang Nano 20K
 
-We highly recommend buying this cheap FPGA from either [Amazon](https://www.amazon.com/Tang-Nano-20K-Development-Computer/dp/B0GCVFLFPP/ref=sr_1_1?crid=32SUSOZGEPZC6&dib=eyJ2IjoiMSJ9.Ow-0YEuarWedIbDbBtOwJv4xyhVW5_qqUfOOYW4fjGJ99bRBUHdab_BTUgz_6cyVtW1qZHPo8yTWj7sGpRE0HKkyiMDAd1MSCc4Ea5OlgFsarB_M8y7Nu8sm-REsz0zofY8SMuVfBaJi9QecvRpHNlEv532AEdds7yn9hJ7QXQg.ZnVmNGdJX19GAopy9VviKF0bf9yAC0TmHz8vlWZ4xGQ&dib_tag=se&keywords=speed%2Btang%2Bnano%2B20k&qid=1779923800&sprefix=sipeed%2Btang%2Bnano%2B20k%2B%2Caps%2C286&sr=8-1&th=1), or [AliExpress](https://www.aliexpress.us/item/3256805394833478.html?spm=a2g0o.productlist.main.1.4b04HoNAHoNAIF&algo_pvid=809e9b1f-24a1-4c4b-b135-129d55ab0ff9&algo_exp_id=809e9b1f-24a1-4c4b-b135-129d55ab0ff9-0&pdp_ext_f=%7B%22order%22%3A%22621%22%2C%22eval%22%3A%221%22%2C%22fromPage%22%3A%22search%22%7D&pdp_npi=6%40dis%21USD%2132.39%2131.89%21%21%2132.39%2131.89%21%402103110517799236779054890ef451%2112000033650315249%21sea%21US%210%21ABX%211%210%21n_tag%3A-29910%3Bd%3A4ca8c57d%3Bm03_new_user%3A-29895%3BpisId%3A5000000204886261&curPageLogUid=zXmtXJ517f75&utparam-url=scene%3Asearch%7Cquery_from%3A%7Cx_object_id%3A1005005581148230%7C_p_origin_prod%3A), so you can get the hands-on experience. In AliExpress, carefully choose "Bundle: Nano 20K No header", and triple-check the delivery address before checkout.
+An FPGA is a flexible chip whose internal logic can be configured to realize
+the digital circuit we want. Unlike an ASIC, which is manufactured for one
+fixed design, an FPGA lets us write a circuit in SystemVerilog, load it onto the
+chip, test it, and replace it with another circuit later.
+
+For hands-on experience, we highly recommend buying the inexpensive Tang Nano
+20K from either [Amazon](https://www.amazon.com/Tang-Nano-20K-Development-Computer/dp/B0GCVFLFPP/ref=sr_1_1?crid=32SUSOZGEPZC6&dib=eyJ2IjoiMSJ9.Ow-0YEuarWedIbDbBtOwJv4xyhVW5_qqUfOOYW4fjGJ99bRBUHdab_BTUgz_6cyVtW1qZHPo8yTWj7sGpRE0HKkyiMDAd1MSCc4Ea5OlgFsarB_M8y7Nu8sm-REsz0zofY8SMuVfBaJi9QecvRpHNlEv532AEdds7yn9hJ7QXQg.ZnVmNGdJX19GAopy9VviKF0bf9yAC0TmHz8vlWZ4xGQ&dib_tag=se&keywords=speed%2Btang%2Bnano%2B20k&qid=1779923800&sprefix=sipeed%2Btang%2Bnano%2B20k%2B%2Caps%2C286&sr=8-1&th=1),
+or [AliExpress](https://www.aliexpress.us/item/3256805394833478.html?spm=a2g0o.productlist.main.1.4b04HoNAHoNAIF&algo_pvid=809e9b1f-24a1-4c4b-b135-129d55ab0ff9&algo_exp_id=809e9b1f-24a1-4c4b-b135-129d55ab0ff9-0&pdp_ext_f=%7B%22order%22%3A%22621%22%2C%22eval%22%3A%221%22%2C%22fromPage%22%3A%22search%22%7D&pdp_npi=6%40dis%21USD%2132.39%2131.89%21%21%2132.39%2131.89%21%402103110517799236779054890ef451%2112000033650315249%21sea%21US%210%21ABX%211%210%21n_tag%3A-29910%3Bd%3A4ca8c57d%3Bm03_new_user%3A-29895%3BpisId%3A5000000204886261&curPageLogUid=zXmtXJ517f75&utparam-url=scene%3Asearch%7Cquery_from%3A%7Cx_object_id%3A1005005581148230%7C_p_origin_prod%3A).
+On AliExpress, carefully choose **Bundle: Nano 20K No header**, and
+triple-check the delivery address before checkout.
+
+## What We Are Doing
+
+We will turn our simulated SystemVerilog circuits into configurations that run
+on a real FPGA. The board is described in the official [Tang Nano 20K
+datasheet](https://dl.sipeed.com/fileList/TANG/Nano_20K/1_Datasheet/Sipeed%20Tang%20nano%2020K%20Datasheet%20V1.3-en_US.pdf).
+
+Our flow is:
+
+1. **Design the circuit in SystemVerilog.** For example, see our
+   [`full_adder.sv`](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/reference/full_adder.sv).
+2. **Test it in simulation** with its
+   [`tb_full_adder.sv`](https://github.com/abarajithan11/digital-design/blob/main/material/tb/reference/tb_full_adder.sv):
+   `make sim DESIGN=full_adder`.
+3. **Translate it into a bitstream**—the configuration loaded onto the FPGA—using
+   our [`fpga.mk` build flow](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/common/fpga.mk):
+   `make bitstream DESIGN=full_adder`.
+4. **Program the FPGA** with [openFPGALoader
+   Web](https://ofl.trabucayre.com/).
+5. **Interact with the circuit on the FPGA:** press its buttons, observe its
+   LEDs, or send and receive data from your computer.
+
+For example, when you run `make bitstream DESIGN=full_adder`:
+
+1. The fixed [`board_top.sv`](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/common/board_top.sv)
+   wrapper handles:
+
+   - the board pins from [`board.cst`](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/common/board.cst)
+     and the system clock;
+   - power-on reset;
+   - active-low LED inversion;
+   - button synchronization and debouncing;
+   - UART input synchronization and GPIO.
+
+2. For each example, a `board_glue` module presents an idealized, active-high FPGA interface
+   and wraps the example circuit. For `full_adder`, the
+   [`board_glue`](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/top_glue/reference/full_adder.sv)
+   connects the board interface to our
+   [`full_adder` module](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/reference/full_adder.sv).
+   Other wrappers follow the same
+   `material/fpga/tang_nano_20k/top_glue/{cpu,reference,system}/<design>.sv`
+   layout.
+
+3. The build flow in
+   [`fpga.mk`](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/common/fpga.mk)
+   reads
+   [`full_adder.f`](https://github.com/abarajithan11/digital-design/blob/main/material/designs/reference/full_adder.f),
+   removes simulation-only sources, adds `board_top` and `board_glue`, then uses
+   an open-source toolchain to generate
+   `material/fpga/tang_nano_20k/build/full_adder/full_adder.fs`.
+
+You can wrap your own module in the same way: add its `.f` file and copy
+[`top_glue/_skeleton.sv`](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/top_glue/_skeleton.sv)
+to create its matching `board_glue`.
 
 The FPGA tools use two separate environments:
 
