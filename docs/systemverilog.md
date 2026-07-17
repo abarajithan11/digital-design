@@ -470,6 +470,56 @@ join
 - `join_any` waits until any one child finishes; the others keep running.
 - `join_none` returns immediately; all children keep running.
 
+### Driving and Sampling Around a Clock Edge
+
+A flip-flop and a testbench both act at the rising edge: the flop samples its input with a non-blocking `<=`, while the testbench drives stimulus with a blocking `=`. 
+If the testbench writes a signal *on* the same edge the DUT samples it, the two race, and the winner is not defined by the language. 
+The simulation may still pass its assertions, yet the waveform lies: an input the
+flop should capture *next* cycle appears to be captured *this* cycle, so a register looks like it has no delay.
+
+This is a classic, age-old footgun in SystemVerilog.
+There are few standard ways to deal with this.
+They all solve the problem. 
+What we choose is up to personal preference / style used in the company.
+
+1. Do all the testbench driving/monitoring on `@(negedge clk)`. I don't like this because it makes the waveforms look weird. Testbench-driven signals will be out of phase with other signals.
+2. Register all the signals that originate from the testbench, through their own `always_ff`. This is pretty unintuitive when you want to quickly test something. But we do this in our AXI-Stream VIPs.
+3. Driving and monitoring `#1ps` after the `@(posedge clk)`. This makes the waveform looks better, but it is human-error prone. If you miss a `#1ps`, you'll see weird effects that are hard to trace down. Popular open-source hardware repositories like [PULP-AXI](https://github.com/pulp-platform/axi) do this. To eliminate the factor of human error, you create a `task` like we describe here and use it as we use in our examples.
+
+Think of two timelines. 
+The **clock timeline** is the edge itself, where the DUT lives. 
+The **testbench timeline** is one step later, `edge + 1ps`. Every
+value the testbench drives or samples belongs on the testbench timeline, never
+on the edge. 
+The bridge between them is a single `#1ps` after the edge:
+
+```systemverilog
+@(posedge clk); #1ps; a = 1;   // drive 1ps after the edge, not on it
+```
+
+The rule of thumb is: put exactly one `#1ps` on any edge where the testbench drives or samples the DUT. 
+Edges you only wait through (counting pipeline latency) stay bare. 
+A `#1ps` that is not paired to a `@(posedge clk)` is usually a mistake.
+
+To apply this without scattering `#1ps` everywhere, we can bundle it into a helper task
+next to the clock generator and advance time only through that task:
+
+```systemverilog
+initial forever #1 clk = !clk;
+task automatic posedge_clk(int n = 1);
+  repeat (n) @(posedge clk); #1ps;
+endtask
+```
+
+The testbench body then reads cleanly, and every drive and sample lands on the testbench timeline automatically:
+
+```systemverilog
+posedge_clk;    rstn = 1;        // reset, 1ps after an edge
+posedge_clk(3); x = 5;           // wait 3 cycles, then drive x
+posedge_clk(LATENCY);            // wait for the pipeline to fill
+assert (y == y_exp) else ...;    // sample after the outputs have settled
+```
+
 ### Assertions
 
 An immediate assertion checks an expression when execution reaches it:

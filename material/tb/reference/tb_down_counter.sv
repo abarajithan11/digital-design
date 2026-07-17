@@ -12,6 +12,9 @@ module tb_down_counter;
   logic last, last_clk;
 
   initial forever #1ns clk = ~clk;
+  task automatic posedge_clk(int n = 1);
+    repeat (n) @(posedge clk); #1ps;
+  endtask
 
   down_counter #(.WIDTH(WIDTH)) dut (.*);
 
@@ -19,55 +22,45 @@ module tb_down_counter;
     $dumpfile(`FST_PATH); $dumpvars;
 
     // hold reset for a couple cycles
-    repeat (2) @(posedge clk);
-    #1ps rstn = 1;
+    posedge_clk(2); rstn = 1;
 
     // load max = 5
-    @(posedge clk);
-    #1ps max_in = 8'd5; clear  = 1;
-
-    @(posedge clk);
-    #1ps clear  = 0;
+    posedge_clk; max_in = 8'd5; clear = 1;
+    posedge_clk; clear = 0;
 
     // count down through full cycle: 5,4,3,2,1,0,5,4,...
-    #1ps en = 1;
-    repeat (8) @(posedge clk);
+    en = 1;
+    posedge_clk(8);
 
     // pause counting
-    #1ps en = 0;
-    repeat (3) @(posedge clk);
+    en = 0;
+    posedge_clk(3);
 
     // continue counting
-    #1ps en = 1;
-    repeat (4) @(posedge clk);
+    en = 1;
+    posedge_clk(4);
 
     // load a new max = 3 while running
-    #1ps max_in = 8'd3;
-         clear  = 1;
-         en     = 0;
-
-    @(posedge clk);
-    #1ps clear  = 0;
+    max_in = 8'd3;
+    clear  = 1;
+    en     = 0;
+    posedge_clk; clear = 0;
 
     // count again with new max
-    #1ps en = 1;
-    repeat (6) @(posedge clk);
+    en = 1;
+    posedge_clk(6);
 
     // async reset in the middle
-    #1ps rstn = 0;
-    @(posedge clk);
-    #1ps rstn = 1;
+    rstn = 0;
+    posedge_clk; rstn = 1;
 
     // reload after reset
-    @(posedge clk);
-    #1ps max_in = 8'd2;
-         clear  = 1;
+    posedge_clk; max_in = 8'd2;
+          clear  = 1;
+    posedge_clk; clear  = 0;
+          en     = 1;
 
-    @(posedge clk);
-    #1ps clear  = 0;
-         en     = 1;
-
-    repeat (5) @(posedge clk);
+    posedge_clk(5);
 
     $finish;
   end

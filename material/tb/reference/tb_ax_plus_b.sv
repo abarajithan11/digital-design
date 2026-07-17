@@ -11,18 +11,21 @@ module tb_ax_plus_b;
   logic signed [WS-1:0] sum_exp;
 
   initial forever #1 clk = !clk;
+  task automatic posedge_clk(int n = 1);
+    repeat (n) @(posedge clk); #1ps;
+  endtask
 
   ax_plus_b #(.W(W)) dut (.*);
 
   initial begin
     $dumpfile(`FST_PATH); $dumpvars;
 
-    @(posedge clk) rstn = 1;
-    repeat(2) @(posedge clk);
+    posedge_clk; rstn = 1;
+    posedge_clk(2);
 
-    @(posedge clk) a = 2; b = 3; x = 4;
-    @(posedge clk) a = 5; b = 2; x = 3;
-    @(posedge clk) a = 5; b = 3; x = 2;
+    posedge_clk; a = 2; b = 3; x = 4;
+    posedge_clk; a = 5; b = 2; x = 3;
+    posedge_clk; a = 5; b = 3; x = 2;
 
     repeat(10) begin
       a = W'($urandom);
@@ -32,10 +35,9 @@ module tb_ax_plus_b;
       y_exp = sum_exp < WS'($signed(MIN)) ? MIN :
               sum_exp > WS'($signed(MAX)) ? MAX :
               W'(sum_exp);
-      repeat(3) @(posedge clk);
-      #1ps;
+      posedge_clk(3);
       assert (y == y_exp) $display("OK");
-      else $display("Error: y_exp=%d, y=%d", y_exp, y); 
+      else $display("Error: y_exp=%d, y=%d", y_exp, y);
     end
 
     $finish();

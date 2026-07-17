@@ -11,12 +11,15 @@ module tb_register_file;
   logic [W_DATA-1:0] wdata=0, rdata;
 
   initial forever #1 clk = !clk;
+  task automatic posedge_clk(int n = 1);
+    repeat (n) @(posedge clk); #1ps;
+  endtask
 
   register_file #(.W_DATA(W_DATA), .N_REGS(N_REGS)) dut (.*);
 
   task automatic write(input logic [W_ADDR-1:0] addr, input logic [W_DATA-1:0] data);
-    @(posedge clk); wen = 1; waddr = addr; wdata = data;
-    @(posedge clk); wen = 0;
+    posedge_clk; wen = 1; waddr = addr; wdata = data;
+    posedge_clk; wen = 0;
   endtask
 
   task automatic check(input logic [W_ADDR-1:0] addr, input logic [W_DATA-1:0] exp);
@@ -28,7 +31,7 @@ module tb_register_file;
   initial begin
     $dumpfile(`FST_PATH); $dumpvars;
 
-    @(posedge clk) rstn = 1;
+    posedge_clk; rstn = 1;
 
     check(0, 8'h00);
 

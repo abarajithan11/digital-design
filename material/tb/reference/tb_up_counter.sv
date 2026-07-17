@@ -6,27 +6,21 @@ module tb_up_counter;
   logic [WIDTH-1:0] count;
 
   initial forever #1ns clk = ~clk;
+  task automatic posedge_clk(int n = 1);
+    repeat (n) @(posedge clk); #1ps;
+  endtask
+
   up_counter #(.WIDTH(WIDTH)) dut (.*);
-  
 
   initial begin
     $dumpfile(`FST_PATH); $dumpvars;
-    
-    @(posedge clk);
-    #1ps rstn  = 1;
 
-    repeat(2) @(posedge clk);
-    #1ps incr = 1;
+    posedge_clk;    rstn = 1;
+    posedge_clk(2); incr = 1;
+    posedge_clk;    rstn = 0; incr = 1;
+    posedge_clk(4); incr = 0;
+    posedge_clk(4); rstn = 1;
 
-    @(posedge clk);
-    #1ps rstn  = 0; incr = 1;
-
-    repeat(4) @(posedge clk);
-    #1ps incr = 0;
-
-    repeat(4) @(posedge clk);
-    #1ps rstn  = 1;
-    
     $finish();
   end
 endmodule

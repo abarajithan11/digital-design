@@ -5,6 +5,9 @@ module tb_skid_buffer;
 
   logic clk = 0, rstn = 0;
   initial forever #1ns clk = ~clk;
+  task automatic posedge_clk(int n = 1);
+    repeat (n) @(posedge clk); #1ps;
+  endtask
 
   logic s_valid, s_ready, m_valid, m_ready;
   logic [WIDTH-1:0] s_data, m_data;
@@ -17,8 +20,7 @@ module tb_skid_buffer;
 
   initial begin
     $dumpfile(`FST_PATH); $dumpvars;
-    repeat (5) @(posedge clk);
-    #1ps rstn = 1;
+    posedge_clk(5); rstn = 1;
 
     src.random_queue(tx, NUM_WORDS);
     fork

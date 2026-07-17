@@ -5,24 +5,26 @@ module tb_flip_flop;
   flip_flop dut (.*);
 
   initial forever #1ns clk = !clk;
+  task automatic posedge_clk(int n = 1);
+    repeat (n) @(posedge clk); #1ps;
+  endtask
 
   initial begin
     $dumpfile(`FST_PATH); $dumpvars;
 
-    @(posedge clk);
-    #1ps; rstn = 1;
+    posedge_clk; rstn = 1;
 
-    @(posedge clk); i = 1;
-    @(posedge clk); i = 0; 
-    @(posedge clk); i = 1; rstn = 1;
-    @(posedge clk);
+    posedge_clk; i = 1;
+    posedge_clk; i = 0;
+    posedge_clk; i = 1; rstn = 1;
+    posedge_clk;
 
     repeat (10) begin
       i = 1'($urandom);
       o_exp = i;
 
-      @(posedge clk);
-      #1ps; assert (o == o_exp) else $error("o:%0b != o_exp:%0b", o, o_exp);
+      posedge_clk;
+      assert (o == o_exp) else $error("o:%0b != o_exp:%0b", o, o_exp);
     end
 
     $finish;
