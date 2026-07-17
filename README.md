@@ -167,7 +167,7 @@ exit
 6. Close Zadig when the replacement finishes.
 
 Only replace **Interface 0/A**. 
-Do not replace **Interface 1/B**: it is the USB-UART interface used by `uart_echo.py` and `fir_audio.py`.
+Do not replace **Interface 1/B**: it is the USB-UART interface used by `fpga_uart_echo.py` and `fpga_fir_offline.py`.
 
 </details>
 
@@ -268,7 +268,7 @@ stream `material/data/chill_sub.wav` through the board, write
 3. Program `sys_fir_filter.fs` into SRAM with openFPGALoader Web as described above. Restore or attach the serial device using the relevant OS section, then run the Python script. It resolves its WAV paths relative to itself, so it also works when invoked by absolute path from another directory.
 
    ```bash
-   python3 material/py/fir_audio.py
+   python3 material/py/fpga_fir_offline.py
    ```
 
 Expected final output:

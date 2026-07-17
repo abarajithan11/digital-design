@@ -3,7 +3,7 @@
 
 // uart_echo at 2 Mbaud.  board_top supplies 54 MHz, so
 // CLKS_PER_BIT = 54e6/2e6 = 27.  The design drives tx; the board's onboard
-// bridge runs the UART at 2 Mbaud.  Host: python3 py/uart_echo.py.
+// bridge runs the UART at 2 Mbaud.  Host: python3 py/fpga_uart_echo.py.
 module board_glue (
     input  wire       clk,
     input  wire       rst,

@@ -17,6 +17,7 @@ a reader thread collect the replies as they arrive.
 import argparse
 import threading
 import time
+import urllib.request
 from pathlib import Path
 
 import numpy as np
@@ -32,6 +33,7 @@ MIN_GAP   = 1.25 * CHUNK * 10 / BAUD    # time for the MCU to drain one CHUNK at
                                         # BAUD (10 bits/byte), plus 25% margin
 DATA_DIR  = Path(__file__).resolve().parent.parent / "data"
 INPUT     = DATA_DIR / "chill_sub.wav"
+DOWNLOAD_URL = "https://media.abapages.com/course-site/chill_sub.wav"
 OUTPUT    = DATA_DIR / "fpga_out.wav"
 REFERENCE = DATA_DIR / "bass_only_8bit.wav"   # None to skip the check
 SECONDS   = None                        # None for the whole file
@@ -44,6 +46,14 @@ parser = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
 add_port_argument(parser)
 args = parser.parse_args()
+
+# ---- Download the source audio if it is not already available -----------------
+DATA_DIR.mkdir(parents=True, exist_ok=True)
+if not INPUT.is_file():
+    print(f"{INPUT} not found. Downloading from {DOWNLOAD_URL} ...")
+    req = urllib.request.Request(DOWNLOAD_URL, headers={"User-Agent": "Mozilla/5.0", "Accept": "*/*"})
+    with urllib.request.urlopen(req) as response, INPUT.open("wb") as f:
+        f.write(response.read())
 
 # ---- Quantize the source to signed int8 (mono), matching sys_fir_filter_gen ---
 fs, source = wavfile.read(INPUT)

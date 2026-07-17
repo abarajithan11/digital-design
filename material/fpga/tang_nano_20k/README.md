@@ -74,18 +74,18 @@ designs:
 * buffer with a **`skid_buffer`** (2-deep elastic buffer) so the transmitter can
   backpressure the receiver and no byte is dropped;
 * have the host send in **≤32-byte chunks, reading each back** (the bridge has a
-  32-byte buffer and no flow control) — see `py/uart_echo.py`, `py/fir_audio.py`.
+  32-byte buffer and no flow control) — see `py/fpga_uart_echo.py`, `py/fpga_fir_offline.py`.
 
 Verify `uart_echo` after programming its `.fs` file:
 
 ```bash
-cd material && python3 py/uart_echo.py    # -> PASS: echoed 4096 bytes with no loss.
+python3 material/py/fpga_uart_echo.py    # -> PASS: echoed 4096 bytes with no loss.
 ```
 
 Filter an audio file through `sys_fir_filter` and check it:
 
 ```bash
-cd material && python3 py/fir_audio.py    # data/chill_sub.wav -> FPGA -> checked vs reference
+python3 material/py/fpga_fir_offline.py    # data/chill_sub.wav -> FPGA -> checked vs reference
 ```
 
 Both scripts have `PORT`/`INPUT`/etc. as constants at the top (default

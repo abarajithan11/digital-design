@@ -10,7 +10,7 @@ to stop.
 
 The board's USB bridge MCU has no hardware flow control and only a BURST-byte
 buffer, so writing faster than it drains loses samples before the FPGA sees
-them (the same reason fir_audio.py chunks). A writer thread therefore paces the
+them (the same reason fpga_fir_offline.py chunks). A writer thread therefore paces the
 link; it cannot live in the audio callback, which delivers a whole block at
 once. A reader thread collects the filtered bytes, which come back a few ms
 later, and PREFILL of them are buffered before playback starts so normal jitter
@@ -112,7 +112,7 @@ def reader(ser):
 
 def callback(indata, outdata, frames, time_info, status):
     global playing
-    # float [-1,1] -> int8, matching fir_audio.py's quantization
+    # float [-1,1] -> int8, matching fpga_fir_offline.py's quantization
     to_fpga.put(np.clip(np.round(indata[:, 0] * 128), -128, 127).astype(np.int8))
     outdata[:] = 0                      # silence until the board's reply arrives
     with lock:

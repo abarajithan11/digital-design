@@ -3,7 +3,7 @@
 
 // sys_fir_filter live audio at 2 Mbaud. board_top's 54 MHz -> CLKS_PER_BIT=27.
 // Needs data/coef.svh on the include path (material/ is added by fpga.mk).
-// Host: python3 py/fir_audio.py.
+// Host: python3 py/fpga_fir_offline.py.
 module board_glue (
     input  wire       clk,
     input  wire       rst,
