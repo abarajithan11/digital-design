@@ -31,6 +31,27 @@ The general FPGA flow is as follows:
 5. **Interact with the circuit on the FPGA:** press its buttons, observe its
    LEDs, or send and receive data from your computer.
 
+### Module Heirarchy
+
+We have built the following module hierarchy to help you quickly implement your own designs in the FPGA.
+
+* **Your SystemVerilog Design**: e.g. [`full_adder`](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/reference/full_adder.sv)
+* **An idealized FPGA interface**: [`board_glue`](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/top_glue/reference/full_adder.sv)
+   * Check out the [skeleton of `board_glue` here](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/top_glue/_skeleton.sv).
+   * Each of your designs (e.g. `full_adder`) need to be wrapped in a module named `board_glue` in a file named `full_adder.f` (note that file and module names are different), placed in `material/fpga/tang_nano_20k/top_glue/*/full_adder.f`.
+   * The inputs and outputs of `board_glue` represent an ideal FPGA: active high LEDs, clean buttons...etc.
+* **Topmost module**: [`board_top.sv`](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/common/board_top.sv)
+   * You should not change this file.
+   * This module instantiates `board_glue` module. Since the `board_glue`s of all designs have the same interface, this module can accept any of them. When you do `make bitstream DESGIN=full_adder` [`fpga.mk`](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/common/fpga.mk) selects the `board glue` in `top_glue/reference/full_adder.sv`.
+   * This module abstracts away the real world behaviors of an FPGA to present an idealized interface to `board_glue`. Some of these abstractions are:
+      - Control reset signal when powering on
+      - The LED lights on the FPGA are electronically wired to be active low. They light up when `LED[i]=0`. This module inverts that into active high, so they light up when you do `LED[i]=1` inside the `board_glue`.
+      - Button synchronization and debouncing: When you press a button, mechanically the contacts touch and break several times due to vibrations. This causes the `btn[i]` input to oscillate from `0` to `1` and back many times before settling on `btn[i]=1`. Debouncing logic in `board_glue` observes it for a long time, and only gives `btn[i]=1` to the `board_glue` after everything settles.
+      - UART input synchronization: The `RX` input of UART is not synchronized to any clock (it is in the name). This causes weird behavior if you try to sample it at a clock edge. `board_top` synchronizes it to the clock by registering it twice and gives to the `board_glue`.
+      - GPIO: Most General Purpose Input Output (GPIO) pins of the FPGA can act as either input or output, and are hence declared as `inout` ports. Dealing with `inout` ports is error-prone, since driving the same inout port from the FPGA (output) and from the outside (input) at the same time can lead to short circuit. `board_top` converts that into `input`, `output` and `output_enable` ports, which helps you avoid human error.
+
+### Environment Setup
+
 The examples use two separate environments:
 
 - Build `.fs` bitstreams and train the neural network inside the course Docker
@@ -51,15 +72,11 @@ directory.
 
 ## 1. Full Adder on the FPGA
 
-During discussion, we put the `up_counter` on the FPGA. The `full_adder`
-follows the same flow.
+During discussion, we put the `up_counter` on the FPGA. 
+The `full_adder` follows the same flow.
+If you have done the `up_counter`, you may skip this.
 
 ### 1.1 Design the Circuit
-
-Our
-[`full_adder` RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/reference/full_adder.sv)
-is connected to an idealized, active-high FPGA interface through its
-[`board_glue`](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/top_glue/reference/full_adder.sv).
 
 ### 1.2 Test in Simulation
 
@@ -75,7 +92,7 @@ exit
 
 ### 1.3 Translate to a Bitstream
 
-Build the FPGA configuration inside the container:
+Build the bitstream (= FPGA configuration) inside the container:
 
 ```bash
 make enter
@@ -83,25 +100,10 @@ make bitstream DESIGN=full_adder
 exit
 ```
 
-The build flow in
-[`fpga.mk`](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/common/fpga.mk)
-reads
-[`full_adder.f`](https://github.com/abarajithan11/digital-design/blob/main/material/designs/reference/full_adder.f),
-removes simulation-only sources, adds `board_glue` and the fixed
+This invokes the commands in `fpga.mk`, which read [`full_adder.f`](https://github.com/abarajithan11/digital-design/blob/main/material/designs/reference/full_adder.f),
+removes simulation-only sources, adds [`board_glue`](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/top_glue/reference/full_adder.sv) and the fixed
 [`board_top.sv`](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/common/board_top.sv),
-then runs the open-source Apicula flow
-(`yosys → nextpnr-himbaechel → gowin_pack`) to generate
-`material/fpga/tang_nano_20k/build/full_adder/full_adder.fs`.
-
-`board_top` gives every design the same clean, active-high interface
-(`clk`, `rst`, `btn`, `led`, UART, and GPIO). It handles:
-
-- the board pins from [`board.cst`](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/common/board.cst)
-  and the system clock;
-- power-on reset;
-- active-low LED inversion;
-- button synchronization and debouncing;
-- UART input synchronization and GPIO.
+then runs the open-source Apicula flow (`yosys → nextpnr-himbaechel → gowin_pack`) to generate `material/fpga/tang_nano_20k/build/full_adder/full_adder.fs`.
 
 (program-the-fpga)=
 ### 1.4 Program the FPGA and Interact with your design
@@ -118,7 +120,7 @@ interface 1/B is UART. Keep them separate during the setup.
    not need to be installed.
 2. Connect the Tang Nano 20K to Windows.
 3. In Zadig, select **Options → List All Devices**.
-4. Select **Dual RS232-HS (Interface 0)** or **Interface A**.
+4. Select **Dual RS232-HS / USB Debugger (Interface 0)** or **Interface A**.
 5. Select **WinUSB**, then click **Replace Driver**.
 
 Do not replace the driver for interface 1/B; that is the UART used by the
@@ -130,13 +132,16 @@ Python scripts.
 
 #### To program a bitstream:
 
-1. Open [openFPGALoader Web](https://ofl.trabucayre.com/) in Google Chrome. Firefox does not support WebUSB.
-2. In the section **Automatic Operations**, leave the cable as default, and for the board select **Tang Nano 20K**.
-3. Select **SRAM** for a temporary configuration or **Flash** to keep the
-   configuration after power is removed.
-4. Choose the design's `.fs` file, then click **Program FPGA**. For this
-   example, use `material/fpga/tang_nano_20k/build/full_adder/full_adder.fs`. A successful
-   run ends with `Done`, `DONE`, and `Execution completed`.
+![FPGA Programming](https://media.abapages.com/course-site/fpga_load.png)
+
+1. Open [openFPGALoader Web](https://ofl.trabucayre.com/) in a **Chrome-based browser**. Firefox does not support WebUSB.
+2. Go to the section **Automatic Operations**.
+3. Leave the cable as default, and select **Tang Nano 20K** as the board.
+4. Select **SRAM** for a temporary configuration or **Flash** to keep the configuration after power is removed.
+5. Choose the design's `.fs` file. For this example, use `material/fpga/tang_nano_20k/build/full_adder/full_adder.fs`.
+6. Click **Program FPGA**. 
+7. The first time you do this, it opens this dialog box. Select "USB Debugger" and click "Connect". Note, Firefox does not support WebUSB.
+8. A successful run ends with `Execution completed`.
 
 Press **S1** and **S2** to change the full adder's two inputs. LED0 shows the
 sum and LED1 shows the carry output.
