@@ -13,6 +13,7 @@ docs/design_outputs.md
 *.png
 
 material/data/*.wav
+material/data/MNIST/
 material/data/coef.svh
 material/data/y.txt
 material/data/x_music.txt

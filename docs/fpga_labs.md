@@ -23,7 +23,7 @@ The general FPGA flow is as follows:
 1. **Design the circuit in SystemVerilog.** See our [SystemVerilog RTL](https://github.com/abarajithan11/digital-design/tree/main/material/rtl).
 2. **Test it in simulation** using a [SystemVerilog testbench](https://github.com/abarajithan11/digital-design/tree/main/material/tb):
    `make sim DESIGN=<design>`.
-3. **Translate it into a bitstream**—the configuration loaded onto the FPGA—using
+3. **Translate it into a bitstream** (the configuration loaded onto the FPGA) using
    our [`fpga.mk` build flow](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/common/fpga.mk):
    `make bitstream DESIGN=<design>`.
 4. **Program the FPGA** with [openFPGALoader
@@ -306,7 +306,7 @@ This test checks if your computer can talk to your hardware in the FPGA.
    exit
    ```
 
-2. In Chrome, program
+2. [In Chrome](https://ofl.trabucayre.com/), program
    `material/fpga/tang_nano_20k/build/uart_echo/uart_echo.fs`.
 3. Activate the basic environment and run the loopback test:
 
@@ -348,7 +348,7 @@ to the script, so it can also be invoked from another directory.
    exit
    ```
 
-2. In Chrome, program
+2. [In Chrome](https://ofl.trabucayre.com/), program
    `material/fpga/tang_nano_20k/build/sys_fir_filter/sys_fir_filter.fs`.
 3. Activate the basic environment and process the included WAV file:
 
@@ -392,7 +392,7 @@ mostly bass because the FPGA is running a low-pass filter.
    exit
    ```
 
-2. In Chrome, program
+2. [In Chrome](https://ofl.trabucayre.com/), program
    `material/fpga/tang_nano_20k/build/sys_fir_filter/sys_fir_filter.fs`.
 3. Connect headphones and start at a low volume. Using speakers near the
    microphone can create loud feedback.
@@ -469,7 +469,7 @@ System → Sound**, then run the `--list` command again.
 </details>
 ```
 
-## 5. Run the CPU
+## 5. CPU
 
 This example loads a small program into the CPU on the FPGA over UART, runs it,
 and sends the data memory back to the computer. The program computes
@@ -484,7 +484,7 @@ and sends the data memory back to the computer. The program computes
    exit
    ```
 
-2. In Chrome, program
+2. [In Chrome](https://ofl.trabucayre.com/), program
    `material/fpga/tang_nano_20k/build/cpu_fpga/cpu_fpga.fs`.
 3. Activate the basic environment and load the example program:
 
@@ -507,7 +507,7 @@ line should be:
 dmem[4] = 55  (sum(1..10) should be 55)
 ```
 
-## 6. Test the Neural-Network Accelerator
+## 6. Neural-Network Accelerator
 
 Assignment 4 combines the UART and neural-network blocks into `sys_nn`. For a
 saved MNIST image, the complete path is:
@@ -528,17 +528,21 @@ and predicts the digit with the index of the largest score.
 The webcam path replaces the saved image with a live frame:
 
 ```text
-webcam → OpenCV preprocessing → pyserial → USB → FPGA accelerator
-       → USB → pyserial → Python prediction and preview
+webcam → OpenCV preprocessing → pyserial → USB → FPGA accelerator → USB → pyserial → Python prediction and preview
 ```
 
-Both Python tools crop, downsample, and quantize the image to the same 9×9
-input used to train the model.
+Both host tools: 
+[`fpga_nn.py`](https://github.com/abarajithan11/digital-design/blob/main/material/py/fpga_nn.py)
+and
+[`fpga_nn_camera.py`](https://github.com/abarajithan11/digital-design/blob/main/material/py/fpga_nn_camera.py), crop,
+downsample, and quantize the image to the same 9×9 input used to train the
+model.
 
 ### 6.1 Optional: Train the Neural Network
 
 The trained weights are already provided, so you do not need to train the
-network to test the accelerator. If you want to train it from scratch, run this
+network to test the accelerator.
+If you want to train it from scratch, run this
 from the `digital-design` repository root:
 
 ```bash
@@ -552,12 +556,10 @@ first run downloads MNIST and trains the model; later runs reuse its checkpoint.
 
 ### 6.2 Build and Program `sys_nn`
 
-These files live in `../assignments/a4`, next to the `digital-design`
-directory. Complete Assignment 4 through `sys_nn`, then enter the course
-container:
+Complete Assignment 4 through `sys_nn`. From the root of your Assignment 4
+checkout, enter the course container:
 
 ```bash
-cd ../assignments/a4
 make enter
 ```
 
@@ -569,45 +571,51 @@ make bitstream
 exit
 ```
 
-In Chrome, program `fpga/build/sys_nn/sys_nn.fs` using the
+[In Chrome](https://ofl.trabucayre.com/), program
+`fpga/build/sys_nn/sys_nn.fs` using the
 [web programmer](#program-the-fpga).
 
 ### 6.3 Test an MNIST Image
 
-On the host, activate the basic Conda environment. Use
-`python -m serial.tools.list_ports -v` to find the board, then set `PORT` near
-the top of `py/fpga_nn.py` to that port. Typical values are `/dev/ttyUSB1` on
-Ubuntu, `/dev/cu.usbserial-*` on macOS, and `COM5` on native Windows.
+On the host, open a terminal in the root of your `digital-design` checkout and
+activate the basic Conda environment. The script detects the Tang Nano UART
+automatically. If detection is ambiguous, use
+`python -m serial.tools.list_ports -v` to find it and pass `--port PORT`.
 
 Run a random test image or choose one by its MNIST index:
 
 ```bash
 conda activate tang-basic
-python py/fpga_nn.py
-python py/fpga_nn.py --index 42
+python material/py/fpga_nn.py
+python material/py/fpga_nn.py --index 42
 ```
 
-The script downloads the MNIST test files into `data/MNIST/raw` if they are not
-already present. It then prints the expected label, the FPGA prediction, and
-all ten signed scores. If it cannot find or open the board, see [UART access
-troubleshooting](#uart-access-troubleshooting).
+The script downloads the MNIST test files into `material/data/MNIST/raw` if
+they are not already present. It then prints the expected label, the FPGA
+prediction, and all ten signed scores. If it cannot find or open the board,
+see [UART access troubleshooting](#uart-access-troubleshooting).
 
 ### 6.4 Test the Webcam
 
-Set `PORT` near the top of `py/fpga_nn_camera.py` to the board's serial port.
-The default webcam is `CAMERA=0`; change it if your computer selects a different
-camera.
+The script detects the Tang Nano UART automatically. 
+The default webcam is device `0`. Pass `--camera NUMBER` if your computer selects a different camera.
 
 ```bash
 conda activate tang-basic
-python py/fpga_nn_camera.py
+python material/py/fpga_nn_camera.py
 ```
 
-Show the camera a dark handwritten digit on a light background. The window
-shows the 9×9 quantized image that the FPGA receives, while the terminal prints
-the prediction and scores. Press **q**, **Esc**, or **Ctrl+C** to stop. If the
-camera cannot be opened, check the camera permission for your terminal or
-Anaconda Prompt.
+In a white paper, write a digit with a dark color and show it to the camera.
+The window shows the 9×9 quantized image that the FPGA receives, while the terminal prints the prediction and scores. 
+Press **q**, **Esc**, or **Ctrl+C** to stop. 
+If the camera cannot be opened, check the camera permission for your terminal or Anaconda Prompt.
+
+The prediction is pretty bad because we can only fit a tiny network into the FPGA in a fully-parallel way.
+That is, the whole accelerator accepts a new input and produces a new output every clock cycle.
+This has a throughput is 54 million frames per second, which is a massive overkill, but it keeps the SystemVerilog design simple.
+Since the input rate is only around 30 frames per second, you can optimize the accelerator such that it takes one input every `INTERVAL` clock cycles, and reuses the multipliers and accumulators when processing it.
+This results in much lower area, allowing you to train a bigger model and fill the FPGA.
+Engineering is all about trade-offs and constraints.
 
 ## Common fixes
 
