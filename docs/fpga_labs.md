@@ -1,4 +1,4 @@
-# FPGA Setup: Our Examples on Tang Nano 20K
+# FPGA Labs
 
 An FPGA is a flexible chip whose internal logic can be configured to realize
 the digital circuit we want. Unlike an ASIC, which is manufactured for one
@@ -11,15 +11,14 @@ or [AliExpress](https://www.aliexpress.us/item/3256805394833478.html?spm=a2g0o.p
 On AliExpress, carefully choose **Bundle: Nano 20K No header**, and
 triple-check the delivery address before checkout.
 
-## What We Are Doing
+## Overview
 
 We will turn our simulated SystemVerilog circuits into configurations that run
 on a real FPGA. The board is described in the official [Tang Nano 20K
 datasheet](https://dl.sipeed.com/fileList/TANG/Nano_20K/1_Datasheet/Sipeed%20Tang%20nano%2020K%20Datasheet%20V1.3-en_US.pdf).
 It uses a Gowin `GW2AR-18` FPGA; the [board overview](https://wiki.sipeed.com/tangnano20k)
 has additional hardware details.
-
-Our flow is:
+The general FPGA flow is as follows:
 
 1. **Design the circuit in SystemVerilog.** See our [SystemVerilog RTL](https://github.com/abarajithan11/digital-design/tree/main/material/rtl).
 2. **Test it in simulation** using a [SystemVerilog testbench](https://github.com/abarajithan11/digital-design/tree/main/material/tb):
@@ -39,14 +38,6 @@ The examples use two separate environments:
 - Run the Python UART, audio, and camera tools directly on your computer in a
   Conda environment.
 
-If you want to train the neural network from scratch, run this from the repository root.
-
-```bash
-make enter
-python3 py/nn_model.py
-exit
-```
-
 Complete the [Docker setup](https://github.com/abarajithan11/digital-design/)
 first. If you have not cloned the repository yet, run:
 
@@ -63,51 +54,98 @@ directory.
 During discussion, we put the `up_counter` on the FPGA. The `full_adder`
 follows the same flow.
 
-1. **Design:** Our
-   [`full_adder` RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/reference/full_adder.sv)
-   is connected to an idealized, active-high FPGA interface through its
-   [`board_glue`](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/top_glue/reference/full_adder.sv).
-2. **Test in simulation:** Run its
-   [`tb_full_adder.sv`](https://github.com/abarajithan11/digital-design/blob/main/material/tb/reference/tb_full_adder.sv):
+### 1.1 Design the Circuit
 
-   ```bash
-   make enter
-   make sim DESIGN=full_adder
-   exit
-   ```
+Our
+[`full_adder` RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/reference/full_adder.sv)
+is connected to an idealized, active-high FPGA interface through its
+[`board_glue`](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/top_glue/reference/full_adder.sv).
 
-3. **Translate to a bitstream:**
+### 1.2 Test in Simulation
 
-   ```bash
-   make enter
-   make bitstream DESIGN=full_adder
-   exit
-   ```
+Run the
+[`tb_full_adder.sv`](https://github.com/abarajithan11/digital-design/blob/main/material/tb/reference/tb_full_adder.sv)
+testbench inside the container:
 
-   The build flow in
-   [`fpga.mk`](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/common/fpga.mk)
-   reads
-   [`full_adder.f`](https://github.com/abarajithan11/digital-design/blob/main/material/designs/reference/full_adder.f),
-   removes simulation-only sources, adds `board_glue` and the fixed
-   [`board_top.sv`](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/common/board_top.sv),
-   then runs the open-source Apicula flow
-   (`yosys → nextpnr-himbaechel → gowin_pack`) to generate
-   `material/fpga/tang_nano_20k/build/full_adder/full_adder.fs`.
+```bash
+make enter
+make sim DESIGN=full_adder
+exit
+```
 
-   `board_top` gives every design the same clean, active-high interface
-   (`clk`, `rst`, `btn`, `led`, UART, and GPIO). It handles:
+### 1.3 Translate to a Bitstream
 
-   - the board pins from [`board.cst`](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/common/board.cst)
-     and the system clock;
-   - power-on reset;
-   - active-low LED inversion;
-   - button synchronization and debouncing;
-   - UART input synchronization and GPIO.
+Build the FPGA configuration inside the container:
 
-4. **Program the FPGA:** In Chrome, program
-   `material/fpga/tang_nano_20k/build/full_adder/full_adder.fs`.
-5. **Interact with the circuit:** Press **S1** and **S2** to change the two
-   inputs. LED0 shows the sum and LED1 shows the carry output.
+```bash
+make enter
+make bitstream DESIGN=full_adder
+exit
+```
+
+The build flow in
+[`fpga.mk`](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/common/fpga.mk)
+reads
+[`full_adder.f`](https://github.com/abarajithan11/digital-design/blob/main/material/designs/reference/full_adder.f),
+removes simulation-only sources, adds `board_glue` and the fixed
+[`board_top.sv`](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/common/board_top.sv),
+then runs the open-source Apicula flow
+(`yosys → nextpnr-himbaechel → gowin_pack`) to generate
+`material/fpga/tang_nano_20k/build/full_adder/full_adder.fs`.
+
+`board_top` gives every design the same clean, active-high interface
+(`clk`, `rst`, `btn`, `led`, UART, and GPIO). It handles:
+
+- the board pins from [`board.cst`](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/common/board.cst)
+  and the system clock;
+- power-on reset;
+- active-low LED inversion;
+- button synchronization and debouncing;
+- UART input synchronization and GPIO.
+
+(program-the-fpga)=
+### 1.4 Program the FPGA and Interact with your design
+
+Program the matching `.fs` file with [openFPGALoader
+Web](https://ofl.trabucayre.com/) in Google Chrome. Firefox does not provide
+the WebUSB access used by the programmer.
+
+```{raw} html
+<details>
+<summary><strong>Windows 11: one-time WebUSB setup</strong></summary>
+```
+
+There are two interfaces on the board: interface 0/A is JTAG programming, and
+interface 1/B is UART. Keep them separate during the setup.
+
+1. Download and run [Zadig](https://zadig.akeo.ie/). It is portable and does
+   not need to be installed.
+2. Connect the Tang Nano 20K to Windows.
+3. In Zadig, select **Options → List All Devices**.
+4. Select **Dual RS232-HS (Interface 0)** or **Interface A**.
+5. Select **WinUSB**, then click **Replace Driver**.
+
+Do not replace the driver for interface 1/B; that is the UART used by the
+Python scripts.
+
+```{raw} html
+</details>
+```
+
+To program a bitstream:
+
+1. Open [openFPGALoader Web](https://ofl.trabucayre.com/) in Chrome and select
+   **Automatic Operations**.
+2. Select **Tang Nano 20K**.
+3. Select **SRAM** for a temporary configuration or **Flash** to keep the
+   configuration after power is removed.
+4. Select the design's `.fs` file, then click **Program FPGA**. For this
+   example, use
+   `material/fpga/tang_nano_20k/build/full_adder/full_adder.fs`. A successful
+   run ends with `Done`, `DONE`, and `Execution completed`.
+
+Press **S1** and **S2** to change the full adder's two inputs. LED0 shows the
+sum and LED1 shows the carry output.
 
 You can try other simple designs in exactly the same way:
 
@@ -255,47 +293,7 @@ python -c "import numpy, scipy, serial; print('FPGA Python environment is ready'
 The version should be Python 3.11, and the second command should print the
 ready message without an error.
 
-### 2.3 Program the FPGA
-
-Program the matching `.fs` file with [openFPGALoader
-Web](https://ofl.trabucayre.com/) in Google Chrome before running a UART script.
-Firefox does not provide the WebUSB access used by the programmer.
-
-```{raw} html
-<details>
-<summary><strong>Windows 11: one-time WebUSB setup</strong></summary>
-```
-
-There are two interfaces on the board: interface 0/A is JTAG programming, and
-interface 1/B is UART. Keep them separate during the setup.
-
-One-time WebUSB setup:
-
-1. Download and run [Zadig](https://zadig.akeo.ie/). It is portable and does
-   not need to be installed.
-2. Connect the Tang Nano 20K to Windows.
-3. In Zadig, select **Options → List All Devices**.
-4. Select **Dual RS232-HS (Interface 0)** or **Interface A**.
-5. Select **WinUSB**, then click **Replace Driver**.
-
-Do not replace the driver for interface 1/B; that is the UART used by the
-Python scripts.
-
-```{raw} html
-</details>
-```
-
-To program a bitstream:
-
-1. Open [openFPGALoader Web](https://ofl.trabucayre.com/) in Chrome and select
-   **Automatic Operations**.
-2. Select **Tang Nano 20K**.
-3. Select **SRAM** for a temporary configuration or **Flash** to keep the
-   configuration after power is removed.
-4. Select the design's `.fs` file and click **Program FPGA**. A successful run
-   ends with `Done`, `DONE`, and `Execution completed`.
-
-### 2.4 Run the UART Echo Test
+### 2.3 Run the UART Echo Test
 
 This test checks if your computer can talk to your hardware in the FPGA.
 
@@ -326,13 +324,13 @@ The test should finish with:
 PASS: echoed 4096 bytes with no loss.
 ```
 
-## 3. FIR Filter
+## 4. FIR Filter
 
 The FIR filter examples send audio samples to `sys_fir_filter` over UART and
 receive the filtered samples back. Start with a saved audio file, then try the
 same circuit with live microphone audio.
 
-### 3.1 Offline File Test
+### 4.1 Offline File Test
 
 This test sends the included audio file through the FPGA and compares every
 output sample with the reference file. The script reads (or downloads)
@@ -378,7 +376,7 @@ python material/py/fpga_fir_offline.py --port /dev/ttyUSB1
 Use the path printed by your system; on macOS it will usually begin with
 `/dev/cu.usbserial-`, and on Windows it will look like `COM5`.
 
-### 3.2 Live Audio Test
+### 4.2 Live Audio Test
 
 This example records your microphone, sends the audio through the FPGA, and
 plays the filtered result through your selected output device. You should hear
@@ -471,7 +469,7 @@ System → Sound**, then run the `--list` command again.
 </details>
 ```
 
-## 4. Run the CPU
+## 5. Run the CPU
 
 This example loads a small program into the CPU on the FPGA over UART, runs it,
 and sends the data memory back to the computer. The program computes
@@ -508,6 +506,108 @@ line should be:
 ```text
 dmem[4] = 55  (sum(1..10) should be 55)
 ```
+
+## 6. Test the Neural-Network Accelerator
+
+Assignment 4 combines the UART and neural-network blocks into `sys_nn`. For a
+saved MNIST image, the complete path is:
+
+```text
+MNIST image on PC
+  → fpga_nn.py preprocessing → pyserial → USB-to-UART bridge
+  → UART RX → dense 1 → quantized ReLU 1 → dense 2 → output qReLU 2
+  → UART TX → USB-to-UART bridge → pyserial → Python prediction
+```
+
+The network maps 81 quantized pixels through layers of size `81 → 48 → 10`.
+The second qReLU has `RELU=0`, so it requantizes the ten outputs without
+discarding negative scores. UART RX receives one 41-byte packed image; UART TX
+returns the ten signed 4-bit scores in five bytes. Python unpacks the scores
+and predicts the digit with the index of the largest score.
+
+The webcam path replaces the saved image with a live frame:
+
+```text
+webcam → OpenCV preprocessing → pyserial → USB → FPGA accelerator
+       → USB → pyserial → Python prediction and preview
+```
+
+Both Python tools crop, downsample, and quantize the image to the same 9×9
+input used to train the model.
+
+### 6.1 Optional: Train the Neural Network
+
+The trained weights are already provided, so you do not need to train the
+network to test the accelerator. If you want to train it from scratch, run this
+from the `digital-design` repository root:
+
+```bash
+make enter
+python3 py/nn_model.py
+exit
+```
+
+The course container already includes PyTorch, Torchvision, and Brevitas. The
+first run downloads MNIST and trains the model; later runs reuse its checkpoint.
+
+### 6.2 Build and Program `sys_nn`
+
+These files live in `../assignments/a4`, next to the `digital-design`
+directory. Complete Assignment 4 through `sys_nn`, then enter the course
+container:
+
+```bash
+cd ../assignments/a4
+make enter
+```
+
+Simulate the complete system and build its bitstream:
+
+```bash
+make sim DESIGN=sys_nn
+make bitstream
+exit
+```
+
+In Chrome, program `fpga/build/sys_nn/sys_nn.fs` using the
+[web programmer](#program-the-fpga).
+
+### 6.3 Test an MNIST Image
+
+On the host, activate the basic Conda environment. Use
+`python -m serial.tools.list_ports -v` to find the board, then set `PORT` near
+the top of `py/fpga_nn.py` to that port. Typical values are `/dev/ttyUSB1` on
+Ubuntu, `/dev/cu.usbserial-*` on macOS, and `COM5` on native Windows.
+
+Run a random test image or choose one by its MNIST index:
+
+```bash
+conda activate tang-basic
+python py/fpga_nn.py
+python py/fpga_nn.py --index 42
+```
+
+The script downloads the MNIST test files into `data/MNIST/raw` if they are not
+already present. It then prints the expected label, the FPGA prediction, and
+all ten signed scores. If it cannot find or open the board, see [UART access
+troubleshooting](#uart-access-troubleshooting).
+
+### 6.4 Test the Webcam
+
+Set `PORT` near the top of `py/fpga_nn_camera.py` to the board's serial port.
+The default webcam is `CAMERA=0`; change it if your computer selects a different
+camera.
+
+```bash
+conda activate tang-basic
+python py/fpga_nn_camera.py
+```
+
+Show the camera a dark handwritten digit on a light background. The window
+shows the 9×9 quantized image that the FPGA receives, while the terminal prints
+the prediction and scores. Press **q**, **Esc**, or **Ctrl+C** to stop. If the
+camera cannot be opened, check the camera permission for your terminal or
+Anaconda Prompt.
 
 ## Common fixes
 
