@@ -4,14 +4,14 @@
 //  board_top - FIXED board wrapper (CSE140). Students never edit this.
 //
 //  Hands board_glue a clean, ACTIVE-HIGH world:
-//     clk         108 MHz system clock (27 MHz crystal x 4 via PLL)
+//     clk         54 MHz system clock (27 MHz crystal x 2 via PLL)
 //     rst         1 = reset asserted (power-on, or PLL not locked)
 //     btn[1:0]    1 = pressed (synced + debounced; btn[0]=S1, btn[1]=S2)
 //     led[5:0]    drive 1 to light an LED (LEDs are active-low in hardware)
 //     rx / tx     serial (rx is synchronized to clk)
 //     gpio_*      per-pin output value / output-enable / input
 //
-//  Every design runs at 108 MHz. This divides exactly to the UART's 2 Mbaud and
+//  Every design runs at 54 MHz. This divides exactly to the UART's 2 Mbaud and
 //  gives every lab the same clock assumption.
 //
 //  Port names/widths below MUST match board.cst exactly.
@@ -25,9 +25,9 @@ module board_top (
     inout  logic [5:0] gpio      // bidirectional header IO (see board.cst)
 );
 
-  // ---- System clock: 27 MHz crystal -> 108 MHz ---------------------------
+  // ---- System clock: 27 MHz crystal -> 54 MHz ----------------------------
   logic clk_sys, locked;
-  // f_out = 27 MHz * (FBDIV_SEL+1)/(IDIV_SEL+1) = 108 MHz.
+  // f_out = 27 MHz * (FBDIV_SEL+1)/(IDIV_SEL+1) = 54 MHz.
   rPLL #(
       .DEVICE   ("GW2A-18C"),
       .FCLKIN   ("27"),

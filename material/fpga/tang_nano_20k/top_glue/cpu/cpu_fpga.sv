@@ -8,7 +8,7 @@
 //  the CPU, and a UART loader/dumper.  Flow (a tiny state machine):
 //
 //    LOAD  the host streams the program image in over UART (see
-//          py/program_cpu.py): all MEM_ROWS instruction words, then all
+//          py/fpga_program_cpu.py): all MEM_ROWS instruction words, then all
 //          MEM_ROWS data words.  The UART is 16 bits wide, so uart_rx/uart_tx
 //          pack and unpack the two bytes of each word for us (low byte first) -
 //          the loader just writes one whole word per received beat.

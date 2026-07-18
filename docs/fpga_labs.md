@@ -16,6 +16,8 @@ triple-check the delivery address before checkout.
 We will turn our simulated SystemVerilog circuits into configurations that run
 on a real FPGA. The board is described in the official [Tang Nano 20K
 datasheet](https://dl.sipeed.com/fileList/TANG/Nano_20K/1_Datasheet/Sipeed%20Tang%20nano%2020K%20Datasheet%20V1.3-en_US.pdf).
+It uses a Gowin `GW2AR-18` FPGA; the [board overview](https://wiki.sipeed.com/tangnano20k)
+has additional hardware details.
 
 Our flow is:
 
@@ -30,11 +32,20 @@ Our flow is:
 5. **Interact with the circuit on the FPGA:** press its buttons, observe its
    LEDs, or send and receive data from your computer.
 
-The FPGA tools use two separate environments:
+The examples use two separate environments:
 
-- Build the `.fs` bitstream inside the course Docker container.
-- Run the Python UART, audio, and neural-network tools on your computer in a
+- Build `.fs` bitstreams and train the neural network inside the course Docker
+  container.
+- Run the Python UART, audio, and camera tools directly on your computer in a
   Conda environment.
+
+If you want to train the neural network from scratch, run this from the repository root.
+
+```bash
+make enter
+python3 py/nn_model.py
+exit
+```
 
 Complete the [Docker setup](https://github.com/abarajithan11/digital-design/)
 first. If you have not cloned the repository yet, run:
@@ -79,10 +90,12 @@ follows the same flow.
    [`full_adder.f`](https://github.com/abarajithan11/digital-design/blob/main/material/designs/reference/full_adder.f),
    removes simulation-only sources, adds `board_glue` and the fixed
    [`board_top.sv`](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/common/board_top.sv),
-   then generates
+   then runs the open-source Apicula flow
+   (`yosys → nextpnr-himbaechel → gowin_pack`) to generate
    `material/fpga/tang_nano_20k/build/full_adder/full_adder.fs`.
 
-   `board_top` handles:
+   `board_top` gives every design the same clean, active-high interface
+   (`clk`, `rst`, `btn`, `led`, UART, and GPIO). It handles:
 
    - the board pins from [`board.cst`](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/common/board.cst)
      and the system clock;
@@ -108,6 +121,22 @@ You can wrap your own module in the same way: add its `.f` file and copy
 [`top_glue/_skeleton.sv`](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/top_glue/_skeleton.sv)
 to create its matching `board_glue`.
 
+The reusable FPGA files are organized as follows:
+
+```text
+material/fpga/tang_nano_20k/
+  common/board_top.sv                    fixed board wrapper
+  common/board.cst                       fixed pin constraints
+  common/fpga.mk                         bitstream build rules
+  top_glue/{cpu,reference,system}/       one board_glue per design
+  build/<design>/                        generated files; not committed
+material/designs/{cpu,reference,systems}/<design>.f
+```
+
+`FPGA` defaults to `tang_nano_20k`. A design can be built when it has both a matching `.f` source list and `board_glue`.
+The build ignores `tb_*` and `vip_*`
+simulation sources. From inside the container, `make bitstream_all` builds every design that has both files.
+
 ## 2. Make Your Design and Your Computer Communicate
 
 We will now put more advanced designs on the FPGA and communicate with them
@@ -120,6 +149,14 @@ On the computer, Python can send and receive UART data through the
 [`pyserial` library](https://pyserial.readthedocs.io/en/latest/). Later examples
 also need numerical and audio libraries, so we install everything together in
 a Conda environment.
+
+The board's USB-to-UART bridge operates at **2 Mbaud**, has a **32-byte buffer**, and has no hardware flow control.
+At the board's 54 MHz system clock,
+the UART circuits use `CLKS_PER_BIT=27`.
+The echo and FIR designs use a two-entry
+[`skid_buffer`](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/reference/skid_buffer.sv),
+while the host scripts transfer at most 32 bytes at a time and drain replies so
+the bridge does not silently drop data.
 
 ### 2.1 Install Miniconda
 
@@ -234,7 +271,8 @@ interface 1/B is UART. Keep them separate during the setup.
 
 One-time WebUSB setup:
 
-1. Download and run [Zadig](https://zadig.akeo.ie/).
+1. Download and run [Zadig](https://zadig.akeo.ie/). It is portable and does
+   not need to be installed.
 2. Connect the Tang Nano 20K to Windows.
 3. In Zadig, select **Options → List All Devices**.
 4. Select **Dual RS232-HS (Interface 0)** or **Interface A**.
@@ -246,6 +284,16 @@ Python scripts.
 ```{raw} html
 </details>
 ```
+
+To program a bitstream:
+
+1. Open [openFPGALoader Web](https://ofl.trabucayre.com/) in Chrome and select
+   **Automatic Operations**.
+2. Select **Tang Nano 20K**.
+3. Select **SRAM** for a temporary configuration or **Flash** to keep the
+   configuration after power is removed.
+4. Select the design's `.fs` file and click **Program FPGA**. A successful run
+   ends with `Done`, `DONE`, and `Execution completed`.
 
 ### 2.4 Run the UART Echo Test
 
@@ -287,7 +335,10 @@ same circuit with live microphone audio.
 ### 3.1 Offline File Test
 
 This test sends the included audio file through the FPGA and compares every
-output sample with the reference file.
+output sample with the reference file. The script reads (or downloads)
+`material/data/chill_sub.wav`, writes `material/data/fpga_out.wav`, and compares
+it with `material/data/bass_only_8bit.wav`. These paths are resolved relative
+to the script, so it can also be invoked from another directory.
 
 1. Simulate `sys_fir_filter`, then build its bitstream inside the Docker
    container. The simulation generates the files needed by the example:
@@ -418,6 +469,44 @@ System → Sound**, then run the `--list` command again.
 
 ```{raw} html
 </details>
+```
+
+## 4. Run the CPU
+
+This example loads a small program into the CPU on the FPGA over UART, runs it,
+and sends the data memory back to the computer. The program computes
+`1 + ... + 10` and stores the result in `dmem[4]`.
+
+1. Simulate `cpu_fpga`, then build its bitstream inside the Docker container:
+
+   ```bash
+   make enter
+   make sim DESIGN=cpu_fpga
+   make bitstream DESIGN=cpu_fpga
+   exit
+   ```
+
+2. In Chrome, program
+   `material/fpga/tang_nano_20k/build/cpu_fpga/cpu_fpga.fs`.
+3. Activate the basic environment and load the example program:
+
+   ```bash
+   conda activate tang-basic
+   python material/py/fpga_program_cpu.py
+   ```
+
+   If the Python script cannot find or open the board, see [UART access
+   troubleshooting](#uart-access-troubleshooting).
+
+4. Press **S1** when prompted. The CPU runs at about one instruction per
+   second, and the LEDs show the opcode. Hold **S2** to show the low six bits of
+   `dmem[4]` instead.
+
+When the run finishes, the script prints the returned data memory. The final
+line should be:
+
+```text
+dmem[4] = 55  (sum(1..10) should be 55)
 ```
 
 ## Common fixes

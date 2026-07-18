@@ -66,8 +66,10 @@ RUN python3 -m pip install --no-cache-dir --use-pep517 \
 
 # CPU-only PyTorch + Brevitas for the quantized-NN example (py/nn_model.py).
 RUN python3 -m pip install --no-cache-dir \
-        --index-url https://download.pytorch.org/whl/cpu torch torchvision \
- && python3 -m pip install --no-cache-dir brevitas
+        --index-url https://download.pytorch.org/whl/cpu \
+        torch==2.12.1 \
+        torchvision==0.27.1 \
+ && python3 -m pip install --no-cache-dir brevitas==0.12.1
 
 RUN test -f "${ORFS_HOME}/flow/Makefile" \
  && test -x "${ORFS_HOME}/tools/install/yosys/bin/yosys" \

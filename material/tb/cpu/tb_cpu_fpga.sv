@@ -2,7 +2,7 @@
 
 // End-to-end test of the FPGA board_glue for the CPU: stream a program image in
 // over UART, press the "run" button, then read the data RAM back out - all
-// through the real uart_rx/uart_tx, exactly as py/program_cpu.py does on
+// through the real uart_rx/uart_tx, exactly as py/fpga_program_cpu.py does on
 // hardware.  Runs the classic sum(1..10) program and checks dmem[4] == 55.
 //
 // The UART is 16 bits wide, so each send/recv is one whole word (uart_rx/uart_tx

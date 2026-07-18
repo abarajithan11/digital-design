@@ -5,7 +5,7 @@ data RAM.
     make program_fpga DESIGN=cpu_fpga     # flash the bitstream (from the host)
     python3 /path/to/digital-design/material/py/fpga_program_cpu.py --port PORT
 
-The board_glue (fpga/tang_nano_20k/top_glue/system/cpu_fpga.sv) holds a full toy
+The board_glue (fpga/tang_nano_20k/top_glue/cpu/cpu_fpga.sv) holds a full toy
 computer: instruction RAM, data RAM, the CPU, and this UART loader/dumper.
 
 Flow:

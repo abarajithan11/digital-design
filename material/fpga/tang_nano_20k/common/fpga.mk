@@ -16,7 +16,7 @@ SHELL := /bin/bash
 #
 #  Per design we compile exactly: common/board_top.sv + the RTL in the shared
 #  designs/*/<DESIGN>.f list + the one top_glue/*.sv. Testbench and VIP sources
-#  from the shared list are omitted. board_top runs every design at 108 MHz
+#  from the shared list are omitted. board_top runs every design at 54 MHz
 #  from the board's 27 MHz crystal.
 # ============================================================================
 
