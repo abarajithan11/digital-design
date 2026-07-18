@@ -35,7 +35,7 @@ The examples use two separate environments:
 
 - Build `.fs` bitstreams and train the neural network inside the course Docker
   container.
-- Run the Python UART, audio, and camera tools directly on your computer in a
+- Run the Python UART, audio, and camera tools **outside the container** in a
   Conda environment.
 
 Complete the [Docker setup](https://github.com/abarajithan11/digital-design/)
@@ -471,9 +471,10 @@ System → Sound**, then run the `--list` command again.
 
 ## 5. CPU
 
+Check out our small CPU designed in 40 lines of SystemVerilog [here](design_outputs.md).
 This example loads a small program into the CPU on the FPGA over UART, runs it,
-and sends the data memory back to the computer. The program computes
-`1 + ... + 10` and stores the result in `dmem[4]`.
+and sends the data memory back to the computer. 
+The program computes `1 + ... + 10` and stores the result in `dmem[4]`.
 
 1. Simulate `cpu_fpga`, then build its bitstream inside the Docker container:
 
@@ -509,27 +510,33 @@ dmem[4] = 55  (sum(1..10) should be 55)
 
 ## 6. Neural-Network Accelerator
 
-Assignment 4 combines the UART and neural-network blocks into `sys_nn`. For a
-saved MNIST image, the complete path is:
+Assignment 4 combines the UART and neural-network blocks into `sys_nn`. 
+The complete path taken by the data is:
 
-```text
-MNIST image on PC
-  → fpga_nn.py preprocessing → pyserial → USB-to-UART bridge
-  → UART RX → dense 1 → quantized ReLU 1 → dense 2 → output qReLU 2
-  → UART TX → USB-to-UART bridge → pyserial → Python prediction
-```
+- Handwritten image on PC / from webcam
+   - Python (fpga_nn.py) 
+   - preprocessing 
+   - pyserial
+   - USB
+- FPGA
+   - USB-to-UART bridge 
+   - UART RX 
+   - dense 1 
+   - quant_ReLU 1 
+   - dense 2 
+   - output qReLU 
+   - UART TX 
+   - USB-to-UART bridge 
+- Your PC
+   - USB
+   - Python: pyserial → prediction
+
 
 The network maps 81 quantized pixels through layers of size `81 → 48 → 10`.
 The second qReLU has `RELU=0`, so it requantizes the ten outputs without
 discarding negative scores. UART RX receives one 41-byte packed image; UART TX
 returns the ten signed 4-bit scores in five bytes. Python unpacks the scores
 and predicts the digit with the index of the largest score.
-
-The webcam path replaces the saved image with a live frame:
-
-```text
-webcam → OpenCV preprocessing → pyserial → USB → FPGA accelerator → USB → pyserial → Python prediction and preview
-```
 
 Both host tools: 
 [`fpga_nn.py`](https://github.com/abarajithan11/digital-design/blob/main/material/py/fpga_nn.py)
