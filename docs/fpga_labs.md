@@ -106,10 +106,6 @@ then runs the open-source Apicula flow
 (program-the-fpga)=
 ### 1.4 Program the FPGA and Interact with your design
 
-Program the matching `.fs` file with [openFPGALoader
-Web](https://ofl.trabucayre.com/) in Google Chrome. Firefox does not provide
-the WebUSB access used by the programmer.
-
 ```{raw} html
 <details>
 <summary><strong>Windows 11: one-time WebUSB setup</strong></summary>
@@ -132,16 +128,14 @@ Python scripts.
 </details>
 ```
 
-To program a bitstream:
+#### To program a bitstream:
 
-1. Open [openFPGALoader Web](https://ofl.trabucayre.com/) in Chrome and select
-   **Automatic Operations**.
-2. Select **Tang Nano 20K**.
+1. Open [openFPGALoader Web](https://ofl.trabucayre.com/) in Google Chrome. Firefox does not support WebUSB.
+2. In the section **Automatic Operations**, leave the cable as default, and for the board select **Tang Nano 20K**.
 3. Select **SRAM** for a temporary configuration or **Flash** to keep the
    configuration after power is removed.
-4. Select the design's `.fs` file, then click **Program FPGA**. For this
-   example, use
-   `material/fpga/tang_nano_20k/build/full_adder/full_adder.fs`. A successful
+4. Choose the design's `.fs` file, then click **Program FPGA**. For this
+   example, use `material/fpga/tang_nano_20k/build/full_adder/full_adder.fs`. A successful
    run ends with `Done`, `DONE`, and `Execution completed`.
 
 Press **S1** and **S2** to change the full adder's two inputs. LED0 shows the
@@ -175,9 +169,9 @@ material/designs/{cpu,reference,systems}/<design>.f
 The build ignores `tb_*` and `vip_*`
 simulation sources. From inside the container, `make bitstream_all` builds every design that has both files.
 
-## 2. Make Your Design and Your Computer Communicate
+## 2. UART Serial: Talking to your computer
 
-We will now put more advanced designs on the FPGA and communicate with them
+We will now implement more advanced designs on the FPGA and communicate with them
 from the computer. We use UART (**Universal Asynchronous Receiver/Transmitter**),
 a simple serial protocol supported by almost every system. UART is easy to use
 but relatively slow. We will cover the protocol and its circuits in the
