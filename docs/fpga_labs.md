@@ -19,51 +19,16 @@ datasheet](https://dl.sipeed.com/fileList/TANG/Nano_20K/1_Datasheet/Sipeed%20Tan
 
 Our flow is:
 
-1. **Design the circuit in SystemVerilog.** For example, see our
-   [`full_adder.sv`](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/reference/full_adder.sv).
-2. **Test it in simulation** with its
-   [`tb_full_adder.sv`](https://github.com/abarajithan11/digital-design/blob/main/material/tb/reference/tb_full_adder.sv):
-   `make sim DESIGN=full_adder`.
+1. **Design the circuit in SystemVerilog.** See our [SystemVerilog RTL](https://github.com/abarajithan11/digital-design/tree/main/material/rtl).
+2. **Test it in simulation** using a [SystemVerilog testbench](https://github.com/abarajithan11/digital-design/tree/main/material/tb):
+   `make sim DESIGN=<design>`.
 3. **Translate it into a bitstream**—the configuration loaded onto the FPGA—using
    our [`fpga.mk` build flow](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/common/fpga.mk):
-   `make bitstream DESIGN=full_adder`.
+   `make bitstream DESIGN=<design>`.
 4. **Program the FPGA** with [openFPGALoader
    Web](https://ofl.trabucayre.com/).
 5. **Interact with the circuit on the FPGA:** press its buttons, observe its
    LEDs, or send and receive data from your computer.
-
-For example, when you run `make bitstream DESIGN=full_adder`:
-
-1. The fixed [`board_top.sv`](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/common/board_top.sv)
-   wrapper handles:
-
-   - the board pins from [`board.cst`](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/common/board.cst)
-     and the system clock;
-   - power-on reset;
-   - active-low LED inversion;
-   - button synchronization and debouncing;
-   - UART input synchronization and GPIO.
-
-2. For each example, a `board_glue` module presents an idealized, active-high FPGA interface
-   and wraps the example circuit. For `full_adder`, the
-   [`board_glue`](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/top_glue/reference/full_adder.sv)
-   connects the board interface to our
-   [`full_adder` module](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/reference/full_adder.sv).
-   Other wrappers follow the same
-   `material/fpga/tang_nano_20k/top_glue/{cpu,reference,system}/<design>.sv`
-   layout.
-
-3. The build flow in
-   [`fpga.mk`](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/common/fpga.mk)
-   reads
-   [`full_adder.f`](https://github.com/abarajithan11/digital-design/blob/main/material/designs/reference/full_adder.f),
-   removes simulation-only sources, adds `board_top` and `board_glue`, then uses
-   an open-source toolchain to generate
-   `material/fpga/tang_nano_20k/build/full_adder/full_adder.fs`.
-
-You can wrap your own module in the same way: add its `.f` file and copy
-[`top_glue/_skeleton.sv`](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/top_glue/_skeleton.sv)
-to create its matching `board_glue`.
 
 The FPGA tools use two separate environments:
 
@@ -82,7 +47,81 @@ cd digital-design
 All commands below assume that your terminal is in this `digital-design`
 directory.
 
-## 1. Install Miniconda
+## 1. Full Adder on the FPGA
+
+During discussion, we put the `up_counter` on the FPGA. The `full_adder`
+follows the same flow.
+
+1. **Design:** Our
+   [`full_adder` RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/reference/full_adder.sv)
+   is connected to an idealized, active-high FPGA interface through its
+   [`board_glue`](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/top_glue/reference/full_adder.sv).
+2. **Test in simulation:** Run its
+   [`tb_full_adder.sv`](https://github.com/abarajithan11/digital-design/blob/main/material/tb/reference/tb_full_adder.sv):
+
+   ```bash
+   make enter
+   make sim DESIGN=full_adder
+   exit
+   ```
+
+3. **Translate to a bitstream:**
+
+   ```bash
+   make enter
+   make bitstream DESIGN=full_adder
+   exit
+   ```
+
+   The build flow in
+   [`fpga.mk`](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/common/fpga.mk)
+   reads
+   [`full_adder.f`](https://github.com/abarajithan11/digital-design/blob/main/material/designs/reference/full_adder.f),
+   removes simulation-only sources, adds `board_glue` and the fixed
+   [`board_top.sv`](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/common/board_top.sv),
+   then generates
+   `material/fpga/tang_nano_20k/build/full_adder/full_adder.fs`.
+
+   `board_top` handles:
+
+   - the board pins from [`board.cst`](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/common/board.cst)
+     and the system clock;
+   - power-on reset;
+   - active-low LED inversion;
+   - button synchronization and debouncing;
+   - UART input synchronization and GPIO.
+
+4. **Program the FPGA:** In Chrome, program
+   `material/fpga/tang_nano_20k/build/full_adder/full_adder.fs`.
+5. **Interact with the circuit:** Press **S1** and **S2** to change the two
+   inputs. LED0 shows the sum and LED1 shows the carry output.
+
+You can try other simple designs in exactly the same way:
+
+- `and_gate`: [RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/reference/and_gate.sv) · [board_glue](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/top_glue/reference/and_gate.sv)
+- `not_gate`: [RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/reference/not_gate.sv) · [board_glue](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/top_glue/reference/not_gate.sv)
+- `xor_gate`: [RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/reference/xor_gate.sv) · [board_glue](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/top_glue/reference/xor_gate.sv)
+- `mux`: [RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/reference/mux.sv) · [board_glue](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/top_glue/reference/mux.sv)
+- `decoder`: [RTL](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/reference/decoder.sv) · [board_glue](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/top_glue/reference/decoder.sv)
+
+You can wrap your own module in the same way: add its `.f` file and copy
+[`top_glue/_skeleton.sv`](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/top_glue/_skeleton.sv)
+to create its matching `board_glue`.
+
+## 2. Make Your Design and Your Computer Communicate
+
+We will now put more advanced designs on the FPGA and communicate with them
+from the computer. We use UART (**Universal Asynchronous Receiver/Transmitter**),
+a simple serial protocol supported by almost every system. UART is easy to use
+but relatively slow. We will cover the protocol and its circuits in the
+lectures.
+
+On the computer, Python can send and receive UART data through the
+[`pyserial` library](https://pyserial.readthedocs.io/en/latest/). Later examples
+also need numerical and audio libraries, so we install everything together in
+a Conda environment.
+
+### 2.1 Install Miniconda
 
 Open the instructions for your operating system. If Conda is already installed
 and `conda --version` works, skip to the next section.
@@ -155,26 +194,15 @@ first.
 </details>
 ```
 
-## 2. Create the environment
+### 2.2 Create the Environment
 
 On Windows, run the `conda env create` command below from the Administrator
 Anaconda Prompt opened in the previous section. Ubuntu and macOS users should
 use their regular terminal.
 
-For the UART, CPU, FIR filter, and other labs that do not train a neural
-network, use the smaller `tang-basic` environment:
-
 ```bash
 conda env create -f python-setup/tang-basic.yml
 conda activate tang-basic
-```
-
-If the lab includes neural-network training, use `tang-training` instead. It
-includes the basic packages as well as PyTorch, Torchvision, and Brevitas:
-
-```bash
-conda env create -f python-setup/tang-training.yml
-conda activate tang-training
 ```
 
 You only need to create an environment once. You do need to activate it in each
@@ -190,7 +218,7 @@ python -c "import numpy, scipy, serial; print('FPGA Python environment is ready'
 The version should be Python 3.11, and the second command should print the
 ready message without an error.
 
-## 3. Program the FPGA
+### 2.3 Program the FPGA
 
 Program the matching `.fs` file with [openFPGALoader
 Web](https://ofl.trabucayre.com/) in Google Chrome before running a UART script.
@@ -219,7 +247,7 @@ Python scripts.
 </details>
 ```
 
-## 4. Run UART Echo Test
+### 2.4 Run the UART Echo Test
 
 This test checks if your computer can talk to your hardware in the FPGA.
 
@@ -234,8 +262,6 @@ This test checks if your computer can talk to your hardware in the FPGA.
 
 2. In Chrome, program
    `material/fpga/tang_nano_20k/build/uart_echo/uart_echo.fs`.
-   If the Python script cannot find or open the board afterward, see [UART
-   access troubleshooting](#uart-access-troubleshooting).
 3. Activate the basic environment and run the loopback test:
 
    ```bash
@@ -243,13 +269,22 @@ This test checks if your computer can talk to your hardware in the FPGA.
    python material/py/fpga_uart_echo.py
    ```
 
+   If the Python script cannot find or open the board, see [UART access
+   troubleshooting](#uart-access-troubleshooting).
+
 The test should finish with:
 
 ```text
 PASS: echoed 4096 bytes with no loss.
 ```
 
-## 5. Run FIR Filter with an Offline File
+## 3. FIR Filter
+
+The FIR filter examples send audio samples to `sys_fir_filter` over UART and
+receive the filtered samples back. Start with a saved audio file, then try the
+same circuit with live microphone audio.
+
+### 3.1 Offline File Test
 
 This test sends the included audio file through the FPGA and compares every
 output sample with the reference file.
@@ -266,14 +301,15 @@ output sample with the reference file.
 
 2. In Chrome, program
    `material/fpga/tang_nano_20k/build/sys_fir_filter/sys_fir_filter.fs`.
-   If the Python script cannot find or open the board afterward, see [UART
-   access troubleshooting](#uart-access-troubleshooting).
 3. Activate the basic environment and process the included WAV file:
 
    ```bash
    conda activate tang-basic
    python material/py/fpga_fir_offline.py
    ```
+
+   If the Python script cannot find or open the board, see [UART access
+   troubleshooting](#uart-access-troubleshooting).
 
 The test should finish with a message similar to:
 
@@ -291,7 +327,7 @@ python material/py/fpga_fir_offline.py --port /dev/ttyUSB1
 Use the path printed by your system; on macOS it will usually begin with
 `/dev/cu.usbserial-`, and on Windows it will look like `COM5`.
 
-## 6. Run FIR Filter with Live Audio
+### 3.2 Live Audio Test
 
 This example records your microphone, sends the audio through the FPGA, and
 plays the filtered result through your selected output device. You should hear
@@ -309,8 +345,6 @@ mostly bass because the FPGA is running a low-pass filter.
 
 2. In Chrome, program
    `material/fpga/tang_nano_20k/build/sys_fir_filter/sys_fir_filter.fs`.
-   If the Python script cannot find or open the board afterward, see [UART
-   access troubleshooting](#uart-access-troubleshooting).
 3. Connect headphones and start at a low volume. Using speakers near the
    microphone can create loud feedback.
 4. Activate the basic environment and list the available audio devices:
@@ -325,6 +359,9 @@ mostly bass because the FPGA is running a low-pass filter.
    ```bash
    python material/py/fpga_fir_live_audio.py
    ```
+
+   If the Python script cannot find or open the board, see [UART access
+   troubleshooting](#uart-access-troubleshooting).
 
    Press **Ctrl+C** to stop.
 
@@ -390,7 +427,7 @@ System → Sound**, then run the `--list` command again.
   shell-initialization step.
 - **The environment already exists:** activate it instead of creating it again.
   To bring it up to date, run `conda env update -f
-  python-setup/tang-basic.yml --prune` (or use the training YAML).
+  python-setup/tang-basic.yml --prune`.
 - **No serial port is found:** see [UART access
   troubleshooting](#uart-access-troubleshooting).
 - **The wrong serial port is selected:** rerun the script with `--port PORT`.

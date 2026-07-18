@@ -17,6 +17,7 @@ module tb_up_counter;
 
     posedge_clk;    rstn = 1;
     posedge_clk(2); incr = 1;
+    posedge_clk(10);
     posedge_clk;    rstn = 0; incr = 1;
     posedge_clk(4); incr = 0;
     posedge_clk(4); rstn = 1;
