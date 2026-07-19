@@ -45,10 +45,50 @@ We have built the following module hierarchy to help you quickly implement your 
    * This module instantiates `board_glue` module. Since the `board_glue`s of all designs have the same interface, this module can accept any of them. When you do `make bitstream DESGIN=full_adder` [`fpga.mk`](https://github.com/abarajithan11/digital-design/blob/main/material/fpga/tang_nano_20k/common/fpga.mk) selects the `board glue` in `top_glue/reference/full_adder.sv`.
    * This module abstracts away the real world behaviors of an FPGA to present an idealized interface to `board_glue`. Some of these abstractions are:
       - Control reset signal when powering on
-      - The LED lights on the FPGA are electronically wired to be active low. They light up when `LED[i]=0`. This module inverts that into active high, so they light up when you do `LED[i]=1` inside the `board_glue`.
-      - Button synchronization and debouncing: When you press a button, mechanically the contacts touch and break several times due to vibrations. This causes the `btn[i]` input to oscillate from `0` to `1` and back many times before settling on `btn[i]=1`. Debouncing logic in `board_glue` observes it for a long time, and only gives `btn[i]=1` to the `board_glue` after everything settles.
-      - UART input synchronization: The `RX` input of UART is not synchronized to any clock (it is in the name). This causes weird behavior if you try to sample it at a clock edge. `board_top` synchronizes it to the clock by registering it twice and gives to the `board_glue`.
-      - GPIO: Most General Purpose Input Output (GPIO) pins of the FPGA can act as either input or output, and are hence declared as `inout` ports. Dealing with `inout` ports is error-prone, since driving the same inout port from the FPGA (output) and from the outside (input) at the same time can lead to short circuit. `board_top` converts that into `input`, `output` and `output_enable` ports, which helps you avoid human error.
+
+      ```{raw} html
+      <details>
+      <summary><strong>Active-high LEDs</strong></summary>
+      ```
+
+      The LED lights on the FPGA are electronically wired to be active low. They light up when `LED[i]=0`. This module inverts that into active high, so they light up when you do `LED[i]=1` inside the `board_glue`.
+
+      ```{raw} html
+      </details>
+      ```
+
+      ```{raw} html
+      <details>
+      <summary><strong>Button synchronization and debouncing</strong></summary>
+      ```
+
+      When you press a button, mechanically the contacts touch and break several times due to vibrations. This causes the `btn[i]` input to oscillate from `0` to `1` and back many times before settling on `btn[i]=1`. Debouncing logic in `board_glue` observes it for a long time, and only gives `btn[i]=1` to the `board_glue` after everything settles.
+
+      ```{raw} html
+      </details>
+      ```
+
+      ```{raw} html
+      <details>
+      <summary><strong>UART input synchronization</strong></summary>
+      ```
+
+      The `RX` input of UART is not synchronized to any clock (it is in the name). This causes weird behavior if you try to sample it at a clock edge. `board_top` synchronizes it to the clock by registering it twice and gives to the `board_glue`.
+
+      ```{raw} html
+      </details>
+      ```
+
+      ```{raw} html
+      <details>
+      <summary><strong>GPIO</strong></summary>
+      ```
+
+      Most General Purpose Input Output (GPIO) pins of the FPGA can act as either input or output, and are hence declared as `inout` ports. Dealing with `inout` ports is error-prone, since driving the same inout port from the FPGA (output) and from the outside (input) at the same time can lead to short circuit. `board_top` converts that into `input`, `output` and `output_enable` ports, which helps you avoid human error.
+
+      ```{raw} html
+      </details>
+      ```
 
 ### Environment Setup
 
@@ -182,6 +222,11 @@ a simple serial protocol supported by almost every system. UART is easy to use
 but relatively slow. We will cover the protocol and its circuits in the
 lectures.
 
+```{raw} html
+<details>
+<summary><strong>Computer and board UART details</strong></summary>
+```
+
 On the computer, Python can send and receive UART data through the
 [`pyserial` library](https://pyserial.readthedocs.io/en/latest/). Later examples
 also need numerical and audio libraries, so we install everything together in
@@ -194,6 +239,10 @@ The echo and FIR designs use a two-entry
 [`skid_buffer`](https://github.com/abarajithan11/digital-design/blob/main/material/rtl/reference/skid_buffer.sv),
 while the host scripts transfer at most 32 bytes at a time and drain replies so
 the bridge does not silently drop data.
+
+```{raw} html
+</details>
+```
 
 ### 2.1 Install Miniconda
 
@@ -470,10 +519,23 @@ System → Sound**, then run the `--list` command again.
 
 ## 5. CPU
 
-Check out our small CPU designed in 40 lines of SystemVerilog [here](design_outputs.md).
+Check out our small CPU designed in 40 lines of SystemVerilog [here](cpu.md).
 This example loads a small program into the CPU on the FPGA over UART, runs it,
 and sends the data memory back to the computer. 
-The program computes `1 + ... + 10` and stores the result in `dmem[4]`.
+
+```py
+program = [
+   [LOAD,  2, 0x02],       # r2 (counter) = dmem[2] = 10
+   [LOAD,  1, 0x01],       # r1 (one)     = dmem[1] = 1
+   [LOAD,  0, 0x00],       # r0 (sum)     = dmem[0] = 0
+   [ADD,   0, 0, 2],       # r0 += r2
+   [SUB,   2, 2, 1],       # r2 -= r1
+   [JNZ,   2, 0x03],       # loop to imem[3] while r2 != 0
+   [STORE, 0, WATCH_ADDR], # dmem[WATCH_ADDR] = r0  (= 55)
+]
+```
+
+The program computes `1 + ... + 10` and stores the result in `dmem[4]`. You may write your own program in the assembly specified here.
 
 1. Simulate `cpu_fpga`, then build its bitstream inside the Docker container:
 
@@ -510,7 +572,11 @@ dmem[4] = 55  (sum(1..10) should be 55)
 ## 6. Neural-Network Accelerator
 
 Assignment 4 combines the UART and neural-network blocks into `sys_nn`. 
-The complete path taken by the data is:
+
+```{raw} html
+<details>
+<summary><strong>The complete path taken by the data</strong></summary>
+```
 
 - Handwritten image on PC / from webcam
    - Python (fpga_nn.py) 
@@ -530,6 +596,9 @@ The complete path taken by the data is:
    - USB
    - Python: pyserial → prediction
 
+```{raw} html
+</details>
+```
 
 The network maps 81 quantized pixels through layers of size `81 → 48 → 10`.
 The second qReLU has `RELU=0`, so it requantizes the ten outputs without
