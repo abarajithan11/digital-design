@@ -86,6 +86,14 @@ The paper-based exam will include code closely related to the assignments.
 Bonus points and missed session penalties are added/subtracted as percentage points to your final score percentage. 
 What counts as "meaningful participation" is up to the discretion of the instructor alone.
 
+## Optional Resource Optimization
+
+Resource optimization is optional and must be completed without AI assistance. To be eligible for bonus points, email the instructor by Wednesday at 11:59 p.m. to declare your intent to optimize, then present your work in class. During the presentation, you will be asked to explain randomly selected lines of code and justify your design decisions on the blackboard; bonus points will be based on this presentation.
+
+There are six presentation slots: three for the neural-network (NN) designs with the lowest area and three for the FIR designs with the lowest area. If you optimize both NN and FIR, you will use one slot to present both. Unfilled slots will be reassigned first to additional NN designs, then to additional FIR designs.
+
+Permitted optimizations include reusing multipliers and adders across multiple computations within the same inference, initializing accumulators with their bias values, and, for the FIR filter, sharing products for repeated coefficients. If there is good reason to believe your code was generated using AI and you cannot explain it during the presentation, you risk receiving an F for the course under the AI policy below.
+
 ## Key Policies:
 
 - **Attendance is mandatory for all lectures and discussions:** 
