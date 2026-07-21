@@ -96,7 +96,8 @@ There are six presentation slots: three for the neural-network (NN) designs with
 If you optimize both NN and FIR, you will use one slot to present both. 
 Unfilled slots will be reassigned first to additional NN designs, then to additional FIR designs.
 
-Permitted optimizations include reusing multipliers and adders across multiple computations within the same inference, initializing accumulators with their bias values, and, for the FIR filter, sharing products for repeated coefficients. 
+Possible optimizations include reusing multipliers and adders across multiple computations within the same inference, initializing accumulators with their bias values, and, for the FIR filter, sharing products for repeated coefficients. 
+You may try your own optimizations, implement a larger, more robust NN / FIR Filter...etc.
 
 ## Key Policies:
 
