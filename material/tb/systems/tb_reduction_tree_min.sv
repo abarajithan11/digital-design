@@ -3,6 +3,9 @@
 module tb_reduction_tree_min;
   logic clk = 0, rstn = 0, cen = 0;
   initial forever #1ns clk = ~clk;
+  task automatic posedge_clk(int n = 1);
+    repeat (n) @(posedge clk); #1ps;
+  endtask
 
   parameter N = 5, W_X = 8, N_EXP = 20;
   localparam LATENCY = $clog2(N);
@@ -19,7 +22,7 @@ module tb_reduction_tree_min;
   );
     x = x_in;
     cen = 1;
-    repeat(LATENCY) @(posedge clk); #1ps;
+    posedge_clk(LATENCY);
     cen = 0;
     assert (y == expected)
       else $error("Mismatch: y=%0d expected=%0d x=%p",
@@ -29,7 +32,7 @@ module tb_reduction_tree_min;
   initial begin
     $dumpfile(`FST_PATH); $dumpvars;
 
-    @(posedge clk) #1ps rstn = 1;
+    posedge_clk; rstn = 1;
 
     // All-positive inputs catch an incorrect zero pad for a minimum tree.
     check('{ 8'd7,   8'd2,   8'd9,  8'd4,  8'd1},   8'd1);
@@ -44,9 +47,9 @@ module tb_reduction_tree_min;
         if ($signed(x[i]) < $signed(y_exp))
           y_exp = x[i];
 
-      @(posedge clk) #1ps cen = 1;
-      repeat(LATENCY-1) @(posedge clk);
-      @(posedge clk) #1ps cen = 0;
+      posedge_clk; cen = 1;
+      posedge_clk(LATENCY-1);
+      posedge_clk; cen = 0;
 
       assert (y == y_exp)
         else $error("Mismatch: y=%0d expected=%0d x=%p",

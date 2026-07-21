@@ -15,6 +15,9 @@ module tb_uart_tx;
 
   logic clk = 0, rstn = 0, tx, s_valid = 0, s_ready;
   initial forever #1 clk = !clk;
+  task automatic posedge_clk(int n = 1);
+    repeat (n) @(posedge clk); #1ps;
+  endtask
 
   uart_tx #(
     .CLKS_PER_BIT  (CLKS_PER_BIT),
@@ -37,21 +40,21 @@ module tb_uart_tx;
   initial begin
     $dumpfile(`FST_PATH); $dumpvars;
 
-    repeat (2) @(posedge clk) #1ps;
+    posedge_clk(2);
     rstn = 1;
-    repeat (5) @(posedge clk) #1ps;
+    posedge_clk(5);
 
     repeat (10) begin
-      repeat ($urandom_range(1,20)) @(posedge clk);
+      posedge_clk($urandom_range(1,20));
       wait (s_ready);
 
-      @(posedge clk) #1ps;
+      posedge_clk;
       s_data  = DATA_WIDTH'($urandom());
       s_valid = 1'b1;
 
       vip_tx.recv_packet(rx_data);
 
-      @(posedge clk) #1ps;
+      posedge_clk;
       s_valid = 1'b0;
 
       wait (s_ready);

@@ -23,6 +23,9 @@ module tb_sys_fir_filter;
   logic [WIDTH-1:0] y_queue [$];
 
   initial forever #1 clk = !clk;
+  task automatic posedge_clk(int n = 1);
+    repeat (n) @(posedge clk); #1ps;
+  endtask
 
   sys_fir_filter #(
     .CLKS_PER_BIT   (CLKS_PER_BIT),
@@ -75,7 +78,7 @@ module tb_sys_fir_filter;
 
     // Start the test
 
-    repeat (2) @(posedge clk) #1ps;
+    posedge_clk(2);
     rstn = 1;
 
     for (int i = 0; i < x_queue.size(); i++) begin
@@ -91,7 +94,7 @@ module tb_sys_fir_filter;
       else $error("Mismatch [%0d]: expected %0d, got %0d",
                   i, $signed(y_exp), $signed(m_data[0]));
 
-      repeat ($urandom_range(1,20)) @(posedge clk);
+      posedge_clk($urandom_range(1,20));
     end
     $display("All outputs match!");
     $finish();

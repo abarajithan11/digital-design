@@ -14,6 +14,9 @@ module tb_uart_rx;
   data_t m_data, data;
 
   initial forever #1 clk = !clk;
+  task automatic posedge_clk(int n = 1);
+    repeat (n) @(posedge clk); #1ps;
+  endtask
 
   uart_rx #(
     .CLKS_PER_BIT  (CLKS_PER_BIT),
@@ -33,20 +36,20 @@ module tb_uart_rx;
   initial begin
     $dumpfile(`FST_PATH); $dumpvars;
 
-    repeat (2) @(posedge clk) #1ps;
+    posedge_clk(2);
     rstn = 1;
-    repeat (5) @(posedge clk) #1ps;
+    posedge_clk(5);
 
     repeat (10) begin
       data = DATA_WIDTH'($urandom());
       vip_rx.send_packet(data);
-      repeat ($urandom_range(1,100)) @(posedge clk);
+      posedge_clk($urandom_range(1,100));
     end
     $finish();
   end
 
   initial forever begin
-    @(posedge clk);
+    posedge_clk;
     if (m_valid) begin
       assert (m_data == data) $display("OK, %b", m_data);
       else $error("Sent %b, got %b", data, m_data);

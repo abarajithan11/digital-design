@@ -13,6 +13,9 @@ module tb_uart_echo;
   data_t s_data, m_data;
 
   initial forever #1 clk = !clk;
+  task automatic posedge_clk(int n = 1);
+    repeat (n) @(posedge clk); #1ps;
+  endtask
 
   uart_echo #(
     .CLKS_PER_BIT   (CLKS_PER_BIT),
@@ -45,7 +48,7 @@ module tb_uart_echo;
     $dumpfile(`FST_PATH); $dumpvars;
     assert (W_OUT % BITS_PER_WORD == 0);
 
-    repeat (2) @(posedge clk) #1ps;
+    posedge_clk(2);
     rstn = 1;
 
     repeat (NUM_EXP) begin
@@ -60,7 +63,7 @@ module tb_uart_echo;
       assert (s_data == m_data) $display("Outputs match: %p", m_data);
       else $error("Expected: %p != Output: %p", s_data, m_data);
 
-      repeat ($urandom_range(1,20)) @(posedge clk);
+      posedge_clk($urandom_range(1,20));
     end
     $finish();
   end

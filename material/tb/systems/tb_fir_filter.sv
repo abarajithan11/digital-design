@@ -8,6 +8,9 @@ module tb_fir_filter;
 
   logic clk=0, rstn=0, en=1;
   initial forever #1 clk = ~clk;
+  task automatic posedge_clk(int n = 1);
+    repeat (n) @(posedge clk); #1ps;
+  endtask
 
   logic [W_X-1:0] x=0;
   logic [W_Y-1:0] y, y_exp=0;
@@ -25,10 +28,11 @@ module tb_fir_filter;
   initial begin
     $dumpfile(`FST_PATH); $dumpvars(0, dut);
 
-    @(posedge clk) #1ps rstn = 1;
-    
-    while (!$feof(file_x))
-      @(posedge clk) #1ps status = $fscanf(file_x,"%d\r", x);
+    posedge_clk; rstn = 1;
+
+    while (!$feof(file_x)) begin
+      posedge_clk; status = $fscanf(file_x,"%d\r", x);
+    end
     $fclose(file_x);
     $fclose(file_y);
     $finish();
@@ -36,7 +40,7 @@ module tb_fir_filter;
 
   // Monitor signals
   initial forever begin
-    @(posedge clk) #1ps
+    posedge_clk;
     zq.push_front(x);
     zq.pop_back();
     
