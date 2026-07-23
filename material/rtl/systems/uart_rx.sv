@@ -1,8 +1,7 @@
 module uart_rx #(
-  parameter CLKS_PER_BIT    = 4,
-            N_WORDS         = 3,
-            BITS_PER_WORD   = 8,
-            PACKET_GAP_CLKS = 100
+  parameter CLKS_PER_BIT  = 4,
+            N_WORDS       = 3,
+            BITS_PER_WORD = 8
 )(
   input  logic clk, rstn, rx,
   output logic m_valid,
@@ -11,7 +10,6 @@ module uart_rx #(
   localparam CW_CLK    = $clog2(CLKS_PER_BIT);
   localparam CW_BIT    = $clog2(BITS_PER_WORD);
   localparam CW_WORD   = $clog2(N_WORDS) == 0 ? 1 : $clog2(N_WORDS);
-  localparam CW_GAP    = $clog2(PACKET_GAP_CLKS+1);
 
   typedef enum logic [1:0] {IDLE, START, DATA, END} state_t;
   state_t state;
@@ -19,12 +17,11 @@ module uart_rx #(
   logic [CW_CLK -1:0] c_clocks;
   logic [CW_BIT -1:0] c_bits;
   logic [CW_WORD-1:0] c_words;
-  logic [CW_GAP -1:0] c_gap;
 
   always_ff @(posedge clk or negedge rstn) begin
     if (!rstn) begin
       state    <= IDLE;
-      {c_clocks, c_bits, c_words, c_gap} <= '0;
+      {c_clocks, c_bits, c_words} <= '0;
       {m_valid, m_data}  <= '0;
     end else begin
       m_valid <= 1'b0;
@@ -32,17 +29,10 @@ module uart_rx #(
         IDLE:   begin
                   c_clocks <= '0;
                   c_bits   <= '0;
-                  if (!rx) begin
-                    state <= START;
-                    c_gap <= '0;
-                    if (c_gap >= CW_GAP'(PACKET_GAP_CLKS))
-                      c_words <= '0;
-                  end else if (c_gap < CW_GAP'(PACKET_GAP_CLKS))
-                    c_gap <= c_gap + 1'b1;
+                  if (!rx) state <= START;
                 end
 
         START:  begin
-                  c_gap <= '0;
                   if (c_clocks == CW_CLK'(CLKS_PER_BIT/2 - 1)) begin
                     state    <= DATA;
                     c_clocks <= '0;

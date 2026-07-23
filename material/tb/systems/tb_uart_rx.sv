@@ -6,7 +6,6 @@ module tb_uart_rx;
     CLKS_PER_BIT   = 4, // 200_000_000/9600
     N_WORDS        = 2,
     BITS_PER_WORD  = 8,
-    PACKET_GAP_CLKS = 8,
     DATA_WIDTH     = N_WORDS * BITS_PER_WORD;
 
   logic clk = 0, rstn = 0, rx, m_valid;
@@ -22,8 +21,7 @@ module tb_uart_rx;
   uart_rx #(
     .CLKS_PER_BIT  (CLKS_PER_BIT),
     .N_WORDS       (N_WORDS),
-    .BITS_PER_WORD (BITS_PER_WORD),
-    .PACKET_GAP_CLKS (PACKET_GAP_CLKS)
+    .BITS_PER_WORD (BITS_PER_WORD)
   ) dut (.*);
 
   vip_uart_rx #(
@@ -51,26 +49,17 @@ module tb_uart_rx;
       posedge_clk($urandom_range(1,100));
     end
 
-    // A short idle gap preserves the partially received packet.
+    // Idle time between words preserves the partially received packet.
     data = 16'hc35a;
     vip_rx.send_words(data, 1);
-    posedge_clk(PACKET_GAP_CLKS-2);
+    posedge_clk(100);
     next_word = '0;
     next_word[0] = data[1];
     vip_rx.send_words(next_word, 1);
     posedge_clk;
 
-    // A full idle gap discards a partial packet, so the next packet starts at
-    // word zero rather than completing the stale packet.
-    data = 16'h12a5;
-    vip_rx.send_words(data, 1);
-    posedge_clk(PACKET_GAP_CLKS);
-    data = 16'h7e81;
-    vip_rx.send_packet(data);
-    posedge_clk;
-
-    assert (packets_received == 12)
-      else $error("Expected 12 packets, received %0d", packets_received);
+    assert (packets_received == 11)
+      else $error("Expected 11 packets, received %0d", packets_received);
     $finish();
   end
 
