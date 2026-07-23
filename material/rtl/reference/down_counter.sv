@@ -13,8 +13,7 @@ module down_counter #(parameter WIDTH = 8)(
       count  <= max_in;
       max    <= max_in;
       last   <= max_in == 0;
-    end
-    else if (en) begin
+    end else if (en) begin
       last   <= count_next == 0;
       count  <= count_next;
     end

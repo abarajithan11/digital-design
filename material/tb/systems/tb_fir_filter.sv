@@ -48,9 +48,8 @@ module tb_fir_filter;
     for (int i = 0; i < N+1; i += 1)
       y_exp = $signed(y_exp) + $signed(zq[i]) * $signed(K[i]);
     
-    assert (y==y_exp) begin 
-      $display("OK: y:%d", y);
-      $fdisplay(file_y, "%d", y);
-    end else $error("y:%d != y_exp:%d", y, y_exp);
+    $fdisplay(file_y, "%d", y);
+    assert (y==y_exp) $display("OK: y:%d", y);
+    else $error("y:%d != y_exp:%d", y, y_exp);
   end
 endmodule
