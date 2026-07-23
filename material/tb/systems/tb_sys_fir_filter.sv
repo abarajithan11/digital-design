@@ -39,14 +39,14 @@ module tb_sys_fir_filter;
 
   vip_uart_rx #(
     .CLKS_PER_BIT  (CLKS_PER_BIT),
-    .BITS_PER_WORD (WIDTH),
-    .W_OUT         (WIDTH)
+    .N_WORDS       (N_WORDS),
+    .BITS_PER_WORD (WIDTH)
   ) vip_rx (.*);
 
   vip_uart_tx #(
     .CLKS_PER_BIT   (CLKS_PER_BIT),
+    .N_WORDS        (N_WORDS),
     .BITS_PER_WORD  (WIDTH),
-    .W_OUT          (WIDTH),
     .PACKET_SIZE_TX (PACKET_SIZE_TX)
   ) vip_tx (.*);
 

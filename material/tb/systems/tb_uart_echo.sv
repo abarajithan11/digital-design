@@ -3,8 +3,7 @@ module tb_uart_echo;
   timeunit 1ns/1ps;
   localparam CLKS_PER_BIT     = 4,
              BITS_PER_WORD    = 8,
-             W_OUT            = 24,
-             N_WORDS          = W_OUT/BITS_PER_WORD,
+             N_WORDS          = 3,
              PACKET_SIZE_TX   = BITS_PER_WORD+5,
              NUM_EXP          = 10;
 
@@ -19,15 +18,15 @@ module tb_uart_echo;
 
   uart_echo #(
     .CLKS_PER_BIT   (CLKS_PER_BIT),
+    .N_WORDS        (N_WORDS),
     .BITS_PER_WORD  (BITS_PER_WORD),
-    .PACKET_SIZE_TX (PACKET_SIZE_TX),
-    .W_OUT          (W_OUT)
+    .PACKET_SIZE_TX (PACKET_SIZE_TX)
   ) dut (.*);
 
   vip_uart_rx #(
     .CLKS_PER_BIT  (CLKS_PER_BIT),
-    .BITS_PER_WORD (BITS_PER_WORD),
-    .W_OUT         (W_OUT)
+    .N_WORDS       (N_WORDS),
+    .BITS_PER_WORD (BITS_PER_WORD)
   ) vip_rx (
     .clk (clk),
     .rx  (rx)
@@ -35,8 +34,8 @@ module tb_uart_echo;
 
   vip_uart_tx #(
     .CLKS_PER_BIT   (CLKS_PER_BIT),
+    .N_WORDS        (N_WORDS),
     .BITS_PER_WORD  (BITS_PER_WORD),
-    .W_OUT          (W_OUT),
     .PACKET_SIZE_TX (PACKET_SIZE_TX)
   ) vip_tx (
     .clk  (clk),
@@ -46,8 +45,6 @@ module tb_uart_echo;
 
   initial begin
     $dumpfile(`FST_PATH); $dumpvars;
-    assert (W_OUT % BITS_PER_WORD == 0);
-
     posedge_clk(2);
     rstn = 1;
 

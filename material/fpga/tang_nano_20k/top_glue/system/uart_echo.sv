@@ -19,7 +19,7 @@ module board_glue (
   uart_echo #(
     .CLKS_PER_BIT  (27),
     .PACKET_SIZE_TX(10),
-    .W_OUT         (8)
+    .N_WORDS       (1)
   ) u_dut (
     .clk (clk),
     .rstn(~rst),

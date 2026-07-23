@@ -3,8 +3,7 @@
 module vip_uart_rx #(
   parameter CLKS_PER_BIT   = 4,
             BITS_PER_WORD  = 8,
-            W_OUT          = 24,
-            N_WORDS        = W_OUT / BITS_PER_WORD,
+            N_WORDS        = 3,
             INTER_WORD_GAP_MAX = 20
   )(
     input  logic clk,

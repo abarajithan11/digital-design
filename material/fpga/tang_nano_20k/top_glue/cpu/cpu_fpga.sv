@@ -71,12 +71,12 @@ module board_glue #(
   logic        tx_valid;
   logic [15:0] tx_word;
 
-  uart_rx #(.CLKS_PER_BIT(CLKS_PER_BIT), .BITS_PER_WORD(8), .W_OUT(16)) u_rx (
+  uart_rx #(.CLKS_PER_BIT(CLKS_PER_BIT), .N_WORDS(2), .BITS_PER_WORD(8)) u_rx (
     .clk(clk), .rstn(rstn), .rx(rx), .m_valid(rx_valid), .m_data(rx_word)
   );
 
-  uart_tx #(.CLKS_PER_BIT(CLKS_PER_BIT), .BITS_PER_WORD(8),
-            .PACKET_SIZE(PACKET_SIZE), .W_OUT(16)) u_tx (
+  uart_tx #(.CLKS_PER_BIT(CLKS_PER_BIT), .N_WORDS(2), .BITS_PER_WORD(8),
+            .W_PACKET(PACKET_SIZE)) u_tx (
     .clk(clk), .rstn(rstn), .s_valid(tx_valid), .s_data(tx_word),
     .tx(tx), .s_ready(tx_ready)
   );

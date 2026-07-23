@@ -23,8 +23,8 @@ module sys_fir_filter #(
 
   uart_rx #(
     .CLKS_PER_BIT  (CLKS_PER_BIT),
-    .BITS_PER_WORD (BITS_PER_WORD),
-    .W_OUT         (WIDTH)
+    .N_WORDS       (WIDTH/BITS_PER_WORD),
+    .BITS_PER_WORD (BITS_PER_WORD)
   ) u_rx (
     .clk    (clk),
     .rstn   (rstn),
@@ -78,9 +78,9 @@ module sys_fir_filter #(
 
   uart_tx #(
     .CLKS_PER_BIT  (CLKS_PER_BIT),
+    .N_WORDS       (WIDTH/BITS_PER_WORD),
     .BITS_PER_WORD (BITS_PER_WORD),
-    .PACKET_SIZE   (PACKET_SIZE_TX),
-    .W_OUT         (WIDTH)
+    .W_PACKET      (PACKET_SIZE_TX)
   ) u_tx (
     .clk    (clk),
     .rstn   (rstn),

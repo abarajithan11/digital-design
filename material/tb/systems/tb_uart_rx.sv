@@ -4,14 +4,13 @@ module tb_uart_rx;
 
   localparam 
     CLKS_PER_BIT   = 4, // 200_000_000/9600
-    W_OUT          = 16,
+    N_WORDS        = 2,
     BITS_PER_WORD  = 8,
     PACKET_GAP_CLKS = 8,
-    NUM_WORDS      = W_OUT / BITS_PER_WORD,
-    DATA_WIDTH     = NUM_WORDS * BITS_PER_WORD;
+    DATA_WIDTH     = N_WORDS * BITS_PER_WORD;
 
   logic clk = 0, rstn = 0, rx, m_valid;
-  typedef logic [NUM_WORDS-1:0][BITS_PER_WORD-1:0] data_t;
+  typedef logic [N_WORDS-1:0][BITS_PER_WORD-1:0] data_t;
   data_t m_data, data;
   int packets_received = 0;
 
@@ -22,7 +21,7 @@ module tb_uart_rx;
 
   uart_rx #(
     .CLKS_PER_BIT  (CLKS_PER_BIT),
-    .W_OUT         (W_OUT),
+    .N_WORDS       (N_WORDS),
     .BITS_PER_WORD (BITS_PER_WORD),
     .PACKET_GAP_CLKS (PACKET_GAP_CLKS)
   ) dut (.*);
@@ -30,7 +29,7 @@ module tb_uart_rx;
   vip_uart_rx #(
     .CLKS_PER_BIT  (CLKS_PER_BIT),
     .BITS_PER_WORD (BITS_PER_WORD),
-    .W_OUT         (W_OUT),
+    .N_WORDS       (N_WORDS),
     .INTER_WORD_GAP_MAX (0)
   ) vip_rx (
     .clk (clk),

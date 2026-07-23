@@ -39,9 +39,9 @@ module tb_cpu_fpga;
   );
 
   // 16-bit-wide UART VIPs: one packet == one word.
-  vip_uart_rx #(.CLKS_PER_BIT(CLKS_PER_BIT), .BITS_PER_WORD(8), .W_OUT(16))
+  vip_uart_rx #(.CLKS_PER_BIT(CLKS_PER_BIT), .N_WORDS(2), .BITS_PER_WORD(8))
     vip_rx (.clk(clk), .rx(rx));
-  vip_uart_tx #(.CLKS_PER_BIT(CLKS_PER_BIT), .BITS_PER_WORD(8), .W_OUT(16),
+  vip_uart_tx #(.CLKS_PER_BIT(CLKS_PER_BIT), .N_WORDS(2), .BITS_PER_WORD(8),
                 .PACKET_SIZE_TX(PACKET_TX))
     vip_tx (.clk(clk), .rstn(~rst), .tx(tx));
 

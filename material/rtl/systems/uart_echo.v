@@ -6,20 +6,22 @@
 module uart_echo #(
     parameter
       CLKS_PER_BIT   = 4,
+      N_WORDS        = 3,
       BITS_PER_WORD  = 8,
-      PACKET_SIZE_TX = BITS_PER_WORD+5,
-      W_OUT          = 24
+      PACKET_SIZE_TX = BITS_PER_WORD+5
   )(
     input  wire clk, rstn, rx,
     output wire tx
   );
+  localparam DATA_WIDTH = N_WORDS*BITS_PER_WORD;
+
   wire             rx_valid, fifo_valid, fifo_ready, tx_ready;
-  wire [W_OUT-1:0] rx_data, fifo_data;
+  wire [DATA_WIDTH-1:0] rx_data, fifo_data;
 
   uart_rx #(
     .CLKS_PER_BIT  (CLKS_PER_BIT),
-    .BITS_PER_WORD (BITS_PER_WORD),
-    .W_OUT         (W_OUT)
+    .N_WORDS       (N_WORDS),
+    .BITS_PER_WORD (BITS_PER_WORD)
   ) u_rx (
     .clk    (clk),
     .rstn   (rstn),
@@ -29,7 +31,7 @@ module uart_echo #(
   );
 
   skid_buffer #(
-    .WIDTH(W_OUT)
+    .WIDTH(DATA_WIDTH)
   ) u_fifo (
     .clk    (clk),
     .rstn   (rstn),
@@ -43,9 +45,9 @@ module uart_echo #(
 
   uart_tx #(
     .CLKS_PER_BIT  (CLKS_PER_BIT),
+    .N_WORDS       (N_WORDS),
     .BITS_PER_WORD (BITS_PER_WORD),
-    .PACKET_SIZE   (PACKET_SIZE_TX),
-    .W_OUT         (W_OUT)
+    .W_PACKET      (PACKET_SIZE_TX)
   ) u_tx (
     .clk    (clk),
     .rstn   (rstn),
