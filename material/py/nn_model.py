@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Train a tiny quantized MNIST MLP with Brevitas and export it as an SV header."""
+"""Train a tiny quantized MNIST MLP with Brevitas and export it as an SV package."""
 import math
 import os
 from pathlib import Path
@@ -9,9 +9,6 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
-
-# The course image only uses torchvision datasets/transforms, but its CPU-only
-# torchvision build expects these optional detection operators to be declared.
 _torchvision_ops = torch.library.Library("torchvision", "DEF")
 _torchvision_ops.define("nms(Tensor boxes, Tensor scores, float iou_threshold) -> Tensor")
 _torchvision_ops.define("qnms(Tensor boxes, Tensor scores, float iou_threshold) -> Tensor")
@@ -20,10 +17,6 @@ from brevitas.nn import QuantIdentity, QuantLinear, QuantReLU
 from brevitas.quant import (Int8ActPerTensorFixedPoint,
                             Int8WeightPerTensorFixedPoint, Int16Bias)
 
-# The weights are shared material, so they are exported next to the rest of it
-# rather than into an assignment: students fetch this package from this repo (see
-# the A4 README). Anchored to this file, not the cwd, because the assignment
-# runs it from assignments/a4 (where CKPT/data/ resolve).
 PKG_SV = str(Path(__file__).resolve().parent.parent / "rtl" / "reference" / "nn_weights.sv")
 
 CKPT = "data/nn_model_9x9_h48.pt"
@@ -185,13 +178,12 @@ def main():
         params += [(f"SHIFT_{i}", s) for i, s in enumerate(shifts)]
         for pname, pval in params:
             f.write(f"  localparam int {pname} = {pval};\n")
+
+      # Writing SV arrays
         for name, tname, bits, a in arrays:
             cell = lambda v: f"-{bits}'d{-int(v)}" if v < 0 else f"{bits}'d{int(v)}"
             row = lambda r: "{" + ",\n".join(cell(v) for v in r[::-1]) + "}"
             body = row(a) if a.ndim == 1 else "{" + ",\n".join(row(r) for r in a[::-1]) + "}"
-            # Package constants and module parameters are flat packed vectors
-            # for stock Yosys. Assigning them to packed RTL views preserves the
-            # exact bit ordering without an explicit unpacking loop.
             shape = f"[{a.size * bits - 1}:0]"
             f.write(f"  localparam logic signed {shape} {name} = {body};\n")
         f.write("endpackage\n/* verilator lint_on ASCRANGE */\n`endif\n")
