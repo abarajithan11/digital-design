@@ -13,14 +13,21 @@ module vip_axis_sink #(
   logic m_ready_d = 0;
   always_ff @(posedge clk) m_ready <= m_ready_d;
 
+  // Every wait lands 1ps past the edge, so the task writes m_ready_d between
+  // edges (never racing the always_ff above) and samples the handshake after
+  // the DUT's outputs have settled.
+  task automatic posedge_clk(int n = 1);
+    repeat (n) @(posedge clk); #1ps;
+  endtask
+
   task automatic pull(output logic [WORD_W-1:0] q[$], input int n);
     q = {};
     while (q.size() < n) begin
       m_ready_d = 0;                                         // random backpressure
-      while ($urandom_range(0, 99) >= PROB_READY) @(posedge clk);
+      while ($urandom_range(0, 99) >= PROB_READY) posedge_clk();
       m_ready_d = 1;
-      @(posedge clk);
-      if (m_valid && m_ready) q.push_back(m_data);           // accepted this edge
+      posedge_clk();
+      if (m_valid && m_ready) q.push_back(m_data);           // accepted on the next edge
     end
     m_ready_d = 0;
   endtask

@@ -25,6 +25,7 @@ IMAGE_SIZE, DOWNSAMPLE = 28, 3
 DOWNSAMPLED_SIZE = (IMAGE_SIZE - DOWNSAMPLE) // DOWNSAMPLE + 1
 HID, IN, OUT, EPOCHS = 48, DOWNSAMPLED_SIZE**2, 10, 40
 W_X, W_K, W_B, W_ACC = 4, 4, 8, 16    # activation, weight, bias, accumulator bit-widths
+N_SAMPLES = 2                         # (input, hidden, output) vector sets exported for the testbenches
 DENSITY = 0.20
 
 def input_transform():
@@ -151,41 +152,46 @@ def main():
     log2 = lambda qt: round(math.log2(float(qt.scale)))
     to_int = lambda qt: qt.int().numpy().astype(np.int64)
     with torch.no_grad():
-        sample = prep(next(iter(te))[0][:1], cam=False)   # one 9x9 image for the tb vectors
-        acts, denses = [model.inp(sample.flatten()[None])], []
+        sample = prep(next(iter(te))[0][:N_SAMPLES], cam=False)  # N_SAMPLES 9x9 images for the tb vectors
+        acts, denses = [model.inp(sample.flatten(1))], []
         for lin, act in [(model.fc0, model.act), (model.fc1, model.out)]:
             denses.append(lin(acts[-1]))          # dense = matmul + bias (accumulator)
             acts.append(act(denses[-1]))          # activation = requantize + relu
     layers = [model.fc0, model.fc1]
 
+    # Per-sample vectors keep one packed row per sample, so a testbench indexes
+    # them as name[s]. Weights and biases stay flat: they are passed straight
+    # into the RTL's packed K/B parameters.
+    rows = lambda a, bits: f"[{N_SAMPLES-1}:0][{a.shape[-1] * bits - 1}:0]"
+    flat = lambda a, bits: f"[{a.size * bits - 1}:0]"
+
     shifts = []
-    arrays = [("quantized_input", "W_X", W_X, to_int(acts[0]).flatten())]
+    arrays = [("quantized_input", W_X, to_int(acts[0]), rows)]
     for i, lin in enumerate(layers):
         w = lin.quant_weight()
         b = lin.bias_quant(lin.bias, acts[i], w)
         shifts.append(log2(acts[i + 1]) - log2(acts[i]) - log2(w))          # requant right-shift
         out_name = "quantized_output" if i == len(layers) - 1 else f"act_{i}"
-        arrays += [(f"weights_{i}", "W_K", W_K, to_int(w)), (f"bias_{i}", "W_B", W_B, to_int(b).flatten()),
-                   (f"dense_{i}", "W_ACC", W_ACC, to_int(denses[i]).flatten()),
-                   (out_name, "W_X", W_X, to_int(acts[i + 1]).flatten())]
+        arrays += [(f"weights_{i}", W_K, to_int(w), flat), (f"bias_{i}", W_B, to_int(b).flatten(), flat),
+                   (f"dense_{i}", W_ACC, to_int(denses[i]), rows),
+                   (out_name, W_X, to_int(acts[i + 1]), rows)]
 
     with open(PKG_SV, "w") as f:
         f.write("`ifndef NN_WEIGHTS_SV\n`define NN_WEIGHTS_SV\n")
         f.write("/* verilator lint_off ASCRANGE */\npackage nn_weights_pkg;\n")
         params = [("N_IN", IN), ("N_HIDDEN", HID), ("N_OUT", OUT),
                   ("W_X", W_X), ("W_K", W_K), ("W_B", W_B), ("W_ACC", W_ACC),
-                  ("INPUT_SCALE_LOG2", -log2(acts[0]))]
+                  ("N_SAMPLES", N_SAMPLES), ("INPUT_SCALE_LOG2", -log2(acts[0]))]
         params += [(f"SHIFT_{i}", s) for i, s in enumerate(shifts)]
         for pname, pval in params:
             f.write(f"  localparam int {pname} = {pval};\n")
 
       # Writing SV arrays
-        for name, tname, bits, a in arrays:
+        for name, bits, a, shape in arrays:
             cell = lambda v: f"-{bits}'d{-int(v)}" if v < 0 else f"{bits}'d{int(v)}"
             row = lambda r: "{" + ",\n".join(cell(v) for v in r[::-1]) + "}"
             body = row(a) if a.ndim == 1 else "{" + ",\n".join(row(r) for r in a[::-1]) + "}"
-            shape = f"[{a.size * bits - 1}:0]"
-            f.write(f"  localparam logic signed {shape} {name} = {body};\n")
+            f.write(f"  localparam logic signed {shape(a, bits)} {name} = {body};\n")
         f.write("endpackage\n/* verilator lint_on ASCRANGE */\n`endif\n")
     print(f"Wrote {PKG_SV}")
 

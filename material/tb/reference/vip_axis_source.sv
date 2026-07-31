@@ -18,13 +18,20 @@ module vip_axis_source #(
     s_data  <= s_data_d;
   end
 
+  // Every wait lands 1ps past the edge, so the task only ever writes s_valid_d
+  // between edges. Assigning it at the edge itself would race the always_ff
+  // above and could drop the word.
+  task automatic posedge_clk(int n = 1);
+    repeat (n) @(posedge clk); #1ps;
+  endtask
+
   task automatic push(input logic [WORD_W-1:0] q[$]);
     foreach (q[i]) begin
       s_valid_d = 0; s_data_d = 'x;                          // idle gap
-      while ($urandom_range(0, 99) >= PROB_VALID) @(posedge clk);
+      while ($urandom_range(0, 99) >= PROB_VALID) posedge_clk();
       s_valid_d = 1; s_data_d = q[i];                        // present a word
-      @(posedge clk);
-      while (!s_ready) @(posedge clk);                       // hold until accepted
+      posedge_clk();
+      while (!s_ready) posedge_clk();                        // hold until accepted
     end
     s_valid_d = 0; s_data_d = 'x;
   endtask

@@ -54,7 +54,7 @@ include basic_run.mk
 FPGA ?= tang_nano_20k
 include fpga/$(FPGA)/common/fpga.mk
 
-.PHONY: prepare print_rtl_top gtkwave wave_svg show_layout_cells show_3d_cell glb cell_glbs 3d_assets clean
+.PHONY: prepare print_rtl_top wave_svg show_layout_cells show_3d_cell glb cell_glbs 3d_assets clean
 
 print_rtl_top:
 	@printf '%s\n' "$(TOP_RTL)"
@@ -62,8 +62,7 @@ print_rtl_top:
 prepare: check_tools
 	mkdir -p "$(WORK_HOME)" "$(MATERIAL_DIR)/sim" "$(CELL_3D_DIR)"
 
-gtkwave: check_tools
-	gtkwave "$(WAVE_FST)"
+# gtkwave comes from basic_run.mk, so assignments and student templates get it too.
 
 wave_svg: check_tools
 	mkdir -p "$(SIM_WORKDIR)"

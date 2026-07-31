@@ -77,7 +77,7 @@ _GDS_BASIC_GATES_ARG = $(if $(filter 1,$(USE_BASIC_GATES)),DONT_USE_CELLS="$(BAS
 SIM_TOOLS ?= verilator python3
 GDS_TOOLS ?= yosys openroad klayout
 
-.PHONY: check_tools compile sim gds show_syn_netlist show_final_nestlist \
+.PHONY: check_tools compile sim gtkwave gds show_syn_netlist show_final_nestlist \
         show_layout show_3d sim_all gds_all
 
 check_tools:
@@ -107,6 +107,23 @@ compile: check_tools
 
 sim: compile
 	"$(SIM_WORKDIR)/obj_dir/V$(TOP_TB)"
+
+# Open the waveform the last `make sim DESIGN=...` wrote. Checks only for
+# gtkwave, not the ORFS tools, so it also works on a host that just has a
+# viewer installed.
+gtkwave:
+	command -v gtkwave >/dev/null 2>&1 || { \
+	    printf 'gtkwave not found in PATH.\n' >&2; \
+	    printf 'Use the Docker container (make start / make run CMD="..."),\n' >&2; \
+	    printf 'or install gtkwave on your machine.\n' >&2; \
+	    exit 1; \
+	}
+	test -f "$(WAVE_FST)" || { \
+	    printf 'No waveform at %s\n' "$(WAVE_FST)" >&2; \
+	    printf 'Run `make sim DESIGN=<design>` first.\n' >&2; \
+	    exit 1; \
+	}
+	gtkwave "$(WAVE_FST)"
 
 gds: check_tools
 	if [ -n "$(SIM_GEN)" ] && [ -f "$(SIM_GEN)" ]; then \
