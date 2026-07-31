@@ -24,16 +24,16 @@ module tb_cpu_sum_to_n;
     dmem.mem[2] = 16'd10;
 
     // Initialize N, constant one, and the sum.
-    imem.mem[0] = {8'h02,        4'h2, LOAD};  // r2 (counter) = N = 10
-    imem.mem[1] = {8'h01,        4'h1, LOAD};  // r1 (one)     = mem[1] = 1
-    imem.mem[2] = {8'h00,        4'h0, LOAD};  // r0 (sum)     = mem[0] = 0
+    imem.mem[0] = {8'h02,        4'h2, LOAD};  // R2 = *(2);          counter = N = 10
+    imem.mem[1] = {8'h01,        4'h1, LOAD};  // R1 = *(1);          one     = 1
+    imem.mem[2] = {8'h00,        4'h0, LOAD};  // R0 = *(0);          sum     = 0
 
     // Add each counter value and count down to zero.
-    imem.mem[3] = {4'h2,  4'h0,  4'h0, ADD};   // r0 (sum) += r2 (counter)
-    imem.mem[4] = {4'h1,  4'h2,  4'h2, SUB};   // r2 (counter) -= r1 (one)
-    imem.mem[5] = {8'h03,        4'h2, JNZ};   // repeat while r2 (counter) != 0
+    imem.mem[3] = {4'h2,  4'h0,  4'h0, ADD};   // R0 = R0 + R2;
+    imem.mem[4] = {4'h1,  4'h2,  4'h2, SUB};   // R2 = R2 - R1;
+    imem.mem[5] = {8'h03,        4'h2, JNZ};   // if (R2!=0) goto 3;
 
-    imem.mem[6] = {8'h04,        4'h0, STORE}; // mem[4] = r0 (sum)
+    imem.mem[6] = {8'h04,        4'h0, STORE}; // *(4) = R0;          sum
 
     @(posedge clk); #1ps reset = 0;
     repeat (35) @(posedge clk);

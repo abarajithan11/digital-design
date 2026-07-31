@@ -11,6 +11,9 @@ TOP_TB       ?= tb_$(TB)_$(DESIGN)
 TOP_RTL      ?= $(DESIGN)
 SIM_MAX_TIME ?= 1s
 VERILATOR_EXTRA_FLAGS ?=
+# Verilator silently drops unpacked arrays deeper than --trace-max-array (default
+# 32) from the trace, which hides memories such as the CPU's 256-word imem/dmem.
+TRACE_MAX_ARRAY ?= 1024
 
 CONT_REPO     ?= /repo
 CONT_MATERIAL ?= $(CONT_REPO)
@@ -94,6 +97,7 @@ compile: check_tools
 	if [ -n "$(SIM_GEN)" ] && [ -f "$(SIM_GEN)" ]; then python3 "$(SIM_GEN)"; fi
 	verilator --binary --trace-fst --trace-structs --timing --sv --timescale 1ns/1ps \
 	    $(VERILATOR_EXTRA_FLAGS) \
+	    --trace-max-array $(TRACE_MAX_ARRAY) \
 	    --preproc-token-limit 2000000 \
 	    --top-module "$(TOP_TB)" \
 	    -Mdir "$(SIM_WORKDIR)/obj_dir" \

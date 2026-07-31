@@ -23,18 +23,18 @@ module tb_cpu_5_jump;
     dmem.mem[1] = 16'hDEAD;
     dmem.mem[2] = 16'hBEEF;
 
-    // Put 1 in r1, then jump from PC 1 to immediate address 4.
-    imem.mem[0] = {8'h00, 4'h1, LOAD}; // r1 = mem[0] = 1
-    imem.mem[1] = {8'h04, 4'h1, JNZ};  // if (r1 != 0) jump to PC 4
-    imem.mem[2] = {8'h01, 4'h3, LOAD}; // r3 = mem[1] (skipped)
-    imem.mem[4] = {8'h02, 4'h3, LOAD}; // r3 = mem[2]
+    // Load 1 into r1, then jump over the LOAD at PC 2 and store r1 at address 2.
+    imem.mem[0] = {8'h00, 4'h1, LOAD};  // R1 = *(0);
+    imem.mem[1] = {8'h03, 4'h1, JNZ};   // if (R1!=0) goto 3;
+    imem.mem[2] = {8'h01, 4'h1, LOAD};  // R1 = *(1);            (skipped)
+    imem.mem[3] = {8'h02, 4'h1, STORE}; // *(2) = R1;
 
     @(posedge clk); #1ps reset = 0;
-    repeat (3) @(posedge clk);
+    repeat (10) @(posedge clk);
     #1ps;
 
-    assert (dut.regs[3] == 16'hBEEF)
-      $display("PASS: r3=%04h", dut.regs[3]);
+    assert (dmem.mem[2] == 16'd1)
+      $display("PASS: mem[2]=%04h", dmem.mem[2]);
       else $fatal(1, "JNZ failed");
     $finish;
   end

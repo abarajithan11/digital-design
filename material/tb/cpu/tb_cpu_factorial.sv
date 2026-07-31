@@ -23,17 +23,17 @@ module tb_cpu_factorial;
     dmem.mem[1] = 16'd1;
 
     // Load 5 and constant 1, then initialize the factorial accumulator.
-    imem.mem[0] = {8'h00,        4'h2, LOAD}; // r2 (counter)   = 5
-    imem.mem[1] = {8'h01,        4'h1, LOAD}; // r1 (one)       = mem[1] = 1
-    imem.mem[2] = {4'h0,  4'h1,  4'h0, MOVE}; // r0 (factorial) = r1 (one)
+    imem.mem[0] = {8'h00,        4'h2, LOAD}; // R2 = *(0);          counter = 5
+    imem.mem[1] = {8'h01,        4'h1, LOAD}; // R1 = *(1);          one     = 1
+    imem.mem[2] = {4'h0,  4'h1,  4'h0, MOVE}; // R0 = R1;            factorial
 
     // Multiply by the counter, decrement it, and repeat until zero.
-    imem.mem[3] = {4'h2,  4'h0,  4'h0, MUL}; // r0 (factorial)            *= r2 (counter)
-    imem.mem[4] = {4'h1,  4'h2,  4'h2, SUB}; // r2 (counter)              -= r1 (one)
-    imem.mem[5] = {8'h03,        4'h2, JNZ}; // repeat while r2 (counter) != 0
+    imem.mem[3] = {4'h2,  4'h0,  4'h0, MUL}; // R0 = R0 * R2;
+    imem.mem[4] = {4'h1,  4'h2,  4'h2, SUB}; // R2 = R2 - R1;
+    imem.mem[5] = {8'h03,        4'h2, JNZ}; // if (R2!=0) goto 3;
 
-    // Store 5! at memory address 2.
-    imem.mem[6] = {8'h04,        4'h0, STORE}; // mem[4] = r0 (factorial)
+    // Store 5! at memory address 4.
+    imem.mem[6] = {8'h04,        4'h0, STORE}; // *(4) = R0;
 
     @(posedge clk); #1ps reset = 0;
     repeat (20) @(posedge clk);

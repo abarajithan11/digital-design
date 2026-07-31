@@ -19,19 +19,23 @@ module tb_cpu_3_store_data;
     $dumpfile(`FST_PATH);
     $dumpvars(0, tb_cpu_3_store_data);
 
-    dmem.mem[0] = 16'hBEEF;
-
-    // Load 0xBEEF into r3, then store r3 at address 1.
-    imem.mem[0] = {8'h00, 4'h3, LOAD};  // r3 = mem[0]
-    imem.mem[1] = {8'h01, 4'h3, STORE}; // mem[1] = r3
+    dmem.mem[3] = 16'hBEEF;
+    // Load 0xBEEF from address 3 into r2, then store r2 at addresses 2, 1 and 0.
+    imem.mem[0] = {8'h03, 4'h2, LOAD};  // R2 = *(3);
+    imem.mem[1] = {8'h02, 4'h2, STORE}; // *(2) = R2;
+    imem.mem[2] = {8'h01, 4'h2, STORE}; // *(1) = R2;
+    imem.mem[3] = {8'h00, 4'h2, STORE}; // *(0) = R2;
 
     @(posedge clk); #1ps reset = 0;
-    repeat (2) @(posedge clk);
+    repeat (10) @(posedge clk);
     #1ps;
 
-    assert (dmem.mem[1] == 16'hBEEF)
-      $display("PASS: mem[1]=%04h", dmem.mem[1]);
-      else $fatal(1, "STORE failed");
+    assert (dut.regs[2]  == 16'hBEEF) else $fatal(1, "LOAD failed");
+    assert (dmem.mem[2] == 16'hBEEF) else $fatal(1, "STORE to mem[2] failed");
+    assert (dmem.mem[1] == 16'hBEEF) else $fatal(1, "STORE to mem[1] failed");
+    assert (dmem.mem[0] == 16'hBEEF) else $fatal(1, "STORE to mem[0] failed");
+    $display("PASS: r2=%04h mem[2:0]=%04h %04h %04h",
+             dut.regs[2], dmem.mem[2], dmem.mem[1], dmem.mem[0]);
     $finish;
   end
 

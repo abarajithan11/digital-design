@@ -18,17 +18,24 @@ module tb_cpu_2_load_data_into_registers;
     $dumpfile(`FST_PATH);
     $dumpvars(0, tb_cpu_2_load_data_into_registers);
 
-    dmem.mem[0] = 16'hBEEF;
+    dmem.mem[2] = 16'hBEEF;
+    dmem.mem[3] = 16'hABCD;
 
-    // Load memory location 0 into register 3.
-    imem.mem[0] = {8'h00, 4'h3, LOAD}; // r3 = mem[0]
+    // Load memory locations 2 and 3 into registers 1 and 2.
+    imem.mem[0] = {8'h02, 4'h1, LOAD}; // R1 = *(2);
+    imem.mem[1] = {8'h03, 4'h2, LOAD}; // R2 = *(3);
 
     @(posedge clk); #1ps reset = 0;
-    @(posedge clk); #1ps;
+    repeat (2) @(posedge clk);
+    #1ps;
 
-    assert (dut.regs[3] == 16'hBEEF)
-      $display("PASS: r3=%04h", dut.regs[3]);
+    assert (dut.regs[1] == 16'hBEEF)
+      $display("PASS: r1=%04h", dut.regs[1]);
       else $fatal(1, "LOAD failed");
+    assert (dut.regs[2] == 16'hABCD)
+      $display("PASS: r2=%04h", dut.regs[2]);
+      else $fatal(1, "LOAD failed");
+    repeat(5) @(posedge clk);
     $finish;
   end
 

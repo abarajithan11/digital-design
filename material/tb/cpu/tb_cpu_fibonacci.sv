@@ -24,19 +24,19 @@ module tb_cpu_fibonacci;
     dmem.mem[2] = 16'd10;
 
     // Initialize consecutive Fibonacci values, counter, and constant one.
-    imem.mem[0] = {8'h00,        4'h0, LOAD};  // r0 (a)       = mem[0] = 0
-    imem.mem[1] = {8'h01,        4'h1, LOAD};  // r1 (b)       = mem[1] = 1
-    imem.mem[2] = {8'h02,        4'h3, LOAD};  // r3 (counter) = 10
-    imem.mem[3] = {8'h01,        4'h4, LOAD};  // r4 (one)     = 1
+    imem.mem[0] = {8'h00,        4'h0, LOAD};  // R0 = *(0);          a       = 0
+    imem.mem[1] = {8'h01,        4'h1, LOAD};  // R1 = *(1);          b       = 1
+    imem.mem[2] = {8'h02,        4'h3, LOAD};  // R3 = *(2);          counter = 10
+    imem.mem[3] = {8'h01,        4'h4, LOAD};  // R4 = *(1);          one     = 1
 
     // Advance the pair and repeat ten times.
-    imem.mem[4] = {4'h1,  4'h0,  4'h2, ADD};   // r2 (next) = r0 (a) + r1 (b)
-    imem.mem[5] = {4'h0,  4'h1,  4'h0, MOVE};  // r0 (a) = r1 (b)
-    imem.mem[6] = {4'h0,  4'h2,  4'h1, MOVE};  // r1 (b) = r2 (next)
-    imem.mem[7] = {4'h4,  4'h3,  4'h3, SUB};   // r3 (counter) -= r4 (one)
-    imem.mem[8] = {8'h04,        4'h3, JNZ};   // repeat while r3 (counter) != 0
+    imem.mem[4] = {4'h1,  4'h0,  4'h2, ADD};   // R2 = R0 + R1;       next = a + b
+    imem.mem[5] = {4'h0,  4'h1,  4'h0, MOVE};  // R0 = R1;
+    imem.mem[6] = {4'h0,  4'h2,  4'h1, MOVE};  // R1 = R2;
+    imem.mem[7] = {4'h4,  4'h3,  4'h3, SUB};   // R3 = R3 - R4;
+    imem.mem[8] = {8'h04,        4'h3, JNZ};   // if (R3!=0) goto 4;
 
-    imem.mem[9] = {8'h04,        4'h0, STORE}; // mem[4] = r0 = F(10)
+    imem.mem[9] = {8'h04,        4'h0, STORE}; // *(4) = R0;          F(10)
 
     @(posedge clk); #1ps reset = 0;
     repeat (56) @(posedge clk);

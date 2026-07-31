@@ -56,13 +56,13 @@ module tb_cpu_fpga;
     dmem[0] = 16'd0;
     dmem[1] = 16'd1;
     dmem[2] = 16'd10;
-    imem[0] = {8'h02,        4'h2, LOAD};   // r2 (counter) = N = 10
-    imem[1] = {8'h01,        4'h1, LOAD};   // r1 (one)     = 1
-    imem[2] = {8'h00,        4'h0, LOAD};   // r0 (sum)     = 0
-    imem[3] = {4'h2,  4'h0,  4'h0, ADD};    // r0 += r2
-    imem[4] = {4'h1,  4'h2,  4'h2, SUB};    // r2 -= r1
-    imem[5] = {8'h03,        4'h2, JNZ};    // loop while r2 != 0
-    imem[6] = {8'h04,        4'h0, STORE};  // dmem[4] = r0
+    imem[0] = {8'h02,        4'h2, LOAD};   // R2 = *(2);          counter = N = 10
+    imem[1] = {8'h01,        4'h1, LOAD};   // R1 = *(1);          one     = 1
+    imem[2] = {8'h00,        4'h0, LOAD};   // R0 = *(0);          sum     = 0
+    imem[3] = {4'h2,  4'h0,  4'h0, ADD};    // R0 = R0 + R2;
+    imem[4] = {4'h1,  4'h2,  4'h2, SUB};    // R2 = R2 - R1;
+    imem[5] = {8'h03,        4'h2, JNZ};    // if (R2!=0) goto 3;
+    imem[6] = {8'h04,        4'h0, STORE};  // *(4) = R0;
 
     $dumpfile(`FST_PATH);
     $dumpvars(0, tb_cpu_fpga);
