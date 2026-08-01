@@ -1,16 +1,32 @@
 # Week 4 – Practical Circuits
 
-## Lecture
+## Lecture 1
 
-- AXI-Stream Protocol
-  - Ready/valid handshake
-  - Converting an adder tree to AXI-Stream
-- FSM
-  - 3-process coding style
-  - Parallel-to-serial converter
-- UART serial protocol
-  - AXI-Stream UART Transmitter
-  - AXI-Stream UART Receiver
+- Introduce Assignment 4, to allow students two weeks to try optimizations
+  - Demonstration: Neural Network on FPGA processing images from webcam
+  - Demonstration: FIR Filter on FPGA on audio
+- Trace through waveforms: counter with data loading
+- FIR Filter
+  - Audio signal, coefficients, processing - basics
+  - Naive FIR filter - long combinational path
+  - Transposed FIR Filter - shorter path, higher FMAX
+
+[Open slides in new tab](https://1drv.ms/p/c/154152893557b712/IQS_Vj1wYiE4R5rejk78uiATAWcethDAHLuYYF-XUke3trc)
+
+<iframe src="https://1drv.ms/p/c/154152893557b712/IQS_Vj1wYiE4R5rejk78uiATAWcethDAHLuYYF-XUke3trc?em=2&amp;wdAr=1.7777777777777777" width="900px" height="534px" frameborder="0" title="PowerPoint Viewer">This is an embedded <a target="_blank" href="https://office.com">Microsoft Office</a> presentation, powered by <a target="_blank" href="https://office.com/webapps">Office</a>.</iframe>
+
+## Lecture 2
+
+- Refresher: Setup/hold time
+- Activity - draw the waveform of nested counters
+- Flow control: ready/valid
+- Parallel to Serial Converter
+  - State machine
+  - Ready/valid, backpressure
+
+[Open slides in new tab](https://1drv.ms/p/c/154152893557b712/IQQCK7wbg_uySYpNPKxr6DMWAU1iKOfSWE05uWOOIb3Ic5Y)
+
+<iframe src="https://1drv.ms/p/c/154152893557b712/IQQCK7wbg_uySYpNPKxr6DMWAU1iKOfSWE05uWOOIb3Ic5Y?em=2&amp;wdAr=1.7777777777777777" width="900px" height="534px" frameborder="0" title="PowerPoint Viewer">This is an embedded <a target="_blank" href="https://office.com">Microsoft Office</a> presentation, powered by <a target="_blank" href="https://office.com/webapps">Office</a>.</iframe>
 
 ## Discussion: FPGA System
 

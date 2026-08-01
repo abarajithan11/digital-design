@@ -1,20 +1,45 @@
 # Week 3 – Sequential Logic
 
-## Lecture
+## Lecture 1
 
+- ALU + Testbench
+- Sequential Circuits 1
+  - Storing a bit - Inverter loop
+  - SR Latch
+  - D Latch
+  - Flipflops and Registers
+  - Registers in SystemVerilog
+  - Reset (active low/high, sync, async), clock enable
+  - Shift register
 - Timing Analysis
   - Why a chip needs a clock
-  - Contamination Delay
-  - Propagation Delay
+  - Propagation Delay, Contamination Delay
+
+[Open slides in new tab](https://1drv.ms/p/c/154152893557b712/IQQnF3pXUWjyRb1Q7vgkzwd7AYcaMCiqpMjAPdJWb0KKPMw)
+
+<iframe src="https://1drv.ms/p/c/154152893557b712/IQQnF3pXUWjyRb1Q7vgkzwd7AYcaMCiqpMjAPdJWb0KKPMw?em=2&amp;wdAr=1.7777777777777777" width="900px" height="534px" frameborder="0" title="PowerPoint Viewer">This is an embedded <a target="_blank" href="https://office.com">Microsoft Office</a> presentation, powered by <a target="_blank" href="https://office.com/webapps">Office</a>.</iframe>
+
+## Lecture 2
+
+- Register file example: Flip flop + decoder + multiplexer + demultiplexer
+- Timing Analysis
   - Setup time, Hold time
   - Critical path analysis
-- Sequential Circuits 2
-  - Parameterized Binary Reduction Tree to find the minimum value in a vector `y = min(X)`
-
+- Live coding SystemVerilog: pipelined `a*x + b`
+- Parameterized Binary Reduction Tree to find the minimum value in a vector `y = min(X)`
 - Finite State Machines
-  - Up Counter
-  - Down Counter
-  - Nested counters
+  - Counter
+  - Pattern detector
+  - Mealy and Moore Machines
+
+## Discussion
+
+- Hands-on FPGA
+- Implement a counter on FPGA
+
+[Open slides in new tab](https://1drv.ms/p/c/154152893557b712/IQQCbHLcMd9fTbYvzkfQvLRWAcFgFTIvopyMca2XEFBDY1k)
+
+<iframe src="https://1drv.ms/p/c/154152893557b712/IQQCbHLcMd9fTbYvzkfQvLRWAcFgFTIvopyMca2XEFBDY1k?em=2&amp;wdAr=1.7777777777777777" width="900px" height="534px" frameborder="0" title="PowerPoint Viewer">This is an embedded <a target="_blank" href="https://office.com">Microsoft Office</a> presentation, powered by <a target="_blank" href="https://office.com/webapps">Office</a>.</iframe>
 
 ## Assignment 3: Fully parallel dense layer 
 
@@ -26,3 +51,15 @@ This assignment is intended to develop your skills in hierarchical design & para
 4. Create a module `dense_relu` with optional ReLU with `N_OUTPUTS` number of the above module.
 5. Use our basic testbenches to test (1,2,3,4)
 6. Write an advanced testbench to do randomized testing
+
+## Midterm Exam
+
+- 26 MCQs. Students are graded on their best 25
+- Covering Week 1 & Week 2
+- 50% theory, 50% SystemVerilog
+- Questions are extensions of the assignments
+- The real learning happens with assignments, and midterm is to make sure they did the assignments themselves without using AI. 
+
+[Open the midterm exam PDF in a new tab](https://media.abapages.com/course-site/midterm_cse140_ss1_26.pdf)
+
+<iframe src="https://media.abapages.com/course-site/midterm_cse140_ss1_26.pdf" width="100%" height="900px" title="Midterm Exam PDF">Your browser does not support embedded PDFs. <a href="https://media.abapages.com/course-site/midterm_cse140_ss1_26.pdf">Open the midterm exam PDF</a>.</iframe>

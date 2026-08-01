@@ -18,39 +18,36 @@
   - Sign-Magnitude, Two's complement
   - Multiplication
   - Overflow
-  - Handling overflow: clamping/clipping
+  - Clamping/clipping - handling overflows
+
+[Open slides in new tab](https://1drv.ms/p/c/154152893557b712/IQT7kM59SgRASaNRjaLbfVYhAYRXbM7EKvznsySSP964jGE)
+
+<iframe src="https://1drv.ms/p/c/154152893557b712/IQT7kM59SgRASaNRjaLbfVYhAYRXbM7EKvznsySSP964jGE?em=2&amp;wdAr=1.7777777777777777" width="900px" height="534px" frameborder="0" title="PowerPoint Viewer">This is an embedded <a target="_blank" href="https://office.com">Microsoft Office</a> presentation, powered by <a target="_blank" href="https://office.com/webapps">Office</a>.</iframe>
 
 ## Lecture 2
 
 - Number representation
-  - Fixed-point arithmatic, measure error
-  SystemVerilog Literals
+  - Signed Multiplication
+  - SystemVerilog Literals
+  - Fixed Point Representation - calculate `kx + y`
+  - Error from truncation
+  - Banker's rounding - round to nearest even
+  - Measure error
 - Combinational Circuits 1
   - Half adder, Full adder, Ripple carry adder + Testbench
   - Adder-Subtractor
   - Comparator
   - Shifter: Logical, Arthmetic, Circular
-  - Error from truncation
   - Multiplexer
-  - Logic using multiplexers
   - Saturating adder
   - ALU + Testbench
   - SV Functions
   - Lookup Tables
   - Demultiplexer
-- Sequential Circuits 1
-  - Latches, Flipflops and Registers
-- Combinational circuits 2
-  - Encoder, priority encoder
-  - Decoder
-  - Logic using decoders
-  - Register file example
 
-### Slides
+[Open slides in new tab](https://1drv.ms/p/c/154152893557b712/IQSgztkdDg20SIwxw_ZFSsguAVIiFKTMYSOc7TtWvFCauSc)
 
-[Open slides in new tab](https://1drv.ms/p/c/154152893557b712/IQT7kM59SgRASaNRjaLbfVYhAYRXbM7EKvznsySSP964jGE)
-
-<iframe src="https://1drv.ms/p/c/154152893557b712/IQT7kM59SgRASaNRjaLbfVYhAYRXbM7EKvznsySSP964jGE?em=2&amp;wdAr=1.7777777777777777" width="900px" height="534px" frameborder="0" title="PowerPoint Viewer">This is an embedded <a target="_blank" href="https://office.com">Microsoft Office</a> presentation, powered by <a target="_blank" href="https://office.com/webapps">Office</a>.</iframe>
+<iframe src="https://1drv.ms/p/c/154152893557b712/IQSgztkdDg20SIwxw_ZFSsguAVIiFKTMYSOc7TtWvFCauSc?em=2&amp;wdAr=1.7777777777777777" width="900px" height="534px" frameborder="0" title="PowerPoint Viewer">This is an embedded <a target="_blank" href="https://office.com">Microsoft Office</a> presentation, powered by <a target="_blank" href="https://office.com/webapps">Office</a>.</iframe>
 
 ## Discussion
 
