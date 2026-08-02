@@ -51,15 +51,3 @@ This assignment is intended to develop your skills in hierarchical design & para
 4. Create a module `dense_relu` with optional ReLU with `N_OUTPUTS` number of the above module.
 5. Use our basic testbenches to test (1,2,3,4)
 6. Write an advanced testbench to do randomized testing
-
-## Midterm Exam
-
-- 26 MCQs. Students are graded on their best 25
-- Covering Week 1 & Week 2
-- 50% theory, 50% SystemVerilog
-- Questions are extensions of the assignments
-- The real learning happens with assignments, and midterm is to make sure they did the assignments themselves without using AI. 
-
-[Open the midterm exam PDF in a new tab](https://media.abapages.com/course-site/midterm_cse140_ss1_26.pdf)
-
-<iframe src="https://media.abapages.com/course-site/midterm_cse140_ss1_26.pdf" width="100%" height="900px" title="Midterm Exam PDF">Your browser does not support embedded PDFs. <a href="https://media.abapages.com/course-site/midterm_cse140_ss1_26.pdf">Open the midterm exam PDF</a>.</iframe>
