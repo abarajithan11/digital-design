@@ -1,7 +1,8 @@
-# Digital Design, End to End
+# Digital Design - UCSD CSE140 SS1'26
 
 Learn digital design from scratch: the foundational theory, SystemVerilog implementation, and practical best practices, and get a hands-on taste of both ASIC and FPGA design flows.
 This is a five-week course with 30 hours of lectures and a strong balance between the theory of digital circuits and building them.
+It was developed and taught to 52 students as CSE 140 in the Department of Computer Science and Engineering at UC San Diego during Summer Session I 2026.
 
 - [Start with Docker](setting-up-docker.md)
 - [Browse design examples](design_outputs.md)
@@ -56,8 +57,6 @@ Almost half of this course develops theory such as number representation, Boolea
 That theory is woven into practical work that you simulate, inspect, synthesize, and run on your own computer.
 Each assignment is roughly half theory and half SystemVerilog design, so you immediately apply the ideas you have learned.
 
-### Where This Course Fits
-
 Digital design is the foundation for compute architecture (including CPU, GPU, and accelerator design), physical design, EDA/CAD software for ASIC and FPGA development, and many other hardware disciplines.
 
 ![Diagram showing where an introductory digital-design course fits among related computer engineering subjects](https://media.abapages.com/course-site/where_fits.png)
@@ -99,11 +98,11 @@ Listen to the original audio and the output of a 4-bit-quantized low-pass FIR fi
 
 | Week | Theory and practice |
 | --- | --- |
-| [1](week-1.md) | Boolean functions, gates, simulation, and a first RTL-to-GDS design |
-| [2](week-2.md) | Number representation, logic simplification, combinational circuits, quantization, and ReLU |
-| [3](week-3.md) | Sequential logic, setup and hold time, critical paths, reduction trees, and multiply-accumulate units |
-| [4](week-4.md) | Finite-state machines, ready/valid handshakes, UART, and streaming neural-network integration |
-| [5](week-5.md) | FIR architecture, retiming, and complete CPU, filter, and accelerator systems |
+| [W1](week-1.md) | Boolean functions, gates, simulation, and a first RTL-to-GDS design |
+| [W2](week-2.md) | Number representation, logic simplification, combinational circuits, quantization, and ReLU |
+| [W3](week-3.md) | Sequential logic, setup and hold time, critical paths, reduction trees, and multiply-accumulate units |
+| [W4](week-4.md) | Finite-state machines, ready/valid handshakes, UART, and streaming neural-network integration |
+| [W5](week-5.md) | FIR architecture, retiming, and complete CPU, filter, and accelerator systems |
 
 ## What You Will Learn
 
