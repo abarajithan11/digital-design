@@ -16,7 +16,7 @@ module tb_cpu_fpga;
   localparam int WATCH_ADDR   = 4;
 
   // Opcodes (must match cpu.sv's enum order).
-  localparam logic [3:0] LOAD=0, STORE=1, MOVE=2, ADD=3, SUB=4, MUL=5, JNZ=6;
+  typedef enum logic [3:0] {NOP, LOAD, STORE, MOVE, ADD, SUB, MUL, JNZ} op_t;
 
   logic clk = 0, rst = 1;
   logic [1:0] btn = 2'b00;
@@ -25,6 +25,9 @@ module tb_cpu_fpga;
   logic rx, tx;
 
   initial forever #1 clk = ~clk;
+  task automatic posedge_clk(int n = 1);
+    repeat (n) @(posedge clk); #1ps;
+  endtask
 
   board_glue #(
     .ADDR_W      (ADDR_W),
@@ -67,17 +70,16 @@ module tb_cpu_fpga;
     $dumpfile(`FST_PATH);
     $dumpvars(0, tb_cpu_fpga);
 
-    repeat (10) @(posedge clk);
-    rst = 0;
+    posedge_clk(); rst = 0;
 
     // ---- LOAD: all imem words, then all dmem words (no echo) -----------------
     for (int r = 0; r < MEM_ROWS; r++) vip_rx.send_packet(imem[r]);
     for (int r = 0; r < MEM_ROWS; r++) vip_rx.send_packet(dmem[r]);
 
     // ---- Press S1 to run ----------------------------------------------------
-    repeat (20) @(posedge clk);
+    posedge_clk(20);
     btn[0] = 1'b1;
-    repeat (40) @(posedge clk);
+    posedge_clk(40);
     btn[0] = 1'b0;
 
     // ---- DUMP: read dmem back, one word per row -----------------------------

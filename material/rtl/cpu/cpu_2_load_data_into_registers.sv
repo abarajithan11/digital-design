@@ -2,22 +2,18 @@ module cpu_2_load_data_into_registers (
   input  logic        clk,
   input  logic        reset,
 
-  output logic [7:0]  imem_addr,
-  input  logic [15:0] imem_rdata,
+  output logic [7:0]  pc,
+  input  logic [15:0] instruction,
 
   output logic [7:0]  dmem_addr,  // --- new
   input  logic [15:0] dmem_rdata // --- new
 );
-  logic [7:0] pc, addr;
-  enum logic [3:0] {LOAD} opcode; // --- new
-  logic [ 3:0] i_reg; // --- new
+  enum logic [3:0] {NOP, LOAD} opcode; // --- new
+  logic [ 3:0] i_reg_a; // --- new
   logic [15:0] regs [16]; // --- new
 
   always_comb begin
-    imem_addr         = pc;
-    {addr, i_reg, opcode} = imem_rdata; // --- new
-
-    dmem_addr = addr; // --- new
+    {dmem_addr, i_reg_a, opcode} = instruction; // --- new
   end
 
   always_ff @(posedge clk) begin
@@ -28,7 +24,7 @@ module cpu_2_load_data_into_registers (
       pc   <= pc + 1'b1;
 
       case (opcode) // --- new
-        LOAD: regs[i_reg] <= dmem_rdata; // --- new
+        LOAD: regs[i_reg_a] <= dmem_rdata; // --- new
         default: ;
       endcase
     end

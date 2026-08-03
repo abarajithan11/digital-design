@@ -80,11 +80,12 @@ Example programs:
 
 ## CPU Design
 
-* Only 7 opcodes: `LOAD=0`, `STORE=1`, `MOVE=2`, `ADD=3`, `SUB=4`, `MUL=5`, and `JNZ=6`.
+* Only 8 opcodes: `NOP=0`, `LOAD=1`, `STORE=2`, `MOVE=3`, `ADD=4`, `SUB=5`, `MUL=6`, and `JNZ=7`.
+* `NOP` is the all-zero instruction and has no side effects.
 * Two instruction formats:
-  * Address type: `LOAD, STORE, JNZ` take an `addr`ess and register index (`i_reg`)
-  * Register type: `MOVE, ADD, SUB, MUL` take indices of three registers. Two source (`i_rs1, i_rs2`) and one destination `i_rd`.
-* `JNZ` jumps to the `addr` when `regs[i_reg]` is nonzero.
+  * Address type: `LOAD, STORE, JNZ` take a data-memory address (`dmem_addr`) and register index (`i_reg_a`)
+  * Register type: `MOVE, ADD, SUB, MUL` take indices of three registers. Two sources (`i_reg_b, i_reg_c`) and one destination (`i_reg_a`).
+* `JNZ` jumps to `dmem_addr` when `regs[i_reg_a]` is nonzero.
 
 <style>
   .cpu-instruction-table {
@@ -114,16 +115,16 @@ Example programs:
   <tr>
     <td><code>LOAD</code>, <code>STORE</code>, <code>JNZ</code></td>
     <td>Address</td>
-    <td colspan="2" align="center"><code>addr</code></td>
-    <td><code>i_reg</code></td>
+    <td colspan="2" align="center"><code>dmem_addr</code></td>
+    <td><code>i_reg_a</code></td>
     <td><code>opcode</code></td>
   </tr>
   <tr>
     <td><code>MOVE</code>, <code>ADD</code>, <code>SUB</code>, <code>MUL</code></td>
     <td>Register</td>
-    <td><code>i_rs2</code></td>
-    <td><code>i_rs1</code></td>
-    <td><code>i_rd</code></td>
+    <td><code>i_reg_c</code></td>
+    <td><code>i_reg_b</code></td>
+    <td><code>i_reg_a</code></td>
     <td><code>opcode</code></td>
   </tr>
 </table>
@@ -133,11 +134,42 @@ Example programs:
 Each instruction field is 4-bits, so it becomes a character when displayed as hex, making it easy to read binary. Read right to left (little endian). e.g.
 
 ```
-0x 1250 : 0=LOAD regs[5] <- dmem[0x12]
-0x 0123 : 3=ADD  regs[2] <- regs[1] + regs[0]
+0x 1251 : 1=LOAD regs[5] <- dmem[0x12]
+0x 0124 : 4=ADD  regs[2] <- regs[1] + regs[0]
 ```
 
-Waveform of Fibonacci program:
+### Example: Sum to N numbers
+
+The algorithm described in C:
+
+```c
+// setup:
+uint16_t mem[256];
+mem[0] = 0;    // sum seed
+mem[1] = 1;    // the constant one
+mem[2] = 10;   // N
+
+// run:
+uint16_t r0_sum   = mem[0];
+uint16_t r1_one   = mem[1];
+for (r2_count = mem[2]; r2_count !=0; r2_count -= r1_one) {
+  r0_sum += r2_count;
+}
+mem[4] = r0_sum;  //55
+```
+
+The algorithm described in our machine code and assembly:
+
+```
+0: R0_SUM   = *(0);
+1: R1_ONE   = *(1);
+2: R2_COUNT = *(2);
+3: R0_SUM   = R0_SUM + R2_COUNT;
+4: R2_COUNT = R2_COUNT - R1_ONE;
+5: if (R2_COUNT!=0) goto 3;
+6: *(4) = R0_SUM;
+```
+
 ![Fibonacci Code](https://media.abapages.com/course-site/fibonacci.png)
 
 ## Full CPU (40 LOC)

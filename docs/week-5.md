@@ -31,7 +31,7 @@
 
 ## Lecture 2
 
-- Incremental CPU Design (7 opcodes, 40-lines of SV)
+- Incremental CPU Design (8 opcodes, 40-lines of SV)
   1. Memory module
   2. Fetching instructions (PC)
   3. Load data: `LOAD`

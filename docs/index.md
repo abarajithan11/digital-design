@@ -72,7 +72,7 @@ Use the [SystemVerilog guide](systemverilog.md) as a language reference, inspect
 
 ## Systems You Will Build and Explore
 
-- **CPU:** Build a seven-opcode CPU in approximately 40 lines of SystemVerilog and run programs such as Sum-to-N, Fibonacci, factorial, and dot product in the [CPU walkthrough](cpu.md).
+- **CPU:** Build an eight-opcode CPU in approximately 40 lines of SystemVerilog and run programs such as Sum-to-N, Fibonacci, factorial, and dot product in the [CPU walkthrough](cpu.md).
 - **FIR audio filter:** Implement a 100-tap filter, connect it to a computer over UART, and process files or live audio in the [FPGA labs](fpga_labs.md).
 - **Neural-network accelerator:** Progress from quantization and multiply-accumulate units to fully parallel MNIST inference on an FPGA in the [FPGA labs](fpga_labs.md).
 

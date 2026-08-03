@@ -38,15 +38,18 @@ add_port_argument(parser)
 args = parser.parse_args()
 
 # ---- Opcodes (must match the cpu.sv enum order) -----------------------------
-LOAD, STORE, MOVE, ADD, SUB, MUL, JNZ = range(7)
+NOP, LOAD, STORE, MOVE, ADD, SUB, MUL, JNZ = range(8)
 
 
 def encode(instr):
     """One instruction (a list) -> 16-bit word.
+       [NOP]                              -> 16'h0000
        [LOAD|STORE|JNZ, reg, addr]     -> {addr[7:0], reg[3:0], op[3:0]}
        [MOVE|ADD|SUB|MUL, rd, rs1, rs2]-> {rs2[3:0], rs1[3:0], rd[3:0], op[3:0]}
     """
     op = instr[0]
+    if op == NOP:
+        return 0
     if op in (LOAD, STORE, JNZ):
         _, reg, addr = instr
         return (addr & 0xFF) << 8 | (reg & 0xF) << 4 | op

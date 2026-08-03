@@ -98,8 +98,8 @@ module board_glue #(
   // ==========================================================================
   //  The CPU and its ~1 Hz clock (a down_counter divides the 54 MHz clock)
   // ==========================================================================
-  wire [7:0]  imem_addr, dmem_addr;
-  wire [15:0] imem_rdata, dmem_rdata, dmem_wdata;
+  wire [7:0]  pc, dmem_addr;
+  wire [15:0] instruction, dmem_rdata, dmem_wdata;
   wire        dmem_wen;
 
   wire  div_wrap;                              // pulses every CPU_HALF fast clks (while RUN)
@@ -124,8 +124,8 @@ module board_glue #(
 
   cpu u_cpu (
     .clk(cpu_clk), .reset(cpu_reset),
-    .imem_addr(imem_addr), .dmem_addr(dmem_addr),
-    .imem_rdata(imem_rdata), .dmem_rdata(dmem_rdata),
+    .pc(pc), .dmem_addr(dmem_addr),
+    .instruction(instruction), .dmem_rdata(dmem_rdata),
     .dmem_wdata(dmem_wdata), .dmem_wen(dmem_wen)
   );
 
@@ -142,10 +142,10 @@ module board_glue #(
   // ==========================================================================
   //  Memory address / write muxing (one shared port each)
   // ==========================================================================
-  wire [7:0] imem_paddr = (state == S_LOAD) ? {{(8-ADDR_W){1'b0}}, ld_row} : imem_addr;
+  wire [7:0] imem_paddr = (state == S_LOAD) ? {{(8-ADDR_W){1'b0}}, ld_row} : pc;
 
   memory #(.ADDR_W(ADDR_W)) u_imem (
-    .clk(clk), .addr(imem_paddr), .wdata(rx_word), .wen(ld_imem_we), .rdata(imem_rdata)
+    .clk(clk), .addr(imem_paddr), .wdata(rx_word), .wen(ld_imem_we), .rdata(instruction)
   );
 
   logic [7:0]  dmem_paddr;
@@ -194,7 +194,7 @@ module board_glue #(
   // ==========================================================================
   //  LEDs
   // ==========================================================================
-  wire [3:0] opcode = imem_rdata[3:0];         // the instruction currently fetched
+  wire [3:0] opcode = instruction[3:0];        // the instruction currently fetched
   always_comb begin
     {led, gpio_o, gpio_oe} = '0;
     if (btn[1]) led = watch_val[5:0];          // S2 held: low 6 bits of dmem[WATCH_ADDR]
