@@ -1,6 +1,7 @@
 # Digital Design - UCSD CSE140 SS1'26
 
-Learn digital design from scratch: the foundational theory, SystemVerilog implementation, and practical best practices, and get a hands-on taste of both ASIC and FPGA design flows.
+This course is redesigned to help you learn digital design in a fun, interesting and inspiring way. 
+You will learn the foundational theory, SystemVerilog implementation, and practical best practices, and get a hands-on taste of both ASIC and FPGA design flows.
 This is a five-week course with 30 hours of lectures and a strong balance between the theory of digital circuits and building them.
 It was developed and taught to 52 students as CSE 140 in the Department of Computer Science and Engineering at UC San Diego during Summer Session I 2026.
 
@@ -52,9 +53,9 @@ It was developed and taught to 52 students as CSE 140 in the Department of Compu
 
 ## Why This Course?
 
-Digital design is both a theoretical discipline and the craft of making real circuits work.
-Almost half of this course develops theory such as number representation, Boolean algebra, Karnaugh maps, logic minimization, sequential logic, and timing analysis.
-That theory is woven into practical work that you simulate, inspect, synthesize, and run on your own computer.
+Digital design is a discipline where the art of designing complex digital circuits and its rules of thumb are grounded in theoretical analysis.
+Half of this course develops theory such as number representation, Boolean algebra, Karnaugh maps, logic minimization, sequential logic, and timing analysis.
+That theory is woven into practical work that you design, simulate, inspect, synthesize, and run on your own computer.
 Each assignment is roughly half theory and half SystemVerilog design, so you immediately apply the ideas you have learned.
 
 Digital design is the foundation for compute architecture (including CPU, GPU, and accelerator design), physical design, EDA/CAD software for ASIC and FPGA development, and many other hardware disciplines.
@@ -75,6 +76,8 @@ Use the [SystemVerilog guide](systemverilog.md) as a language reference, inspect
 - **FIR audio filter:** Implement a 100-tap filter, connect it to a computer over UART, and process files or live audio in the [FPGA labs](fpga_labs.md).
 - **Neural-network accelerator:** Progress from quantization and multiply-accumulate units to fully parallel MNIST inference on an FPGA in the [FPGA labs](fpga_labs.md).
 
+The CPU and the FIR Filter are taught as examples in the lectures. 
+You will be building the neural-network accelerator through your assignments.
 Listen to the original audio and the output of a 4-bit-quantized low-pass FIR filter with a 250 Hz cutoff.
 
 ```{raw} html
@@ -98,11 +101,11 @@ Listen to the original audio and the output of a 4-bit-quantized low-pass FIR fi
 
 | Week | Theory and practice |
 | --- | --- |
-| [W1](week-1.md) | Boolean functions, gates, simulation, and a first RTL-to-GDS design |
-| [W2](week-2.md) | Number representation, logic simplification, combinational circuits, quantization, and ReLU |
-| [W3](week-3.md) | Sequential logic, setup and hold time, critical paths, reduction trees, and multiply-accumulate units |
-| [W4](week-4.md) | Finite-state machines, ready/valid handshakes, UART, and streaming neural-network integration |
-| [W5](week-5.md) | FIR architecture, retiming, and complete CPU, filter, and accelerator systems |
+| [[W1]](week-1.md) | Boolean functions, gates, simulation, and a first RTL-to-GDS design |
+| [[W2]](week-2.md) | Number representation, logic simplification, combinational circuits, quantization, and ReLU |
+| [[W3]](week-3.md) | Sequential logic, setup and hold time, critical paths, reduction trees, and multiply-accumulate units |
+| [[W4]](week-4.md) | Finite-state machines, ready/valid handshakes, UART, and streaming neural-network integration |
+| [[W5]](week-5.md) | FIR architecture, retiming, and complete CPU, filter, and accelerator systems |
 
 ## What You Will Learn
 
