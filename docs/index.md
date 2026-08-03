@@ -135,6 +135,7 @@ All [RTL sources](https://github.com/abarajithan11/digital-design/tree/main/mate
 Home <self>
 Syllabus <syllabus>
 Exams <exams>
+Lecture Recordings <https://podcast.ucsd.edu/watch/s126/cse140_a00>
 Contact Us <contact-us>
 ```
 
@@ -146,6 +147,7 @@ Contact Us <contact-us>
 Docker for ASIC+FPGA <setting-up-docker>
 Running Our Examples <running-examples>
 SystemVerilog Basics <systemverilog>
+Acronyms from Lectures <acronyms>
 ```
 
 ```{toctree}
@@ -169,21 +171,4 @@ Week 2 <week-2>
 Week 3 <week-3>
 Week 4 <week-4>
 Week 5 <week-5>
-```
-
-```{toctree}
-:maxdepth: 1
-:caption: Reference
-:hidden:
-
-Acronyms from Lectures <acronyms>
-```
-
-```{toctree}
-:maxdepth: 1
-:caption: External Links
-:hidden:
-
-Lecture Recordings <https://podcast.ucsd.edu/watch/s126/cse140_a00>
-Visualize and Animate SystemVerilog <https://digitaljs.tilk.eu/>
 ```
