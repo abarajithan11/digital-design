@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 
-// AXI-Stream sink VIP (slave). Drains m_valid/m_data with random m_ready
+// AXI-Stream sink VIP (subordinate). Drains m_valid/m_data with random m_ready
 // backpressure and collects `n` words. Registered ready avoids races.
 module vip_axis_sink #(
     parameter WORD_W = 8, PROB_READY = 40

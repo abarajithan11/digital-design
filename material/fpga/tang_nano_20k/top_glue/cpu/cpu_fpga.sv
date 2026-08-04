@@ -98,8 +98,8 @@ module board_glue #(
   // ==========================================================================
   //  The CPU and its ~1 Hz clock (a down_counter divides the 54 MHz clock)
   // ==========================================================================
-  wire [7:0]  pc, dmem_addr;
-  wire [15:0] instruction, dmem_rdata, dmem_wdata;
+  wire [7:0]  pc, addr;
+  wire [15:0] instruction, read_data, write_data;
   wire        dmem_wen;
 
   wire  div_wrap;                              // pulses every CPU_HALF fast clks (while RUN)
@@ -124,9 +124,9 @@ module board_glue #(
 
   cpu u_cpu (
     .clk(cpu_clk), .reset(cpu_reset),
-    .pc(pc), .dmem_addr(dmem_addr),
-    .instruction(instruction), .dmem_rdata(dmem_rdata),
-    .dmem_wdata(dmem_wdata), .dmem_wen(dmem_wen)
+    .pc(pc), .addr(addr),
+    .instruction(instruction), .read_data(read_data),
+    .write_data(write_data), .dmem_wen(dmem_wen)
   );
 
   // ==========================================================================
@@ -154,14 +154,14 @@ module board_glue #(
   always_comb begin
     case (state)
       S_LOAD:  begin dmem_paddr = {{(8-ADDR_W){1'b0}}, ld_row};   dmem_pwdata = rx_word;    dmem_pwen = ld_dmem_we; end
-      S_RUN:   begin dmem_paddr = dmem_addr;                      dmem_pwdata = dmem_wdata; dmem_pwen = dmem_wen;   end
+      S_RUN:   begin dmem_paddr = addr;                           dmem_pwdata = write_data; dmem_pwen = dmem_wen;   end
       S_DUMP:  begin dmem_paddr = {{(8-ADDR_W){1'b0}}, dump_row}; dmem_pwdata = '0;         dmem_pwen = 1'b0;       end
       default: begin dmem_paddr = '0;                             dmem_pwdata = '0;         dmem_pwen = 1'b0;       end
     endcase
   end
 
   memory #(.ADDR_W(ADDR_W)) u_dmem (
-    .clk(clk), .addr(dmem_paddr), .wdata(dmem_pwdata), .wen(dmem_pwen), .rdata(dmem_rdata)
+    .clk(clk), .addr(dmem_paddr), .wdata(dmem_pwdata), .wen(dmem_pwen), .rdata(read_data)
   );
 
   // Snoop writes to WATCH_ADDR so the LEDs can show it without stealing the
@@ -174,7 +174,7 @@ module board_glue #(
   // Dump drives the UART; otherwise it's idle.
   always_comb begin
     tx_valid = state == S_DUMP;
-    tx_word  = dmem_rdata;
+    tx_word  = read_data;
   end
 
   // ==========================================================================

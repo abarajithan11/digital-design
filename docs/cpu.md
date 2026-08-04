@@ -83,9 +83,9 @@ Example programs:
 * Only 8 opcodes: `NOP=0`, `LOAD=1`, `STORE=2`, `MOVE=3`, `ADD=4`, `SUB=5`, `MUL=6`, and `JNZ=7`.
 * `NOP` is the all-zero instruction and has no side effects.
 * Two instruction formats:
-  * Address type: `LOAD, STORE, JNZ` take a data-memory address (`dmem_addr`) and register index (`i_reg_a`)
+  * Address type: `LOAD, STORE, JNZ` take a data-memory address (`addr`) and register index (`i_reg_a`)
   * Register type: `MOVE, ADD, SUB, MUL` take indices of three registers. Two sources (`i_reg_b, i_reg_c`) and one destination (`i_reg_a`).
-* `JNZ` jumps to `dmem_addr` when `regs[i_reg_a]` is nonzero.
+* `JNZ` jumps to `addr` when `regs[i_reg_a]` is nonzero.
 
 <style>
   .cpu-instruction-table {
@@ -115,7 +115,7 @@ Example programs:
   <tr>
     <td><code>LOAD</code>, <code>STORE</code>, <code>JNZ</code></td>
     <td>Address</td>
-    <td colspan="2" align="center"><code>dmem_addr</code></td>
+    <td colspan="2" align="center"><code>addr</code></td>
     <td><code>i_reg_a</code></td>
     <td><code>opcode</code></td>
   </tr>
@@ -161,12 +161,12 @@ mem[4] = r0_sum;  //55
 The algorithm described in our machine code and assembly:
 
 ```
-0: R0_SUM   = *(0);
-1: R1_ONE   = *(1);
-2: R2_COUNT = *(2);
-3: R0_SUM   = R0_SUM + R2_COUNT;
-4: R2_COUNT = R2_COUNT - R1_ONE;
-5: if (R2_COUNT!=0) goto 3;
+0: R0_SUM     = *(0);
+1: R1_ONE     = *(1);
+2: R2_COUNTER = *(2);
+3: R0_SUM     = R0_SUM + R2_COUNTER;
+4: R2_COUNTER = R2_COUNTER - R1_ONE;
+5: if (R2_COUNTER != 0) goto 3;
 6: *(4) = R0_SUM;
 ```
 

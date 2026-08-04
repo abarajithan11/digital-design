@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 
-// AXI-Stream source VIP (master). Drives s_valid/s_data with random idle gaps
+// AXI-Stream source VIP (manager). Drives s_valid/s_data with random idle gaps
 // and waits for s_ready, so it exercises backpressure. Outputs are registered
 // so they never race the DUT's sampling edge. Style: abarajithan11/axis_vip.
 module vip_axis_source #(

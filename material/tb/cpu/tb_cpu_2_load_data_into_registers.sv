@@ -4,13 +4,13 @@ module tb_cpu_2_load_data_into_registers;
   typedef enum logic [3:0] {NOP, LOAD} op_t;
 
   logic clk = 0, reset = 1;
-  logic [7:0] pc, dmem_addr;
-  logic [15:0] instruction, dmem_rdata;
+  logic [7:0] pc, addr;
+  logic [15:0] instruction, read_data;
 
   cpu_2_load_data_into_registers dut(.*);
 
-  memory imem(clk, pc, '0, 1'b0, instruction);
-  memory dmem(clk, dmem_addr, '0, 1'b0, dmem_rdata);
+  memory imem(clk, pc,   '0, 1'b0, instruction);
+  memory dmem(clk, addr, '0, 1'b0, read_data);
 
   initial forever #1 clk = ~clk;
   task automatic posedge_clk(int n = 1);
