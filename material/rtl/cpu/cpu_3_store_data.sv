@@ -13,13 +13,15 @@ module cpu_3_store_data (
   enum logic [3:0] {NOP, LOAD, STORE} opcode; // --- new
   logic [ 3:0] i_reg_a;
   logic [15:0][15:0] regs;
-  logic [15:0] alu_out;
+  logic [15:0] bus_a, alu_out; // --- new: bus_a
   logic reg_wen;
 
   always_comb begin
     {addr, i_reg_a, opcode} = instruction;
 
-    write_data = regs[i_reg_a];   // --- new
+    bus_a      = regs[i_reg_a];   // --- new
+
+    write_data = bus_a;           // --- new
     dmem_wen   = opcode == STORE; // --- new
 
     alu_out = '0;
@@ -31,8 +33,10 @@ module cpu_3_store_data (
   end
 
   always_ff @(posedge clk)
-    if (reset) {pc, regs} <= '0;
-    else begin
+    if (reset) begin
+      pc   <= '0;
+      regs <= '0;
+    end else begin
       pc <= pc + 1;
       if (reg_wen) regs[i_reg_a] <= alu_out;
     end

@@ -11,35 +11,39 @@ module cpu_4_move_alu (
   output logic        dmem_wen
 );
   enum logic [3:0] {NOP, LOAD, STORE, MOVE, ADD, SUB, MUL} opcode; // --- new
-  logic [ 3:0] i_reg_a, i_reg_b, i_reg_c; // --- new
+  logic [ 3:0] i_reg_a, i_bus_b, i_bus_c;    // --- new
   logic [15:0][15:0] regs;
-  logic [15:0] reg_b, reg_c, alu_out;     // --- new
+  logic [15:0] bus_a, bus_b, bus_c, alu_out; // --- new: bus_b, bus_c
   logic reg_wen;
 
   always_comb begin
     {addr,             i_reg_a, opcode} = instruction;
-    {i_reg_c, i_reg_b, i_reg_a, opcode} = instruction; // --- new
+    {i_bus_c, i_bus_b, i_reg_a, opcode} = instruction; // --- new
 
-    write_data = regs[i_reg_a];
+    bus_a      = regs[i_reg_a];
+    bus_b      = regs[i_bus_b];       // --- new
+    bus_c      = regs[i_bus_c];       // --- new
+
+    write_data = bus_a;
     dmem_wen   = opcode == STORE;
-    reg_b      = regs[i_reg_b];         // --- new
-    reg_c      = regs[i_reg_c];         // --- new
 
     alu_out = '0;
     reg_wen = 1'b1;
     case (opcode)
       LOAD   : alu_out = read_data;
-      MOVE   : alu_out = reg_b;         // --- new
-      ADD    : alu_out = reg_b + reg_c; // --- new
-      SUB    : alu_out = reg_b - reg_c; // --- new
-      MUL    : alu_out = reg_b * reg_c; // --- new
+      MOVE   : alu_out = bus_b;         // --- new
+      ADD    : alu_out = bus_b + bus_c; // --- new
+      SUB    : alu_out = bus_b - bus_c; // --- new
+      MUL    : alu_out = bus_b * bus_c; // --- new
       default: reg_wen = 1'b0;
     endcase
   end
 
   always_ff @(posedge clk)
-    if (reset) {pc, regs} <= '0;
-    else begin
+    if (reset) begin
+      pc   <= '0;
+      regs <= '0;
+    end else begin
       pc <= pc + 1;
       if (reg_wen) regs[i_reg_a] <= alu_out;
     end

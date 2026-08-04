@@ -26,8 +26,10 @@ module cpu_2_load_data_into_registers (
   end                                      // --- new
 
   always_ff @(posedge clk)
-    if (reset) {pc, regs} <= '0;             // --- new: regs
-    else begin
+    if (reset) begin
+      pc   <= '0;
+      regs <= '0;                            // --- new
+    end else begin
       pc <= pc + 1;
       if (reg_wen) regs[i_reg_a] <= alu_out; // --- new
     end
