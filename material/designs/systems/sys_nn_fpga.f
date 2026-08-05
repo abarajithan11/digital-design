@@ -1,0 +1,12 @@
+rtl/systems/nn_weights.sv
+rtl/systems/quant_relu.sv
+rtl/systems/reduction_tree_add.sv
+rtl/systems/vector_mac.sv
+rtl/systems/dense_qrelu.sv
+rtl/systems/axis_dense_relu.sv
+rtl/systems/nn.sv
+rtl/systems/down_counter.sv
+rtl/systems/uart_rx.sv
+rtl/systems/uart_tx.sv
+rtl/systems/skid_buffer.sv
+rtl/systems/sys_nn.sv

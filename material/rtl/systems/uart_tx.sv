@@ -1,57 +1,61 @@
 module uart_tx #(
   parameter CLKS_PER_BIT  = 4,
-            N_WORDS       = 2,
             BITS_PER_WORD = 8,
-            W_PACKET      = BITS_PER_WORD+5
+            PACKET_SIZE   = BITS_PER_WORD+5,
+            W_OUT         = 24
   )(
     input  logic clk, rstn, s_valid,
-    input  logic [N_WORDS-1:0][BITS_PER_WORD-1:0] s_data,
+    input  logic [NUM_WORDS-1:0][BITS_PER_WORD-1:0] s_data,
     output logic tx, s_ready
   );
-  localparam END_BITS = W_PACKET-BITS_PER_WORD-1;
-  localparam CW_BITS = $clog2(N_WORDS*W_PACKET);
-  localparam CW_CLKS = $clog2(CLKS_PER_BIT);
+  localparam NUM_WORDS = W_OUT/BITS_PER_WORD;
+  localparam END_BITS  = PACKET_SIZE-BITS_PER_WORD-1;
+  localparam NUM_BITS  = NUM_WORDS*PACKET_SIZE;
 
-  logic [N_WORDS-1:0][W_PACKET-1:0] s_packets;
-  logic [N_WORDS*W_PACKET-1:0]      m_packets;
+  logic [NUM_BITS-1:0] m_packets;
+  logic [NUM_WORDS-1:0][PACKET_SIZE-1:0] s_packets;
+  logic [$clog2(CLKS_PER_BIT)-1:0] c, c_max;
+  logic [$clog2(NUM_BITS)    -1:0] p, p_max;
+  logic c_en, c_clr, c_last, c_last_clk;
+  logic p_en, p_clr, p_last, p_last_clk;
+
+  enum {IDLE, SEND} state;
+
+  down_counter #(.WIDTH($bits(c))) c_ctr
+    (.clk(clk), .rstn(rstn), .en(c_en), .clear(c_clr), .max_in(c_max), .count(c), .last(c_last), .last_clk(c_last_clk));
+  down_counter #(.WIDTH($bits(p))) p_ctr
+    (.clk(clk), .rstn(rstn), .en(p_en), .clear(p_clr), .max_in(p_max), .count(p), .last(p_last), .last_clk(p_last_clk));
+
+  genvar n;
+  for (n=0; n<NUM_WORDS; n=n+1)
+    always_comb s_packets[n] = {{END_BITS{1'b1}}, s_data[n], 1'b0};
 
   always_comb begin
     tx      = m_packets[0];
-    s_ready = (state == IDLE);
-    for (int n=0; n<N_WORDS; n=n+1)
-      s_packets[n] = {{END_BITS{1'b1}}, s_data[n], 1'b0};
+    s_ready = state == IDLE;
+
+    c_clr = state == IDLE && s_valid; 
+    p_clr = state == IDLE && s_valid;
+    c_en  = state == SEND;
+    p_en  = c_last_clk;
+    c_max = $bits(c)'(CLKS_PER_BIT-1);
+    p_max = $bits(p)'(NUM_BITS-1);
   end
-
-  logic [CW_BITS-1:0] c_bits;
-  logic [CW_CLKS-1:0] c_clocks;
-
-  enum {IDLE, SEND} state;
 
   always_ff @(posedge clk or negedge rstn) begin
     if (!rstn) begin
       state     <= IDLE;
       m_packets <= '1;
-      {c_bits, c_clocks} <= '0;
-    end else
-      case (state)
-        IDLE: if (s_valid) begin
-                state     <= SEND;
-                m_packets <= s_packets;
-              end
-
-        SEND: if (c_clocks == CW_CLKS'(CLKS_PER_BIT-1)) begin
-                c_clocks <= '0;
-
-                if (c_bits == CW_BITS'(N_WORDS*W_PACKET-1)) begin
-                  c_bits    <= '0;
-                  m_packets <= '1;
-                  state     <= IDLE;
-                end else begin
-                  c_bits     <= c_bits + 1'b1;
-                  m_packets <= m_packets >> 1;
-                end
-              end else c_clocks <= c_clocks + 1'b1;
-      endcase
+    end else if (state == IDLE && s_valid) begin
+      state     <= SEND;
+      m_packets <= s_packets;
+    end else if (state == SEND && c_last_clk) begin
+      if (p_last_clk) begin
+        state     <= IDLE;
+        m_packets <= '1;
+      end else begin
+        m_packets <= m_packets >> 1;
+      end
+    end
   end
-
 endmodule
