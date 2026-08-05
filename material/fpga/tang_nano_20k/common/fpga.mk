@@ -64,6 +64,12 @@ check_fpga_tools:
 bitstream: check_fpga_tools
 	test -n "$(FPGA_GLUE)"  || { echo "No top_glue for DESIGN='$(DESIGN)' in $(FPGA_DIR)/top_glue/" >&2; exit 1; }
 	test -f "$(FPGA_FLIST)" || { echo "No shared flist for DESIGN='$(DESIGN)' in $(MATERIAL_DIR)/designs/" >&2; exit 1; }
+	# Some designs synthesize generated includes (for example, FIR coefficients).
+	# Refresh them here just as the simulation and GDS flows do; otherwise an
+	# ignored file left by an older checkout can silently enter the bitstream.
+	if [ -n "$(SIM_GEN)" ] && [ -f "$(SIM_GEN)" ]; then \
+	    ( cd "$(MATERIAL_DIR)" && python3 "$(abspath $(SIM_GEN))" ); \
+	fi
 	mkdir -p "$(FPGA_BUILD)"
 	# Shared flist paths are relative to material/. Drop simulation-only files,
 	# then append the board glue if the shared list does not already contain it.
