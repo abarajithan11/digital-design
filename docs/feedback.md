@@ -1,12 +1,12 @@
 # Student Feedback and Course Iteration
 
 CSE140 is a particularly challenging course to teach and learn.
-My task was to take the students from CSE 30 (C programming) to CSE 141 (Intro to computer architecture) within five weeks.
+My task was to take the fifty enrolled students from CSE 30 (C programming) to CSE 141 (Intro to computer architecture) within five weeks.
 The course needed to be as rigorous as a quarter-legnth course, since it shows up in their transcript just like other courses.
 
-I collected feedback almost daily, making adjustments to my method as the course progressed. 
-I used a three-question feedback block in eight of the ten lecture activities.
-Fifty-one students enrolled for the course, one discontinued early.
+I collected feedback almost daily, through a form of three questions, embedded within FeedbackFruits, which I also used for in-class quizzes. 
+I summarize the feedback from each lecture and present it at the beginning of the following lecture, and made adjustments to my method as the course progressed.
+This made students feel they are being heard.
 Each student participated in an average of 4.9 of the eight daily feedback rounds.
 The final Student Evaluation of Teaching (SET) received 35 responses.
 
@@ -18,7 +18,7 @@ The students called me professor, even though I made it clear I'm just a PhD stu
 
 The final SET reported that 97.1% of respondents agreed that course goals and expectations were communicated effectively, 97.1% agreed that sufficient opportunities for help were offered, 94.3% agreed that assessments appropriately measured the learning outcomes, and 91.4% agreed that the assignments helped them learn the content.
 
-The strongest comments were not simply about liking the course; they described an active, supportive learning process:
+### Many described an active, supportive learning process
 
 > I really like the taking feedback from students and incorporating it into lectures.
 > It allowed a lot of students to revisit particularly difficult topics and become more comfortable.
@@ -33,7 +33,7 @@ The strongest comments were not simply about liking the course; they described a
 
 > It was such a great learning experience, the professor [sic] really cares about our success
 
-Students also appreciated the connection between code, hardware and waveforms:
+### They also appreciated the connection between code, hardware and waveforms
 
 > The example code alongside the theory material in the lecture slides helped me understand the concepts better and understand how a certain hardware is realized in code.
 
