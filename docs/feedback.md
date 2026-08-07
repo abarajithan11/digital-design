@@ -33,9 +33,13 @@ The strongest comments were not simply about liking the course; they described a
 
 > It was such a great learning experience, the professor [sic] really cares about our success
 
-Students also singled out the connection between code and hardware:
+Students also appreciated the connection between code, hardware and waveforms:
 
 > The example code alongside the theory material in the lecture slides helped me understand the concepts better and understand how a certain hardware is realized in code.
+
+> I really liked going over the waveform for Parallel to Serial, it helped me learn  more about the transitions that I was struggling to figure out.
+
+> Going through the systemverilog AND testbench wave data was great enough teaching where I understood the AXI stream.
 
 ## Closing the feedback loop within the week
 
@@ -148,11 +152,12 @@ One final-evaluation comment said:
 > There could be instructions that this is how you declare a function in hdl vs programming language and et cetera.
 > Learn building blocks instead of patterns to modify.
 
-This criticism identifies a real onboarding problem, but a complete programming-language-style tour was not feasible or desirable in this course.
+This criticism identifies a real issue. 
+But it was not feasible to teach SystemVerilog like a programming language.
 SystemVerilog is a vastly complex, historically layered language with a dense syntax in which several constructs can describe the same hardware.
 I therefore carved out a smaller subset and used consistent patterns.
 
-I could not responsibly enumerate every legal way to drive a signal or explain the historical reasons for packed & unpacked arrays behaving so, without confusing beginners.
+I could not enumerate every legal way to drive a signal, or explain the historical reasons for packed & unpacked arrays behaving so, without confusing beginners.
 The part I can improve is introducing the chosen subset earlier, explaining why each restriction exists, and explicitly comparing its semantics with familiar programming languages.
 
 ## What I will improve in the next iteration
@@ -160,23 +165,38 @@ The part I can improve is introducing the chosen subset earlier, explaining why 
 Some critical comments point to changes that should be designed into the course from the start rather than patched during a five-week term.
 
 1. **Introduce the course's SystemVerilog subset earlier and more incrementally.**
-   Students wrote, “Being thrown into the PA's with little idea of how to write Verilog; we could've started more incrementally and earlier I think” and “Not going over at least the basics of system verilog made it very hard to start assignments.”
+   Students wrote, `“Being thrown into the PA's with little idea of how to write Verilog; we could've started more incrementally and earlier I think” and “Not going over at least the basics of system verilog made it very hard to start assignments.”`
    Since I was teaching a 10-week course in 5 weeks, the first assignment had to go live on day one. 
    In a  quarter-length course, short code-reading and code-writing exercises will begin in week one, before the first substantial programming assignment, with a recurring checklist of common synthesis and simulation mistakes.
 
 2. **Break long explanations into shorter learn–try–check cycles.**
-   One final comment said, “Explanations in class went on for almost an hour or more at times.”
+   One final comment said, `“Explanations in class went on for almost an hour or more at times.”`
    I will use shorter explanation blocks followed by an ungraded check, a worked example, or a brief peer discussion before continuing.
 
 3. **Make live coding easier to follow and recover from.**
-   Although many students praised live coding, one wrote, “The live coding session kinda had the professor just go off on his own when he started doing the pipeline.
-   I was following along just fine before and then he went silent and I got lost with all the edits he was making.”
+   Although many students praised live coding, one wrote, `“The live coding session kinda had the professor just go off on his own when he started doing the pipeline.
+   I was following along just fine before and then he went silent and I got lost with all the edits he was making.”`
    Future live coding will use named checkpoints, downloadable snapshots, narration during every edit, and a known-working fallback if debugging consumes the segment.
 
 4. **Make slides more useful before and after class.**
-   While many students praised the visual slides showing designs and code side-by-side, some students wrote, “Slides were difficult to understand on their own” and “I hope the lecture materials can be provided earlier so that I can study them on my own in advance”.
+   While many students praised the visual slides showing designs and code side-by-side, some students wrote, `“Slides were difficult to understand on their own”` and `“I hope the lecture materials can be provided earlier so that I can study them on my own in advance”`.
    I will publish stable drafts earlier, simplify code slides, enlarge diagrams, and define abbreviations where they appear.
-   I did create an acronym reference the day after the first lecture's feedback, but the later comment “I think the slides use a lot of abbreviations” shows that a separate glossary alone did not solve the problem.
+   I did create an acronym reference the day after the first lecture's feedback, but the later comment `“I think the slides use a lot of abbreviations”` shows that a separate glossary alone did not solve the problem.
 
 CSE140 is a challenging course to teach and learn.
 The goal is to preserve what students valued: worked examples, hardware visualizations, real applications, accessibility, and rapid response to feedback, while making the course easier to enter, easier to follow live, and easier to review independently.
+
+## Daily feedback spreadsheet
+
+[Open the complete daily feedback spreadsheet in Google Sheets](https://docs.google.com/spreadsheets/d/1ZJVSfJzX2sH5YzpmKOntHkc-AWjsyaTDs4wMl40rhoY/edit?usp=sharing).
+
+```{raw} html
+<iframe
+  src="https://docs.google.com/spreadsheets/d/1ZJVSfJzX2sH5YzpmKOntHkc-AWjsyaTDs4wMl40rhoY/preview"
+  title="CSE 140 daily feedback spreadsheet"
+  width="100%"
+  height="650"
+  loading="lazy"
+  style="border: 1px solid #d0d7de;"
+></iframe>
+```
