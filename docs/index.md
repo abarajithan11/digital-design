@@ -4,6 +4,7 @@ This course is redesigned to help you learn digital design in a fun, interesting
 You will learn the foundational theory, SystemVerilog implementation, and practical best practices, and get a hands-on taste of both ASIC and FPGA design flows.
 This is a five-week course with 30 hours of lectures and a strong balance between the theory of digital circuits and building them.
 It was developed and taught to 52 students as CSE 140 in the Department of Computer Science and Engineering at UC San Diego during Summer Session I 2026.
+Read the [student feedback and course iteration](feedback.md) to see what students valued, how their feedback shaped the course within the week, and what I plan to improve next time.
 
 - [Start with Docker](setting-up-docker.md)
 - [Browse design examples](design_outputs.md)
@@ -137,6 +138,7 @@ All [RTL sources](https://github.com/abarajithan11/digital-design/tree/main/mate
 
 Home <self>
 Syllabus <syllabus>
+Feedback (2026) <feedback>
 Exams <exams>
 Lecture Recordings <https://podcast.ucsd.edu/watch/s126/cse140_a00>
 Contact Us <contact-us>
