@@ -117,7 +117,7 @@ Listen to the original audio and the output of a 4-bit-quantized low-pass FIR fi
 ## Choose Where to Begin
 
 - **Enrolled students:** Read the [syllabus](syllabus.md), complete the [Docker setup](setting-up-docker.md), and begin with [Week 1](week-1.md).
-- **Independent learners:** Complete the [Docker setup](setting-up-docker.md), try the [running examples](running-examples.md), and use the [SystemVerilog guide](systemverilog.md) as a reference.
+- **Independent learners:** Complete the [Docker setup and running examples](setting-up-docker.md), and use the [SystemVerilog guide](systemverilog.md) as a reference.
 - **Visitors:** Browse the [design examples](design_outputs.md), [CPU walkthrough](cpu.md), [3D standard cells](3d-cells.md), and [FPGA labs](fpga_labs.md).
 
 ## Before You Begin
@@ -150,7 +150,6 @@ Contact Us <contact-us>
 :hidden:
 
 Docker for ASIC+FPGA <setting-up-docker>
-Running Our Examples <running-examples>
 SystemVerilog Basics <systemverilog>
 Acronyms from Lectures <acronyms>
 ```

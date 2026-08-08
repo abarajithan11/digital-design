@@ -41,7 +41,57 @@ make show_layout DESIGN=alu  # View GDSII
 make bitstream   DESIGN=alu  # Generate bitstream for FPGA
 ```
 
+## Running Examples
+
+`make enter` starts an interactive terminal in `/repo/material`, where the provided examples and build system are located. Commands use this general format:
+
+```bash
+make <command> DESIGN=<design_name>
+```
+
+For example, simulate the AND gate and open its waveform with:
+
+```bash
+make sim     DESIGN=and_gate
+make gtkwave DESIGN=and_gate
+```
+
+The build system finds exactly one matching file at `designs/<design_name>.f` or `designs/*/<design_name>.f`. This file lists the RTL and testbench sources required for the design. `make sim` compiles and runs the testbench with Verilator.
+
+
+## ASIC Flow
+
+Run the RTL-to-GDS flow with:
+
+```bash
+make gds DESIGN=and_gate
+```
+
+This synthesizes the RTL into standard cells, places the cells, builds the clock tree, routes the design, and generates the final GDS layout.
+
+## Generated Files
+
+- Simulation waveform: `sim/<design_name>/<design_name>.fst`
+- Synthesis netlist: `openroad/work/results/asap7/<rtl_top>/base/1_2_yosys.v` (`make show_syn_netlist DESIGN=<design_name>`)
+- Final netlist: `openroad/work/results/asap7/<rtl_top>/base/6_final.v` (`make show_final_nestlist DESIGN=<design_name>`)
+- Final layout: `openroad/work/results/asap7/<rtl_top>/base/6_final.gds` (`make show_layout DESIGN=<design_name>`)
+- Area, timing, cell-count, and routing reports: `openroad/work/reports/asap7/<rtl_top>/base/`
+
 ## Using Your Own Designs
+
+### For quick iterations
+
+For a small design, if you prefer, you can invoke Verilator and GTKWave directly instead of using the build system. The testbench must enable waveform tracing and write the `.fst` file passed to GTKWave.
+
+```bash
+verilator --binary --trace-fst --timing --sv --top-module tb_<DESIGN> tb_<DESIGN>.sv <DESIGN>.sv
+./obj_dir/Vtb_<DESIGN>
+gtkwave <DESIGN>.fst
+```
+
+But this quickly gets tedious if your design requires many files, like `sys_fir_filter`, which requires six RTL and three testbench files [listed here](https://github.com/abarajithan11/digital-design/blob/main/material/designs/systems/sys_fir_filter.f).
+
+### Using our build system
 
 Choose the category that best fits your design: `reference`, `systems`, or `cpu`. Replace `CATEGORY` and `YOUR_DESIGN` below with your choices, and use the same category for the RTL, testbench, and file-list directories:
 
