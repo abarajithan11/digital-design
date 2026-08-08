@@ -18,7 +18,7 @@ The students called me professor, even though I made it clear I'm just a PhD stu
 
 The final SET reported that 97.1% of respondents agreed that course goals and expectations were communicated effectively, 97.1% agreed that sufficient opportunities for help were offered, 94.3% agreed that assessments appropriately measured the learning outcomes, and 91.4% agreed that the assignments helped them learn the content.
 
-### Many described an active, supportive learning process
+### Many described an active and supportive learning environment
 
 > I really like the taking feedback from students and incorporating it into lectures.
 > It allowed a lot of students to revisit particularly difficult topics and become more comfortable.
@@ -33,7 +33,7 @@ The final SET reported that 97.1% of respondents agreed that course goals and ex
 
 > It was such a great learning experience, the professor [sic] really cares about our success
 
-### They also appreciated the connection between code, hardware and waveforms
+### Many appreciated the connection between code, hardware and waveforms
 
 > The example code alongside the theory material in the lecture slides helped me understand the concepts better and understand how a certain hardware is realized in code.
 
@@ -41,10 +41,10 @@ The final SET reported that 97.1% of respondents agreed that course goals and ex
 
 > Going through the systemverilog AND testbench wave data was great enough teaching where I understood the AXI stream.
 
-## Closing the feedback loop within the week
+## Closing the feedback loop every lecture
 
 I read the short responses after class and used them to shape the next lecture or discussion.
-These are some of the clearest request–response–result sequences in the feedback.
+These are some of the clearest iteration sequences during the course.
 
 ### June 30 → July 2
 
@@ -116,7 +116,7 @@ This loop did not make every change work for every student.
 For example, some students liked the live coding, while others still found it too fast.
 That mixed result is useful feedback in its own right.
 
-## The hardest feedback and the tradeoffs behind it
+## The most critical feedback and tradeoffs
 
 ### The same class felt both too slow and too fast
 
@@ -129,7 +129,6 @@ Another wrote:
 
 > very fast paced today, struggled to keep up
 
-The disagreement appeared from the beginning: “Pacing was a little slow” sat alongside requests to slow down.
 I could not give every student with widely varying preparation their preferred pace.
 My in-class checks showed that many students were not yet confident with the Boolean algebra, fixed-point arithmetic, or other mathematical foundations needed later in the course, so I chose not to skip those foundations.
 Other students explicitly valued that choice:
@@ -141,8 +140,7 @@ The final SET made the same point from a broader perspective:
 
 > Professor [sic] Aba was just very understanding that people may be coming from different backgrounds so he starts at the basic fundamental concepts for each topic we start.
 
-The better future solution is not simply faster or slower.
-It is a core path that establishes the prerequisites, paired with optional challenge problems for students who already know them.
+The better future solution would be a core path that establishes the prerequisites, paired with optional challenge problems for students who already know them.
 
 ### Why I did not teach SystemVerilog as if it were C or Python
 
@@ -156,13 +154,10 @@ This criticism identifies a real issue.
 But it was not feasible to teach SystemVerilog like a programming language.
 SystemVerilog is a vastly complex, historically layered language with a dense syntax in which several constructs can describe the same hardware.
 I therefore carved out a smaller subset and used consistent patterns.
-
 I could not enumerate every legal way to drive a signal, or explain the historical reasons for packed & unpacked arrays behaving so, without confusing beginners.
 The part I can improve is introducing the chosen subset earlier, explaining why each restriction exists, and explicitly comparing its semantics with familiar programming languages.
 
 ## What I will improve in the next iteration
-
-Some critical comments point to changes that should be designed into the course from the start rather than patched during a five-week term.
 
 1. **Introduce the course's SystemVerilog subset earlier and more incrementally.**
    Students wrote, `“Being thrown into the PA's with little idea of how to write Verilog; we could've started more incrementally and earlier I think” and “Not going over at least the basics of system verilog made it very hard to start assignments.”`
