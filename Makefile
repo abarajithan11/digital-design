@@ -10,7 +10,7 @@ ARCH         ?= $(DEFAULT_ARCH)
 ifneq ($(filter $(ARCH),amd64 arm64),$(ARCH))
 $(error Unsupported ARCH '$(ARCH)' from uname -m='$(HOST_ARCH)'; set ARCH=amd64 or ARCH=arm64)
 endif
-ORFS_REF     ?= ae73a7dd2d4d01b12a9aa2448aba72c16ea8d5c6
+ORFS_REF     ?= 9768f0f5432c77b215be1ff3ce7a3417f2b27bcd
 NUM_THREADS  ?= $(shell nproc 2>/dev/null || sysctl -n hw.logicalcpu 2>/dev/null || printf '%s\n' "$${NUMBER_OF_PROCESSORS:-4}")
 PUBLISH_IMAGE := ghcr.io/ucsd-cse140-s126/digital-design-$(ARCH)
 IMAGE        ?= $(PUBLISH_IMAGE):latest

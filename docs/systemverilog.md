@@ -105,13 +105,11 @@ always_comb signal_2 = signal_1;
 ```
 
 Some synthesis tools may not support some SV features.
-Yosys does not support packed array parameters.
-Therefore, we pass a flattned array as a parameter and then assign it to a local packed view for indexing:
+Yosys' built-in Verilog frontend is a Verilog-2005 parser and rejects packed array parameters, so course RTL used to pass a flattened array and assign it to a local packed view for indexing.
+The flow now runs Yosys with the `slang` frontend (see `SYNTH_HDL_FRONTEND` in `material/basic_run.mk`), a full SystemVerilog elaborator, so a multidimensional constant is declared as the packed array it is and indexed directly:
 
 ```systemverilog
-parameter logic [B*A-1:0] P = '0;
-logic [B-1:0][A-1:0] p_view;
-always_comb p_view = P;
+parameter logic [B-1:0][A-1:0] P = '0;  // index as P[b][a]; no local view needed
 ```
 
 ### `typedef`, `enum`, and `struct`

@@ -8,7 +8,7 @@
 #
 # Usage: docker buildx build --platform linux/arm64 -f Dockerfile.arm64-base .
 
-ARG ORFS_REF=ae73a7dd2d4d01b12a9aa2448aba72c16ea8d5c6
+ARG ORFS_REF=9768f0f5432c77b215be1ff3ce7a3417f2b27bcd
 ARG UBUNTU_VERSION=22.04
 ARG NUM_THREADS=4
 

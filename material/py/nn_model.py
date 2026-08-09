@@ -159,22 +159,22 @@ def main():
             acts.append(act(denses[-1]))          # activation = requantize + relu
     layers = [model.fc0, model.fc1]
 
-    # Per-sample vectors keep one packed row per sample, so a testbench indexes
-    # them as name[s]. Weights and biases stay flat: they are passed straight
-    # into the RTL's packed K/B parameters.
-    rows = lambda a, bits: f"[{N_SAMPLES-1}:0][{a.shape[-1] * bits - 1}:0]"
-    flat = lambda a, bits: f"[{a.size * bits - 1}:0]"
+    # One packed dimension per numpy axis, innermost being the element width, so
+    # the SV name indexes exactly like the numpy array: weights_i[o][j],
+    # bias_i[o], quantized_input[s][j]. Nothing is flattened - the RTL's K/B
+    # parameters are multi-dimensional packed arrays of the same shape.
+    dims = lambda a, bits: "".join(f"[{d-1}:0]" for d in a.shape) + f"[{bits-1}:0]"
 
     shifts = []
-    arrays = [("quantized_input", W_X, to_int(acts[0]), rows)]
+    arrays = [("quantized_input", W_X, to_int(acts[0]))]
     for i, lin in enumerate(layers):
         w = lin.quant_weight()
         b = lin.bias_quant(lin.bias, acts[i], w)
         shifts.append(log2(acts[i + 1]) - log2(acts[i]) - log2(w))          # requant right-shift
         out_name = "quantized_output" if i == len(layers) - 1 else f"act_{i}"
-        arrays += [(f"weights_{i}", W_K, to_int(w), flat), (f"bias_{i}", W_B, to_int(b).flatten(), flat),
-                   (f"dense_{i}", W_ACC, to_int(denses[i]), rows),
-                   (out_name, W_X, to_int(acts[i + 1]), rows)]
+        arrays += [(f"weights_{i}", W_K, to_int(w)), (f"bias_{i}", W_B, to_int(b).flatten()),
+                   (f"dense_{i}", W_ACC, to_int(denses[i])),
+                   (out_name, W_X, to_int(acts[i + 1]))]
 
     with open(PKG_SV, "w") as f:
         f.write("`ifndef NN_WEIGHTS_SV\n`define NN_WEIGHTS_SV\n")
@@ -187,11 +187,11 @@ def main():
             f.write(f"  localparam int {pname} = {pval};\n")
 
       # Writing SV arrays
-        for name, bits, a, shape in arrays:
+        for name, bits, a in arrays:
             cell = lambda v: f"-{bits}'d{-int(v)}" if v < 0 else f"{bits}'d{int(v)}"
             row = lambda r: "{" + ",\n".join(cell(v) for v in r[::-1]) + "}"
             body = row(a) if a.ndim == 1 else "{" + ",\n".join(row(r) for r in a[::-1]) + "}"
-            f.write(f"  localparam logic signed {shape(a, bits)} {name} = {body};\n")
+            f.write(f"  localparam logic signed {dims(a, bits)} {name} = {body};\n")
         f.write("endpackage\n/* verilator lint_on ASCRANGE */\n`endif\n")
     print(f"Wrote {PKG_SV}")
 

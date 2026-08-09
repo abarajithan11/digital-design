@@ -1,18 +1,15 @@
 module fir_filter_naive #(
   parameter N = 5, W_X = 8, W_K = 4,
-  parameter logic [(N+1)*W_K-1:0] K = {
+  parameter logic [N:0][W_K-1:0] K = {
     4'sd1, 4'sd2, 4'sd3, 4'sd4, 4'sd5, 4'sd6
     },//'{default:0},
-  
+
   localparam W_Y = W_X + W_K + $clog2(N+1)
   )(
     input  clk, rstn, en,
     input  logic [W_X-1:0] x,
     output logic [W_Y-1:0] y
   );
-
-  logic [N:0][W_K-1:0] k_arr;
-  always_comb k_arr = K;
 
   genvar n;
   localparam W_M = W_X + W_K;
@@ -30,7 +27,7 @@ module fir_filter_naive #(
 
     y = 0;
     for (int n=0; n < N+1; n=n+1)
-      y = $signed(y) + $signed(k_arr[n]) * $signed(z[n]);
+      y = $signed(y) + $signed(K[n]) * $signed(z[n]);
   end
 
 endmodule

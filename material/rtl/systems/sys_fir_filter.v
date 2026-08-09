@@ -8,7 +8,7 @@ module sys_fir_filter #(
                             // coefficient scale, which is NOT the input's 1<<7
       N              = 100,
       W_K            = 8,
-    parameter [(N+1)*W_K-1:0] K = {
+    parameter [N:0][W_K-1:0] K = {
       `include "data/coef.svh"
     },
     localparam W_Y = WIDTH + W_K + $clog2(N+1)

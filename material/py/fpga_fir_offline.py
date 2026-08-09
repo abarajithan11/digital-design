@@ -69,6 +69,10 @@ raw = samples.tobytes()
 out = bytearray()
 
 with open_serial(args.port, BAUD, timeout=2) as ser:
+    # A failed previous run can leave a final USB packet in the FTDI latency
+    # buffer.  Let it arrive, then discard it so it cannot prefix this run.
+    ser.reset_input_buffer()
+    time.sleep(0.05)
     ser.reset_input_buffer()
 
     def reader():
@@ -77,7 +81,9 @@ with open_serial(args.port, BAUD, timeout=2) as ser:
             if not chunk:
                 return                   # timed out: samples were lost
             out.extend(chunk)
-            out.extend(ser.read(ser.in_waiting or 0))
+            waiting = min(ser.in_waiting, len(raw) - len(out))
+            if waiting:
+                out.extend(ser.read(waiting))
 
     collector = threading.Thread(target=reader, daemon=True)
     collector.start()
@@ -85,17 +91,21 @@ with open_serial(args.port, BAUD, timeout=2) as ser:
     next_progress = 2
     floor = time.perf_counter()
     for i in range(0, len(raw), CHUNK):
+        chunk = raw[i:i + CHUNK]
         # Credit-based flow control. Bytes in flight are exactly the bytes queued
         # in the bridge's tiny return buffer, so bounding them bounds that queue:
         # if the host ever falls behind, credits dry up and we stall instead of
         # overflowing it. A fixed send rate cannot do this - it has no idea the
         # host stalled, and one lost byte shifts the whole stream.
-        while i - len(out) > WINDOW:
+        # Include the chunk about to be written in the limit.  Checking only i
+        # allowed WINDOW + CHUNK bytes (96 for the defaults), which can overflow
+        # on macOS even though the comment above promised a 64-byte maximum.
+        while i + len(chunk) - len(out) > WINDOW:
             time.sleep(0)                    # yields, so the reader can drain
         # Also never hand the MCU a new CHUNK before it has drained the last.
         while time.perf_counter() < floor:
             time.sleep(0)
-        ser.write(raw[i:i + CHUNK])
+        ser.write(chunk)
         floor = time.perf_counter() + MIN_GAP
         if 100 * i >= next_progress * len(raw):
             print(f"{next_progress}% done", flush=True)
@@ -118,4 +128,8 @@ if REFERENCE:
     if np.array_equal(got, want):
         print(f"PASS: all {len(got)} samples match {REFERENCE}.")
     else:
-        print(f"FAIL: {(got != want).sum()} samples differ from {REFERENCE}.")
+        raise SystemExit(
+            f"FAIL: {(got != want).sum()} samples differ from {REFERENCE}. "
+            "Rebuild and reprogram sys_fir_filter; its generated coefficients "
+            "may be stale."
+        )

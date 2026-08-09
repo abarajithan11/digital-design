@@ -13,7 +13,7 @@ package nn_weights_pkg;
   localparam int INPUT_SCALE_LOG2 = 3;
   localparam int SHIFT_0 = 4;
   localparam int SHIFT_1 = 2;
-  localparam logic signed [1:0][323:0] quantized_input = {{4'd0,
+  localparam logic signed [1:0][80:0][3:0] quantized_input = {{4'd0,
 4'd0,
 4'd0,
 4'd0,
@@ -175,7 +175,7 @@ package nn_weights_pkg;
 4'd0,
 4'd0,
 4'd0}};
-  localparam logic signed [15551:0] weights_0 = {{4'd0,
+  localparam logic signed [47:0][80:0][3:0] weights_0 = {{4'd0,
 4'd2,
 4'd0,
 4'd0,
@@ -4063,7 +4063,7 @@ package nn_weights_pkg;
 4'd0,
 4'd0,
 4'd0}};
-  localparam logic signed [383:0] bias_0 = {-8'd10,
+  localparam logic signed [47:0][7:0] bias_0 = {-8'd10,
 8'd8,
 8'd8,
 8'd6,
@@ -4111,7 +4111,7 @@ package nn_weights_pkg;
 8'd12,
 8'd26,
 8'd11};
-  localparam logic signed [1:0][767:0] dense_0 = {{16'd32,
+  localparam logic signed [1:0][47:0][15:0] dense_0 = {{16'd32,
 16'd33,
 16'd52,
 16'd24,
@@ -4207,7 +4207,7 @@ package nn_weights_pkg;
 -16'd4,
 16'd41,
 16'd66}};
-  localparam logic signed [1:0][191:0] act_0 = {{4'd2,
+  localparam logic signed [1:0][47:0][3:0] act_0 = {{4'd2,
 4'd2,
 4'd3,
 4'd2,
@@ -4303,7 +4303,7 @@ package nn_weights_pkg;
 4'd0,
 4'd3,
 4'd4}};
-  localparam logic signed [1919:0] weights_1 = {{4'd0,
+  localparam logic signed [9:0][47:0][3:0] weights_1 = {{4'd0,
 4'd0,
 4'd0,
 -4'd3,
@@ -4783,7 +4783,7 @@ package nn_weights_pkg;
 4'd0,
 4'd0,
 4'd0}};
-  localparam logic signed [79:0] bias_1 = {-8'd1,
+  localparam logic signed [9:0][7:0] bias_1 = {-8'd1,
 -8'd1,
 -8'd1,
 8'd1,
@@ -4793,7 +4793,7 @@ package nn_weights_pkg;
 8'd1,
 8'd2,
 8'd2};
-  localparam logic signed [1:0][159:0] dense_1 = {{-16'd54,
+  localparam logic signed [1:0][9:0][15:0] dense_1 = {{-16'd54,
 -16'd21,
 -16'd40,
 -16'd29,
@@ -4813,7 +4813,7 @@ package nn_weights_pkg;
 -16'd24,
 -16'd25,
 -16'd30}};
-  localparam logic signed [1:0][39:0] quantized_output = {{-4'd8,
+  localparam logic signed [1:0][9:0][3:0] quantized_output = {{-4'd8,
 -4'd5,
 -4'd8,
 -4'd7,

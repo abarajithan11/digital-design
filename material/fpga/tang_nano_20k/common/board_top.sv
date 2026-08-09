@@ -68,13 +68,21 @@ module board_top (
   // ---- Reset: power-on hold + wait-for-PLL-lock ---------------------------
   // S2 is intentionally NOT a reset: on some board revisions that pin is held
   // low, which would keep every design in reset.
+  // power_on_done and rst are registered, not combinational. `&power_on_count`
+  // is a 16-input reduction; feeding it straight into rst put a wide-AND plus
+  // the lock term in front of every register on the chip. yosys <=0.64 mapped
+  // that to a shallow LUT tree and it did not show up, but 0.67+ maps it to a
+  // MUX2_LUT5/6/7/8 cascade that became the whole design's critical path
+  // (sys_fir_filter fell from ~145 MHz to ~78 MHz). Registering costs one clock
+  // on a power-on hold that lasts 65536.
   logic [15:0] power_on_count = '0;
-  logic        power_on_done, rst;
-  always_ff @(posedge clk_sys)
-    if (!power_on_done) power_on_count <= power_on_count + 16'd1;
-  always_comb begin
-    power_on_done = &power_on_count;
-    rst           = !power_on_done | !locked;
+  logic        power_on_done = 1'b0, rst = 1'b1;
+  always_ff @(posedge clk_sys) begin
+    if (!power_on_done) begin
+      power_on_count <= power_on_count + 16'd1;
+      power_on_done  <= &power_on_count;
+    end
+    rst <= !power_on_done | !locked;
   end
 
   // ---- Synchronize the async UART input to clk_sys ------------------------

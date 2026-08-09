@@ -1,5 +1,22 @@
-ARG ORFS_IMAGE_TAG=26Q2-100-gae73a7dd2
-# Newer ORFS/OpenROAD images can SIGILL during CTS on GitHub-hosted runners.
+ARG ORFS_IMAGE_TAG=26Q3-273-g9768f0f54
+# Keep this in sync with ORFS_REF in Makefile and Dockerfile.arm64-base; the tag
+# suffix is the short form of that sha.
+#
+# Bumped off 26Q2-100-gae73a7dd2 for yosys-slang. The course RTL passes weights
+# as multidimensional packed array parameters, which yosys' built-in Verilog
+# frontend rejects at every version, so SYNTH_HDL_FRONTEND=slang is mandatory,
+# not a preference. 26Q2's slang plugin (built 2026-04-14) elaborates wide packed
+# signals in roughly O(N^2*W): assignment 4's reduction_tree_add at N=81 took
+# 215 s against 0.13 s on the built-in frontend, and the nn frontend never
+# finished. Upstream fixed it in May 2026 (povik/sv-elab PR #312 plus "Optimize
+# SigSpec accumulation in expression lowering"). On this base the same RTL
+# elaborates in 0.03 s and the whole nn frontend in 1.6 s.
+#
+# From yosys 0.67 slang is compiled in, so there is no plugin to load; see
+# yosys_read_cmd in material/basic_run.mk.
+#
+# Historical caveat, revisit if CI breaks: newer ORFS/OpenROAD images have been
+# seen to SIGILL during CTS on GitHub-hosted runners.
 # ORFS_BASE_IMAGE can be overridden (e.g. to a from-source arm64 build, see
 # Dockerfile.arm64-base) since openroad/orfs is amd64-only.
 ARG ORFS_BASE_IMAGE=openroad/orfs:${ORFS_IMAGE_TAG}

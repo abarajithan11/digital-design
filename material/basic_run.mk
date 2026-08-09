@@ -44,6 +44,27 @@ YOSYS_EXE    ?= yosys
 OPENROAD_EXE ?= openroad
 KLAYOUT_CMD  ?= klayout
 
+# Yosys' built-in Verilog frontend is a Verilog-2005 parser with partial SV
+# support: it rejects multi-dimensional packed arrays as parameters and
+# concatenations of packed arrays on an assignment LHS, which is why course RTL
+# used to be written around it. yosys-slang, compiled into the yosys the pinned
+# ORFS base ships, is a full SystemVerilog-2017 frontend, so the RTL can be
+# written the way the language actually allows. Setting SYNTH_HDL_FRONTEND=
+# (empty) falls back to the built-in frontend, which will then reject any design
+# using a multi-dimensional packed array parameter (fir_filter, nn, ...).
+SYNTH_HDL_FRONTEND ?= slang
+
+# ORFS builds its own read command from SYNTH_HDL_FRONTEND. The FPGA flows call
+# `yosys -p` directly, so they get the equivalent from here and stay on the same
+# switch. $(1) is the top module; slang needs it to elaborate.
+#
+# No `plugin -i slang`: from yosys 0.67 (the pinned ORFS base) read_slang is
+# compiled in, and loading the plugin errors out because slang.so is gone.
+yosys_read_cmd = $(if $(filter slang,$(SYNTH_HDL_FRONTEND)),\
+                   read_slang -D SYNTHESIS --keep-hierarchy \
+                   --compat=vcs --ignore-assertions --top $(1),\
+                   read_verilog -sv)
+
 GDS3XTRUDE_EXE       ?= gds3xtrude
 OPENSCAD_EXE         ?= openscad
 GDS3XTRUDE_TECH      ?= $(MATERIAL_DIR)/openroad/gds3xtrude/$(PDK).layerstack
@@ -136,6 +157,7 @@ gds: check_tools
 	    "$(WORK_HOME)/reports/$(PDK)/$(TOP_RTL)" \
 	    "$(WORK_HOME)/objects/$(PDK)/$(TOP_RTL)"
 	REPORT_IMAGE_SCALE="$(REPORT_IMAGE_SCALE)" \
+	SYNTH_HDL_FRONTEND="$(SYNTH_HDL_FRONTEND)" \
 	$(MAKE) -C "$(ORFS_FLOW_DIR)" \
 	    $(_GDS_VERILOG_ARG) \
 	    $(_GDS_BASIC_GATES_ARG) \

@@ -36,10 +36,8 @@ module cpu (
   end
 
   always_ff @(posedge clk)
-    if (reset) begin
-      pc   <= '0;
-      regs <= '0;
-    end else begin
+    if (reset) {pc, regs}   <= '0;
+    else begin
       pc <= jump ? addr : pc + 1;
       if (reg_wen) regs[i_reg_a] <= alu_out;
     end
