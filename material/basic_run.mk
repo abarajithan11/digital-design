@@ -9,6 +9,11 @@ FLIST        ?=
 SIM_GEN      ?=
 TOP_TB       ?= tb_$(TB)_$(DESIGN)
 TOP_RTL      ?= $(DESIGN)
+# ORFS output directory name, passed through as DESIGN_NICKNAME. Keyed on DESIGN
+# rather than TOP_RTL so designs that share an RTL module (the cpu_* programs,
+# the fp4 systolic arrays) get their own results/logs/reports/objects trees
+# instead of overwriting each other.
+FLOW_NAME    ?= $(if $(DESIGN),$(DESIGN),$(TOP_RTL))
 SIM_MAX_TIME ?= 1s
 VERILATOR_EXTRA_FLAGS ?=
 # Verilator silently drops unpacked arrays deeper than --trace-max-array (default
@@ -31,7 +36,7 @@ ORFS_HOME        ?= /OpenROAD-flow-scripts
 ORFS_FLOW_DIR    := $(ORFS_HOME)/flow
 WORK_HOME        ?= $(MATERIAL_DIR)/openroad/work
 DESIGN_CONFIG    ?= $(MATERIAL_DIR)/openroad/config.mk
-RESULTS_DIR      := $(WORK_HOME)/results/$(PDK)/$(TOP_RTL)/base
+RESULTS_DIR      := $(WORK_HOME)/results/$(PDK)/$(FLOW_NAME)/base
 FINAL_GDS        := $(RESULTS_DIR)/6_final.gds
 SYNTH_NETLIST    := $(RESULTS_DIR)/1_2_yosys.v
 FINAL_NETLIST    := $(RESULTS_DIR)/6_final.v
@@ -152,16 +157,17 @@ gds: check_tools
 	fi
 	mkdir -p "$(WORK_HOME)"
 	rm -rf \
-	    "$(WORK_HOME)/results/$(PDK)/$(TOP_RTL)" \
-	    "$(WORK_HOME)/logs/$(PDK)/$(TOP_RTL)" \
-	    "$(WORK_HOME)/reports/$(PDK)/$(TOP_RTL)" \
-	    "$(WORK_HOME)/objects/$(PDK)/$(TOP_RTL)"
+	    "$(WORK_HOME)/results/$(PDK)/$(FLOW_NAME)" \
+	    "$(WORK_HOME)/logs/$(PDK)/$(FLOW_NAME)" \
+	    "$(WORK_HOME)/reports/$(PDK)/$(FLOW_NAME)" \
+	    "$(WORK_HOME)/objects/$(PDK)/$(FLOW_NAME)"
 	REPORT_IMAGE_SCALE="$(REPORT_IMAGE_SCALE)" \
 	SYNTH_HDL_FRONTEND="$(SYNTH_HDL_FRONTEND)" \
 	$(MAKE) -C "$(ORFS_FLOW_DIR)" \
 	    $(_GDS_VERILOG_ARG) \
 	    $(_GDS_BASIC_GATES_ARG) \
 	    DESIGN_NAME="$(TOP_RTL)" \
+	    DESIGN_NICKNAME="$(FLOW_NAME)" \
 	    DESIGN_CONFIG="$(DESIGN_CONFIG)" \
 	    WORK_HOME="$(WORK_HOME)" \
 	    YOSYS_EXE="$(YOSYS_EXE)" \
@@ -207,18 +213,12 @@ sim_all: check_tools
 	    $(MAKE) sim DESIGN=$$design_name; \
 	done
 
+# Every design builds: outputs are keyed on DESIGN (via DESIGN_NICKNAME), so
+# designs sharing an RTL top no longer collide and must not be deduplicated.
 gds_all: check_tools
-	declare -A seen_tops=()
 	for design_file in designs/*.f designs/*/*.f; do \
 	    [ -f "$$design_file" ] || continue; \
 	    design_name="$${design_file##*/}"; \
 	    design_name="$${design_name%.f}"; \
-	    rtl_top="$$($(MAKE) -s print_rtl_top DESIGN="$$design_name")"; \
-	    if [ -n "$${seen_tops[$$rtl_top]:-}" ]; then \
-	        printf 'Skipping %s: RTL top %s was already built by %s\n' \
-	            "$$design_name" "$$rtl_top" "$${seen_tops[$$rtl_top]}"; \
-	        continue; \
-	    fi; \
-	    seen_tops[$$rtl_top]="$$design_name"; \
 	    $(MAKE) gds DESIGN=$$design_name; \
 	done

@@ -27,3 +27,7 @@ material/temp_fpga
 
 # Host-side Python dependencies installed by python-setup/tools.py
 python-setup/.python-packages/
+
+material/designs/untracked
+material/rtl/untracked
+material/tb/untracked

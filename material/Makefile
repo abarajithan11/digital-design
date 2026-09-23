@@ -154,14 +154,12 @@ cell_glbs: check_tools
 
 3d_assets: check_tools
 	for design in n_adder cpu_factorial; do \
-		top="$$design"; \
-		[ "$$design" = cpu_factorial ] && top=cpu; \
 		mkdir -p "$(DD_ROOT)/out/gds-assets/$$design"; \
-		if [ ! -f "$(MATERIAL_DIR)/openroad/work/results/$(PDK)/$$top/base/6_final.gds" ]; then \
+		if [ ! -f "$(MATERIAL_DIR)/openroad/work/results/$(PDK)/$$design/base/6_final.gds" ]; then \
 			$(MAKE) gds DESIGN=$$design; \
 		fi; \
 		$(MAKE) glb DESIGN=$$design; \
-		cp "$(MATERIAL_DIR)/openroad/work/results/$(PDK)/$$top/base/6_final.glb" \
+		cp "$(MATERIAL_DIR)/openroad/work/results/$(PDK)/$$design/base/6_final.glb" \
 			"$(DD_ROOT)/out/gds-assets/$$design/$$design.glb"; \
 	done
 

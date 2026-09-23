@@ -181,9 +181,9 @@ gds_output:
 	esac; \
 	printf 'Resolved design %s to RTL top %s\n' "$(DESIGN)" "$$rtl_top"; \
 	if $(MAKE) run CMD="make gds DESIGN=$(DESIGN)" IMAGE="$(IMAGE)"; then \
-		results_dir="material/openroad/work/results/asap7/$$rtl_top/base"; \
-		logs_dir="material/openroad/work/logs/asap7/$$rtl_top/base"; \
-		reports_dir="material/openroad/work/reports/asap7/$$rtl_top/base"; \
+		results_dir="material/openroad/work/results/asap7/$(DESIGN)/base"; \
+		logs_dir="material/openroad/work/logs/asap7/$(DESIGN)/base"; \
+		reports_dir="material/openroad/work/reports/asap7/$(DESIGN)/base"; \
 		artifact_status=0; \
 		gds_src="$$results_dir/6_final.gds"; \
 		if [ -f "$$gds_src" ]; then \
@@ -241,16 +241,14 @@ gds_outputs_all:
 
 gds_glb_assets:
 	for design in n_adder cpu_factorial; do \
-		top="$$design"; \
-		[ "$$design" = cpu_factorial ] && top=cpu; \
 		mkdir -p "out/gds-assets/$$design"; \
-		if [ ! -f "material/openroad/work/results/asap7/$$top/base/6_final.glb" ]; then \
-			if [ ! -f "material/openroad/work/results/asap7/$$top/base/6_final.gds" ]; then \
+		if [ ! -f "material/openroad/work/results/asap7/$$design/base/6_final.glb" ]; then \
+			if [ ! -f "material/openroad/work/results/asap7/$$design/base/6_final.gds" ]; then \
 				$(MAKE) run CMD="make gds DESIGN=$$design" IMAGE="$(IMAGE)"; \
 			fi; \
 			$(MAKE) run CMD="make glb DESIGN=$$design" IMAGE="$(IMAGE)"; \
 		fi; \
-		cp "material/openroad/work/results/asap7/$$top/base/6_final.glb" \
+		cp "material/openroad/work/results/asap7/$$design/base/6_final.glb" \
 			"out/gds-assets/$$design/$$design.glb"; \
 	done
 
