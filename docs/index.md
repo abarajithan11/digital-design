@@ -72,6 +72,7 @@ The course repeatedly takes ideas through the same end-to-end flow:
 
 Use the [SystemVerilog guide](systemverilog.md) as a language reference, inspect the [generated design outputs](design_outputs.md), explore [standard cells in 3D](3d-cells.md), and implement complete systems in the [FPGA labs](fpga_labs.md).
 
+(systems-you-will-build)=
 ## Systems You Will Build and Explore
 
 - **CPU:** Build an eight-opcode CPU in approximately 40 lines of SystemVerilog and run programs such as Sum-to-N, Fibonacci, factorial, and dot product in the [CPU walkthrough](cpu.md).

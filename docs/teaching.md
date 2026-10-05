@@ -11,7 +11,7 @@ This page explains why I made those choices, how I taught the course to 52 stude
 
 Before this course, I mostly thought about what I wanted to teach.
 The Summer Graduate Teaching Scholars (SGTS) program shifted my focus to what students needed to be able to do, and what evidence would show that they had learned it.
-So I organized the course around the [weekly learning outcomes](syllabus.md), the assessments that measure them, and the in-class activities to practice them, rather than around a list of topics.
+So I organized the course around the [weekly learning outcomes](syllabus.md), the assessments that measure them, and the in-class activities to practice them.
 
 CSE 140L, the companion lab course, was not available, so I integrated its hands-on lab experience directly into CSE 140.
 Each assignment is roughly half theory and half SystemVerilog design, so students apply each idea soon after learning it.
@@ -23,9 +23,9 @@ My goal was for students to see how theory, code, waveforms, and physical hardwa
 - **Diagrams next to code:** I presented circuit diagrams and their SystemVerilog side by side, so students could see how a hardware structure becomes code, and how that code behaves in simulation waveforms.
 - **Hardware in 3D:** I developed interactive 3D visualizations of circuits and [standard cells](3d-cells.md), so students could explore how a design is physically built from transistors on a chip.
 - **The full flow on their own computers:** A [Docker image](setting-up-docker.md) packages the simulation, synthesis, and layout tools, so every student could take their own designs from SystemVerilog to a 7 nm layout.
-- **Real applications:** An [FIR audio filter](fpga_labs.md) let students hear the effect of the hardware we designed, and a neural-network accelerator showed how the same principles are used in modern computing.
+- **Real applications:** An [FIR audio filter](#systems-you-will-build) let students hear the effect of the hardware we designed, and a neural-network accelerator showed how the same principles are used in modern computing.
   The final lecture builds a [CPU in 40 lines of SystemVerilog](cpu.md).
-- **Live in class:** I ran FPGA demos, coded and debugged live, and walked through waveforms on the blackboard.
+- **Interactive lessions:** I ran FPGA demos, coded and debugged live, and walked through waveforms on the blackboard.
 
 The topics build on each other, from Boolean logic and combinational circuits to sequential circuits, fixed-point arithmetic, streaming interfaces, and finally complete systems.
 One student wrote:
@@ -38,7 +38,7 @@ Others said the waveform walkthroughs and FPGA examples helped them understand d
 
 Students entered with different levels of preparation, and I received conflicting feedback about pacing.
 Some felt I spent too much time reviewing prerequisites, while others felt the same material moved too quickly.
-Rather than simply speeding up, I used in-class activities, quizzes, and questions to check whether students had the foundations needed for later topics.
+I then used in-class activities, quizzes, and questions to check whether students had the foundations needed for later topics.
 When those checks showed gaps in Boolean algebra, fixed-point arithmetic, or other prerequisites, I reinforced them.
 One student appreciated that I "didn't just assume that everyone knew the basic properties of boolean algebra."
 Another wrote in the final evaluation:
@@ -100,14 +100,14 @@ A few principles guide how I do this:
 - **Real systems as motivation:** Students put effort into learning when they can see the real world utility of the designs.
   An audio filter they can hear, a neural network they can observe, and a CPU they can program make the fundamentals worth learning.
 - **Clarity over completeness:** SystemVerilog has many ways to describe the same hardware.
-  I teach a small, consistent subset well, so beginners spend their effort on design rather than on the language's historical quirks.
+  I teach a small, consistent subset, so beginners can focus on design, not the language's historical quirks.
 - **Doing the work themselves:** Beginners need to write and debug basic designs by hand to build intuition, so they can use AI effectively later in their careers.
   That is why I did not allow AI tools to write or debug assignment code.
-  The paper-based exams were then designed such that they were easy if they did the assignments themselves, and hard if they did not.
-- **Foundations for everyone:** I do not assume that every student arrives with the same preparation.
-  I check what the class actually knows, and reinforce the foundations before building on them.
-- **Tools students own:** I built the Docker image to run on students' own computers, than on a server set up just for one summer course.
+  The paper-based exams were then designed to be easy for students who did the assignments themselves, and hard for those who did not.
+- **Foundations for everyone:** I try not to assume that every student arrives with the same preparation.
+  In this course, I tried to check what the class actually knew, and reinforced the foundations before building on them.
+- **Tools students own:** I built the Docker image to run on students' own computers, not on a server set up just for one summer course.
   Running the full flow on their own machines makes the work personal and gives students a sense of ownership.
   The tools also stay with them after the course ends, so they can keep building designs and add them to a portfolio.
-- **The course as a design:** I treat the course itself as something to test and improve.
-  I start from a well-reasoned plan, measure how students are learning, and change it when the evidence calls for it.
+- **The course as a design:** I try to treat the course itself as something to test and improve.
+  In this course, I started from a plan I had thought through carefully, tried to track how students were learning, and changed the plan when the evidence called for it.
