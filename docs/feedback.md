@@ -195,3 +195,9 @@ The goal is to preserve what students valued: worked examples, hardware visualiz
   style="border: 1px solid #d0d7de;"
 ></iframe>
 ```
+
+## Student Evaluation of Teaching (SET)
+
+[Download the final SET report (PDF)](https://media.abapages.com/course-site/cse140_2026_ss1_set.pdf).
+
+<iframe src="https://media.abapages.com/course-site/cse140_2026_ss1_set.pdf" width="100%" height="900px" title="CSE 140 Student Evaluation of Teaching PDF">Your browser does not support embedded PDFs. <a href="https://media.abapages.com/course-site/cse140_2026_ss1_set.pdf">Open the SET report PDF</a>.</iframe>
