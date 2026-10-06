@@ -25,6 +25,7 @@ My goal was for students to see how theory, code, waveforms, and physical hardwa
 - **The full flow on their own computers:** A [Docker image](setting-up-docker.md) packages the simulation, synthesis, and layout tools, so every student could take their own designs from SystemVerilog to a 7 nm layout.
 - **Real applications:** An [FIR audio filter](#systems-you-will-build) let students hear the effect of the hardware we designed, and a neural-network accelerator showed how the same principles are used in modern computing.
   The final lecture builds a [CPU in 40 lines of SystemVerilog](cpu.md).
+  Each of these is small enough that students can understand every line, and real enough that they can see why someone would build it.
 - **Interactive lessions:** I ran FPGA demos, coded and debugged live, and walked through waveforms on the blackboard.
 
 The topics build on each other, from Boolean logic and combinational circuits to sequential circuits, fixed-point arithmetic, streaming interfaces, and finally complete systems.
@@ -97,8 +98,13 @@ A few principles guide how I do this:
 
 - **Theory and practice together:** Theory explains why a circuit works, and building the circuit is how students test that understanding.
   So every major idea goes from theory to SystemVerilog, waveforms, layout, and, where possible, an FPGA.
-- **Real systems as motivation:** Students put effort into learning when they can see the real world utility of the designs.
-  An audio filter they can hear, a neural network they can observe, and a CPU they can program make the fundamentals worth learning.
+- **Real examples, "simple but complete":** Students put effort into learning when they can see the real world utility of the designs.
+  But finding the right example is the hardest part of preparing a course, and it is where I spend most of my time.
+  I dislike artificial examples like teaching object-oriented programming with `Dog` and `Animal` classes.
+  They demonstrate the mechanics of a feature while telling students nothing about why anyone would use it.
+  An example has to satisfy two constraints at once: simple enough that a beginner can understand every line, with no black boxes left unexplained, yet complete enough to be a recognizable version of something engineers really build, rather than a toy example invented for the lecture.
+  The FIR filter is a few lines of SystemVerilog, and every line is explainable on the first day a student sees multipliers and registers, but it is a real audio filter whose effect they can hear.
+  The neural network accelerator and the [CPU in 40 lines](cpu.md) are chosen the same way: small enough to read in full, real enough to be worth reading.
 - **Clarity over completeness:** SystemVerilog has many ways to describe the same hardware.
   I teach a small, consistent subset, so beginners can focus on design, not the language's historical quirks.
 - **Doing the work themselves:** Beginners need to write and debug basic designs by hand to build intuition, so they can use AI effectively later in their careers.
