@@ -15,9 +15,11 @@
   - Why a chip needs a clock
   - Propagation Delay, Contamination Delay
 
-[Open slides in new tab](https://1drv.ms/p/c/154152893557b712/IQQnF3pXUWjyRb1Q7vgkzwd7AYcaMCiqpMjAPdJWb0KKPMw)
+[Slides with animations](https://1drv.ms/p/c/154152893557b712/IQQnF3pXUWjyRb1Q7vgkzwd7AYcaMCiqpMjAPdJWb0KKPMw) · [PDF slides](https://media.abapages.com/course-site/slides/cse140_3_1.pdf)
 
-<iframe src="https://1drv.ms/p/c/154152893557b712/IQQnF3pXUWjyRb1Q7vgkzwd7AYcaMCiqpMjAPdJWb0KKPMw?em=2&amp;wdAr=1.7777777777777777" width="900px" height="534px" frameborder="0" title="PowerPoint Viewer">This is an embedded <a target="_blank" href="https://office.com">Microsoft Office</a> presentation, powered by <a target="_blank" href="https://office.com/webapps">Office</a>.</iframe>
+<div class="slides-embed">
+<iframe src="https://media.abapages.com/course-site/slides/cse140_3_1.pdf" title="Week 3 Lecture 1 slides (PDF)">Your browser does not support embedded PDFs. <a href="https://media.abapages.com/course-site/slides/cse140_3_1.pdf">Open the slides PDF</a>.</iframe>
+</div>
 
 ## Lecture 2
 
@@ -37,9 +39,11 @@
 - Hands-on FPGA
 - Implement a counter on FPGA
 
-[Open slides in new tab](https://1drv.ms/p/c/154152893557b712/IQQCbHLcMd9fTbYvzkfQvLRWAcFgFTIvopyMca2XEFBDY1k)
+[Slides with animations](https://1drv.ms/p/c/154152893557b712/IQQCbHLcMd9fTbYvzkfQvLRWAcFgFTIvopyMca2XEFBDY1k) · [PDF slides](https://media.abapages.com/course-site/slides/cse140_3_2.pdf)
 
-<iframe src="https://1drv.ms/p/c/154152893557b712/IQQCbHLcMd9fTbYvzkfQvLRWAcFgFTIvopyMca2XEFBDY1k?em=2&amp;wdAr=1.7777777777777777" width="900px" height="534px" frameborder="0" title="PowerPoint Viewer">This is an embedded <a target="_blank" href="https://office.com">Microsoft Office</a> presentation, powered by <a target="_blank" href="https://office.com/webapps">Office</a>.</iframe>
+<div class="slides-embed">
+<iframe src="https://media.abapages.com/course-site/slides/cse140_3_2.pdf" title="Week 3 Lecture 2 slides (PDF)">Your browser does not support embedded PDFs. <a href="https://media.abapages.com/course-site/slides/cse140_3_2.pdf">Open the slides PDF</a>.</iframe>
+</div>
 
 ## Assignment 3: Fully parallel dense layer 
 

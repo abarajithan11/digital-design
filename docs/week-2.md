@@ -20,9 +20,11 @@
   - Overflow
   - Clamping/clipping - handling overflows
 
-[Open slides in new tab](https://1drv.ms/p/c/154152893557b712/IQT7kM59SgRASaNRjaLbfVYhAYRXbM7EKvznsySSP964jGE)
+[Slides with animations](https://1drv.ms/p/c/154152893557b712/IQT7kM59SgRASaNRjaLbfVYhAYRXbM7EKvznsySSP964jGE) · [PDF slides](https://media.abapages.com/course-site/slides/cse140_2_1.pdf)
 
-<iframe src="https://1drv.ms/p/c/154152893557b712/IQT7kM59SgRASaNRjaLbfVYhAYRXbM7EKvznsySSP964jGE?em=2&amp;wdAr=1.7777777777777777" width="900px" height="534px" frameborder="0" title="PowerPoint Viewer">This is an embedded <a target="_blank" href="https://office.com">Microsoft Office</a> presentation, powered by <a target="_blank" href="https://office.com/webapps">Office</a>.</iframe>
+<div class="slides-embed">
+<iframe src="https://media.abapages.com/course-site/slides/cse140_2_1.pdf" title="Week 2 Lecture 1 slides (PDF)">Your browser does not support embedded PDFs. <a href="https://media.abapages.com/course-site/slides/cse140_2_1.pdf">Open the slides PDF</a>.</iframe>
+</div>
 
 ## Lecture 2
 
@@ -45,9 +47,11 @@
   - Lookup Tables
   - Demultiplexer
 
-[Open slides in new tab](https://1drv.ms/p/c/154152893557b712/IQSgztkdDg20SIwxw_ZFSsguAVIiFKTMYSOc7TtWvFCauSc)
+[Slides with animations](https://1drv.ms/p/c/154152893557b712/IQSgztkdDg20SIwxw_ZFSsguAVIiFKTMYSOc7TtWvFCauSc) · [PDF slides](https://media.abapages.com/course-site/slides/cse140_2_2.pdf)
 
-<iframe src="https://1drv.ms/p/c/154152893557b712/IQSgztkdDg20SIwxw_ZFSsguAVIiFKTMYSOc7TtWvFCauSc?em=2&amp;wdAr=1.7777777777777777" width="900px" height="534px" frameborder="0" title="PowerPoint Viewer">This is an embedded <a target="_blank" href="https://office.com">Microsoft Office</a> presentation, powered by <a target="_blank" href="https://office.com/webapps">Office</a>.</iframe>
+<div class="slides-embed">
+<iframe src="https://media.abapages.com/course-site/slides/cse140_2_2.pdf" title="Week 2 Lecture 2 slides (PDF)">Your browser does not support embedded PDFs. <a href="https://media.abapages.com/course-site/slides/cse140_2_2.pdf">Open the slides PDF</a>.</iframe>
+</div>
 
 ## Discussion
 

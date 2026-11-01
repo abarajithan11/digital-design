@@ -11,9 +11,11 @@
   - Naive FIR filter - long combinational path
   - Transposed FIR Filter - shorter path, higher FMAX
 
-[Open slides in new tab](https://1drv.ms/p/c/154152893557b712/IQS_Vj1wYiE4R5rejk78uiATAWcethDAHLuYYF-XUke3trc)
+[Slides with animations](https://1drv.ms/p/c/154152893557b712/IQS_Vj1wYiE4R5rejk78uiATAWcethDAHLuYYF-XUke3trc) · [PDF slides](https://media.abapages.com/course-site/slides/cse140_4_1.pdf)
 
-<iframe src="https://1drv.ms/p/c/154152893557b712/IQS_Vj1wYiE4R5rejk78uiATAWcethDAHLuYYF-XUke3trc?em=2&amp;wdAr=1.7777777777777777" width="900px" height="534px" frameborder="0" title="PowerPoint Viewer">This is an embedded <a target="_blank" href="https://office.com">Microsoft Office</a> presentation, powered by <a target="_blank" href="https://office.com/webapps">Office</a>.</iframe>
+<div class="slides-embed">
+<iframe src="https://media.abapages.com/course-site/slides/cse140_4_1.pdf" title="Week 4 Lecture 1 slides (PDF)">Your browser does not support embedded PDFs. <a href="https://media.abapages.com/course-site/slides/cse140_4_1.pdf">Open the slides PDF</a>.</iframe>
+</div>
 
 ## Lecture 2
 
@@ -24,9 +26,11 @@
   - State machine
   - Ready/valid, backpressure
 
-[Open slides in new tab](https://1drv.ms/p/c/154152893557b712/IQQCK7wbg_uySYpNPKxr6DMWAU1iKOfSWE05uWOOIb3Ic5Y)
+[Slides with animations](https://1drv.ms/p/c/154152893557b712/IQQCK7wbg_uySYpNPKxr6DMWAU1iKOfSWE05uWOOIb3Ic5Y) · [PDF slides](https://media.abapages.com/course-site/slides/cse140_4_2.pdf)
 
-<iframe src="https://1drv.ms/p/c/154152893557b712/IQQCK7wbg_uySYpNPKxr6DMWAU1iKOfSWE05uWOOIb3Ic5Y?em=2&amp;wdAr=1.7777777777777777" width="900px" height="534px" frameborder="0" title="PowerPoint Viewer">This is an embedded <a target="_blank" href="https://office.com">Microsoft Office</a> presentation, powered by <a target="_blank" href="https://office.com/webapps">Office</a>.</iframe>
+<div class="slides-embed">
+<iframe src="https://media.abapages.com/course-site/slides/cse140_4_2.pdf" title="Week 4 Lecture 2 slides (PDF)">Your browser does not support embedded PDFs. <a href="https://media.abapages.com/course-site/slides/cse140_4_2.pdf">Open the slides PDF</a>.</iframe>
+</div>
 
 ## Discussion: FPGA System
 
