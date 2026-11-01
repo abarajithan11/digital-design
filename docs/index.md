@@ -1,6 +1,8 @@
 # Digital Design - UCSD CSE140 SS1'26
 
-This course is redesigned to help you learn digital design in a fun, interesting and inspiring way. 
+I am Abarajithan ([my website](https://abapages.com/)), your instructor-on-record. 
+I have redesigned this course to help you learn digital design in a fun, interesting and inspiring way. 
+
 You will learn the foundational theory, SystemVerilog implementation, and practical best practices, and get a hands-on taste of both ASIC and FPGA design flows.
 This is a five-week course with 30 hours of lectures and a strong balance between the theory of digital circuits and building them.
 It was developed and taught to 52 students as CSE 140 in the Department of Computer Science and Engineering at UC San Diego during Summer Session I 2026.
@@ -166,6 +168,7 @@ Design Examples <design_outputs>
 FPGA Labs <fpga_labs>
 CPU in 40 Lines of SystemVerilog <cpu>
 Standard Cells in 3D <3d-cells>
+My Personal Site <https://abapages.com>
 ```
 
 ```{toctree}
